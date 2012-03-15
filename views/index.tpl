@@ -1,22 +1,10 @@
 <!DOCTYPE html>
 
     <head>
-        <% self.seen_resource = set() %>
-        <%def name="resource_link(name, res_type)">
-            % if name not in self.seen_resource:
-                % if res_type == 'css':
-                    <link rel="stylesheet" href="css/${name}.css" type="text/css" />
-                % elif res_type == 'js':
-                    <script language="javascript" src="js/${name}.js"></script>
-                % endif
-            % endif
-            <% self.seen_resource.add(name) %>
-        </%def>
-
-        ${resource_link('bootstrap', 'css')}
-        ${resource_link('fshop', 'css')}
-        ${resource_link('bootstrap', 'js')}
-        ${resource_link('jquery', 'js')}
+        <link rel="stylesheet" href="static/bootstrap/css/bootstrap.css" type="text/css" />
+        <link rel="stylesheet" href="static/css/ws1.css" type="text/css" />
+        <script language="javascript" src="static/bootstrap/js/bootstrap.js"></script>
+        <script language="javascript" src="static/js/jquery-1.7.1.min.js"></script>
     </head>
 
     <body style="padding-top: 40px;">
@@ -51,9 +39,9 @@
             <div class="row-fluid">
 
                 <div class="span10">
-                    % for a in range(0, 50):
-                        ${data} <p />
-                    % endfor
+                    %for a in range(0, 50):
+                        {{data}} <p />
+                    %end
                 </div>
             </div>
         </div>
