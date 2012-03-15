@@ -1,0 +1,16 @@
+.sidebar-nav-fixed {
+    padding: 9px 0;
+    position: fixed;
+    left: 20px;
+    top: 60px;
+    width: 150px;
+}
+
+.sidebar-container {
+    width: 180px;
+    height: 100%;
+}
+
+.sidebar-offset {
+    margin-left: 170px;
+}
