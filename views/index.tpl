@@ -15,10 +15,10 @@
                 <div class="container">
                     <ul class="nav">
 
-                        <li><a class="brand" href="#">Sorta Software</a></li>
-                        <li class="active"><a href="#">Home</a></li>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Projects</a></li>
+                        <li><a class="brand" href="#">{{ get('site_name', 'BOO') }}</a></li>
+                        %for link in get('manelinks', ['Home', 'home']):
+                            <li><a href="/{{ link[1] }}">{{ link[0] }}</a></li>
+                        %end
 
                     </ul>
                 </div>
@@ -28,6 +28,9 @@
         <div class="sidebar-container">
             <div class="sidebar-nav-fixed">
                 <ul class="nav nav-tabs nav-stacked">
+                    %for link in get('taillinks', []):
+                        <li><a href="/{{ link[1] }}">{{ link[0] }}</a></li>
+                    %end
                     <li class="active"><a href="#">Blog</a></li>
                     <li><a href="#">Blag</a></li>
                     <li><a href="#">Blooog</a></li>
@@ -40,7 +43,7 @@
 
                 <div class="span10">
                     %for a in range(0, 50):
-                        {{data}} <p />
+                        {{ data }} <p />
                     %end
                 </div>
             </div>
