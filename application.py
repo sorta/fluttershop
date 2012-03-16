@@ -1,12 +1,13 @@
 import os
-from bottle import run, Bottle, redirect, static_file
+from bottle import run, Bottle, redirect, static_file, view, abort
 
-from config import HOST_ADDRESS, HOST_PORT, AUTORELOAD, my_view
-from db import get_manelinks, get_taillinks
+from config import HOST_ADDRESS, HOST_PORT, AUTORELOAD, SITE_NAME
+from app.db import FShopDB
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 static_dir = os.path.join(current_dir, 'static')
 fshop_bottle = Bottle()
+db = FShopDB()
 
 
 #### Basic Routes ####
@@ -26,19 +27,36 @@ def error404(error):
 
 
 @fshop_bottle.get('/<mane>')
-@my_view('index')
-def mane():
-    manelinks = get_manelinks()
-    taillinks = get_taillinks()
-    return dict(data='Hello World!!!', manelinks=manelinks, taillinks=taillinks)
+@view('index')
+def mane(mane):
+    if not db.validate_mane(mane):
+        abort(404)
+    pm = get_page_model(mane)
+    pm['data'] = 'Hello World!'
+    return pm
 
 
 @fshop_bottle.get('/<mane>/<tail>')
-@my_view('index')
-def tail():
-    manelinks = get_manelinks()
-    taillinks = get_taillinks(mane)
-    return dict(data='Hello World!!!', manelinks=manelinks, taillinks=taillinks)
+@view('index')
+def tail(mane, tail):
+    if not db.validate_tail(mane, tail):
+        abort(404)
+    pm = get_page_model(mane, tail)
+    pm['data'] = 'Hello World!'
+    print pm
+    return pm
+
+
+def get_page_model(mane, tail=None):
+    manes, tails = db.get_links_for_mane(mane)
+    return {
+        'manelinks': manes,
+        'taillinks': tails,
+        'selected_mane': mane.lower() if mane else mane,
+        'selected_tail': tail.lower() if tail else tail,
+        'site_name': SITE_NAME
+    }
+
 
 #### Main ####
 if __name__ == "__main__":
