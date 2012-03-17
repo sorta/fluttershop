@@ -47,7 +47,7 @@ def tail(mane, tail):
     if not sdb.validate_tail(mane, tail):
         abort(404)
     pm = get_page_model(mane, tail)
-    pm['data'] = 'Hello World!'
+    pm['data'] = 'Hello {0}!'.format(tail)
     return pm
 
 

@@ -5,6 +5,7 @@
         <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.css" type="text/css" />
         <link rel="stylesheet" href="/static/css/ws1.css" type="text/css" />
         <script language="javascript" src="/static/js/jquery-1.7.1.min.js"></script>
+        <script language="javascript" src="/static/js/ws1.js"></script>
         <script language="javascript" src="/static/bootstrap/js/bootstrap.js"></script>
     </head>
 
@@ -42,17 +43,10 @@
                 %end
             </ul>
             <div class="tab-content">
-                <div class="tab-pane active" id="1">
-                    <div class="container-fluid">
-                        <div class="row-fluid">
-
-                            <div class="span10">
-                                %for a in range(0, 50):
-                                    {{ data }} <p />
-                                %end
-                            </div>
-                        </div>
-                    </div>
+                <div class="tab-pane active" id="ActiveTab" click="loadTab()">
+                        %for a in range(0, 50):
+                            {{ data }} <p />
+                        %end
                 </div>
             </div>
         </div>

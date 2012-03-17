@@ -2690,6 +2690,9 @@ input[type="submit"].btn.btn-mini {
 }
 .tab-content {
   display: block;
+  overflow: hidden;
+  padding-left: 19px;
+  border-left: 1px solid #bbb;
 }
 .tabs-below .nav-tabs,
 .tabs-right .nav-tabs,
@@ -2705,7 +2708,7 @@ input[type="submit"].btn.btn-mini {
   display: block;
 }
 .tabs-below .nav-tabs {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #bbb;
 }
 .tabs-below .nav-tabs > li {
   margin-top: -1px;
@@ -2718,11 +2721,11 @@ input[type="submit"].btn.btn-mini {
 }
 .tabs-below .nav-tabs > li > a:hover {
   border-bottom-color: transparent;
-  border-top-color: #ddd;
+  border-top-color: #bbb;
 }
 .tabs-below .nav-tabs .active > a,
 .tabs-below .nav-tabs .active > a:hover {
-  border-color: transparent #ddd #ddd #ddd;
+  border-color: transparent #bbb #bbb #bbb;
 }
 .tabs-left .nav-tabs > li,
 .tabs-right .nav-tabs > li {
@@ -2736,8 +2739,6 @@ input[type="submit"].btn.btn-mini {
 }
 .tabs-left .nav-tabs {
   float: left;
-  margin-right: 19px;
-  border-right: 1px solid #ddd;
 }
 .tabs-left .nav-tabs > li > a {
   margin-right: -1px;
@@ -2750,13 +2751,13 @@ input[type="submit"].btn.btn-mini {
 }
 .tabs-left .nav-tabs .active > a,
 .tabs-left .nav-tabs .active > a:hover {
-  border-color: #ddd transparent #ddd #ddd;
+  border-color: #bbb transparent #bbb #bbb;
   *border-right-color: #ffffff;
 }
 .tabs-right .nav-tabs {
   float: right;
   margin-left: 19px;
-  border-left: 1px solid #ddd;
+  border-left: 1px solid #bbb;
 }
 .tabs-right .nav-tabs > li > a {
   margin-left: -1px;
@@ -2769,7 +2770,7 @@ input[type="submit"].btn.btn-mini {
 }
 .tabs-right .nav-tabs .active > a,
 .tabs-right .nav-tabs .active > a:hover {
-  border-color: #ddd #ddd #ddd transparent;
+  border-color: #bbb #bbb #bbb transparent;
   *border-left-color: #ffffff;
 }
 .navbar {
