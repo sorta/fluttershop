@@ -2,18 +2,19 @@ import os
 from bottle import run, Bottle, redirect, static_file, view, abort
 
 from config import HOST_ADDRESS, HOST_PORT, AUTORELOAD, SITE_NAME
-from app.db import FShopSimpleDB
+from app.content import listify_posts
+from app.db import FShopDBSys
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 static_dir = os.path.join(current_dir, 'static')
 fshop_bottle = Bottle()
-sdb = FShopSimpleDB()
+fsdb = FShopDBSys(mongo_address='192.168.0.189')
 
 
 #### Basic Routes ####
 @fshop_bottle.get('/')
 def index():
-    mane = sdb.get_mane_mane()
+    mane = fsdb.sdb.get_mane_mane()
     redirect("/{0}".format(mane))
 
 
@@ -25,40 +26,43 @@ def send_static(filepath):
 @fshop_bottle.error(404)
 @view('index')
 def error404(error):
-    mane = sdb.get_mane_mane()
+    mane = fsdb.sdb.get_mane_mane()
     pm = get_page_model(mane)
-    pm['data'] = "YOU DIDN'T SAY THE MAGIC WORD!"
     return pm
 
 
 @fshop_bottle.get('/<mane>')
 @view('index')
 def mane(mane):
-    if not sdb.validate_mane(mane):
+    if not fsdb.sdb.validate_mane(mane):
         abort(404)
     pm = get_page_model(mane)
-    pm['data'] = 'Hello World!'
     return pm
 
 
 @fshop_bottle.get('/<mane>/<tail>')
 @view('index')
 def tail(mane, tail):
-    if not sdb.validate_tail(mane, tail):
+    if not fsdb.sdb.validate_tail(mane, tail):
         abort(404)
     pm = get_page_model(mane, tail)
-    pm['data'] = 'Hello {0}!'.format(tail)
     return pm
 
 
 def get_page_model(mane, tail=None):
-    manes, tails = sdb.get_links_for_mane(mane)
+    manes, tails = fsdb.sdb.get_links_for_mane(mane)
+    mane = mane.lower()
+    if tail:
+        tail = tail.lower()
+    route = "{0}/{1}".format(mane, tail) if tail else mane
+    rows = listify_posts(fsdb.mongo, route)
     return {
         'manelinks': manes,
         'taillinks': tails,
-        'selected_mane': mane.lower() if mane else mane,
-        'selected_tail': tail.lower() if tail else tail,
-        'site_name': SITE_NAME
+        'selected_mane': mane,
+        'selected_tail': tail,
+        'site_name': SITE_NAME,
+        'rows': rows
     }
 
 

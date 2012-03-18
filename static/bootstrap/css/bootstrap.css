@@ -2679,6 +2679,7 @@ input[type="submit"].btn.btn-mini {
 }
 .tabbable {
   *zoom: 1;
+  height: 100%;
 }
 .tabbable:before,
 .tabbable:after {
@@ -2691,8 +2692,6 @@ input[type="submit"].btn.btn-mini {
 .tab-content {
   display: block;
   overflow: hidden;
-  padding-left: 19px;
-  border-left: 1px solid #bbb;
 }
 .tabs-below .nav-tabs,
 .tabs-right .nav-tabs,
@@ -2739,6 +2738,9 @@ input[type="submit"].btn.btn-mini {
 }
 .tabs-left .nav-tabs {
   float: left;
+  min-height: 100%;
+  margin-right: 19px;
+  border-right: 1px solid #bbb;
 }
 .tabs-left .nav-tabs > li > a {
   margin-right: -1px;

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 
     <head>
         <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css" type="text/css" />
@@ -12,41 +13,44 @@
     <body style="padding-top: 40px;">
 
         <!-- NAVBAR -->
-        <div class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-                    <ul class="nav">
+        <div class="stretchedMargin">
+            <div class="navbar navbar-fixed-top">
+                <div class="navbar-inner">
+                    <div class="container">
+                        <ul class="nav">
 
-                        <li><a class="brand" href="/">{{ get('site_name', 'Unnamed Site') }}</a></li>
-                        %for link in manelinks:
-                            %if defined('selected_mane') and selected_mane == link.name:
-                                <li class="active">
-                            %else:
-                                <li>
+                            <li><a class="brand" href="/">{{ get('site_name', 'Unnamed Site') }}</a></li>
+                            %for link in manelinks:
+                                %if defined('selected_mane') and selected_mane == link.name:
+                                    <li class="active">
+                                %else:
+                                    <li>
+                                %end
+                                <a href="/{{ link.name }}">{{ link['mane_name'] }}</a></li>
                             %end
-                            <a href="/{{ link.name }}">{{ link['mane_name'] }}</a></li>
-                        %end
 
-                    </ul>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="tabbable tabs-left">
-            <ul class="nav nav-tabs">
-                %for link in get('taillinks', []):
-                    %if defined('selected_tail') and selected_tail == link['tail_name'].lower():
-                        <li class="active">
-                    %else:
-                        <li>
-                    %end
-                    <a href="/{{ link.name }}">{{ link['tail_name'] }}</a></li>
-                %end
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active" id="ActiveTab" click="loadTab()">
-                        %for a in range(0, 50):
-                            {{ data }} <p />
+            <div class="tabbable tabs-left">
+                <ul class="nav nav-tabs">
+                    %for link in get('taillinks', []):
+                        %if defined('selected_tail') and selected_tail == link['tail_name'].lower():
+                            <li class="active">
+                        %else:
+                            <li>
                         %end
+                        <a href="/{{ link.name }}">{{ link['tail_name'] }}</a></li>
+                    %end
+                </ul>
+                <div class="tab-content">
+                    <div style="height: 19px"></div>
+                    <div class="tab-pane active" id="ActiveTab" click="loadTab()">
+                        <div class="container-fluid">
+                            %include content.tpl rows=get('rows', [])
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
