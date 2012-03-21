@@ -1,5 +1,6 @@
 import os
-from bottle import run, Bottle, redirect, static_file, view, abort
+from bottle import run, Bottle, redirect, static_file, view, abort, debug
+
 from beaker.middleware import SessionMiddleware
 from hashlib import sha512
 
@@ -100,7 +101,10 @@ class FShopApp(object):
             'session.cookie_expires': 900,
             'session.auto': True
         }
+        if self._config.debug:
+            debug(True)
         wrapped_bottle = SessionMiddleware(fshop_bottle, session_opts)
+
         run(wrapped_bottle, host=self._config.host_address, port=self._config.host_port, reloader=self._config.autoreload)
 
 
