@@ -8,33 +8,34 @@ FSR = None
 
 
 def get_db_sys(name, config):
-    if name == u'mongo':
+    if name == 'mongo':
         global FSM
         if FSM is None:
-            FSM = FShopMongoDB(config.get('mongo_address', '127.0.0.1'), config.get('mongo_port', 27017))
+            FSM = FShopMongoDB(config.mongo_address, config.mongo_port)
         return FSM
 
-    if name == u'sdb':
+    if name == 'sdb':
         global FSS
         if FSS is None:
-            FSS = FShopSimpleDB(config.get('sdb_key', None), config.get('sdb_secret_key', None))
+            FSS = FShopSimpleDB(config.sdb_key, config.sdb_secret_key)
         return FSS
 
-    if name == u'redis':
+    if name == 'redis':
         global FSR
         if FSR is None:
-            FSR = FShopRedis(config.get('redis_address', '127.0.0.1'), config.get('redis_port', 6379))
+            FSR = FShopRedis(config.redis_address, config.redis_port)
         return FSR
 
 
-class FShopDBSys():
+class FShopDBSys(object):
 
-    def __init__(self, route_db, content_db, rank_db, user_db, config={}):
+    def __init__(self, config):
 
-        self._route_db = get_db_sys(route_db, config)
-        self._content_db = get_db_sys(content_db, config)
-        self._rank_db = get_db_sys(rank_db, config)
-        self._user_db = get_db_sys(user_db, config)
+        self._route_db = get_db_sys(config.route_db, config)
+        self._content_db = get_db_sys(config.content_db, config)
+        self._rank_db = get_db_sys(config.rank_db, config)
+        self._user_db = get_db_sys(config.user_db, config)
+        self._options_db = get_db_sys(config.options_db, config)
 
     @property
     def route_db(self):
@@ -52,6 +53,49 @@ class FShopDBSys():
     def user_db(self):
         return self._user_db
 
+    @property
+    def options_db(self):
+        return self._options_db
+
+
+class IFShopDB(object):
+
+    #### CONTENT ####
+    def get_parts_for_post(self, post_id):
+        return
+
+    def get_posts_for_route(self, route_id, post_limit=10):
+        return
+
+    #### OPTIONS ####
+    #TODO: Implement these!
+
+    #### RANKING ####
+    #TODO: Implement these!
+
+    #### ROUTING ####
+    #TODO: Implement these!
+    def get_manelinks(self):
+        return
+
+    def get_taillinks(self, mane):
+        return
+
+    def get_links_for_mane(self, mane):
+        return
+
+    def get_mane_mane(self):
+        return
+
+    def validate_mane(self, mane):
+        return
+
+    def validate_tail(self, mane, tail):
+        return
+
+    #### USER ####
+    #TODO: Implement these!
+
 
 class FShopSimpleDB():
 
@@ -66,6 +110,9 @@ class FShopSimpleDB():
             self._sdb = connect_sdb()
 
     #### CONTENT ####
+    #TODO: Implement these!
+
+    #### OPTIONS ####
     #TODO: Implement these!
 
     #### RANKING ####
@@ -112,6 +159,7 @@ class FShopMongoDB():
         global pymongo
         if pymongo is None:
             import pymongo
+
         self._connection = pymongo.Connection(db_address, db_port)
         self._mdb = self._connection.fluttershop
 
@@ -132,6 +180,9 @@ class FShopMongoDB():
     def get_posts_for_route(self, route_id, post_limit=10):
         post_col = self.posts_collection
         return post_col.find({'route_id': unicode(route_id)}).sort('rank', 1).limit(post_limit)
+
+    #### OPTIONS ####
+    #TODO: Implement these!
 
     #### RANKING ####
     #TODO: Implement these!
