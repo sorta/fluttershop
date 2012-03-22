@@ -1,3 +1,5 @@
+from hashlib import sha512
+
 connect_sdb = None
 pymongo = None
 redis = None
@@ -34,7 +36,6 @@ class FShopDBSys(object):
         self._route_db = get_db_sys(config.route_db, config)
         self._content_db = get_db_sys(config.content_db, config)
         self._rank_db = get_db_sys(config.rank_db, config)
-        self._user_db = get_db_sys(config.user_db, config)
         self._options_db = get_db_sys(config.options_db, config)
 
     @property
@@ -48,10 +49,6 @@ class FShopDBSys(object):
     @property
     def rank_db(self):
         return self._rank_db
-
-    @property
-    def user_db(self):
-        return self._user_db
 
     @property
     def options_db(self):
@@ -92,9 +89,6 @@ class IFShopDB(object):
 
     def validate_tail(self, mane, tail):
         return
-
-    #### USER ####
-    #TODO: Implement these!
 
 
 class FShopSimpleDB():
@@ -149,9 +143,6 @@ class FShopSimpleDB():
         tails = self._sdb.get_domain('TailLink')
         return True if tails.get_item('{0}/{1}'.format(mane.lower(), tail.lower())) else False
 
-    #### USER ####
-    #TODO: Implement these!
-
 
 class FShopMongoDB():
 
@@ -172,6 +163,10 @@ class FShopMongoDB():
     def parts_collection(self):
         return self._mdb.postparts
 
+    @property
+    def options_collection(self):
+        return self._mdb.options
+
     #### CONTENT ####
     def get_parts_for_post(self, post_id):
         part_col = self.parts_collection
@@ -182,7 +177,9 @@ class FShopMongoDB():
         return post_col.find({'route_id': unicode(route_id)}).sort('rank', 1).limit(post_limit)
 
     #### OPTIONS ####
-    #TODO: Implement these!
+    def get_user(self, username, password):
+        prepared_pass = unicode(sha512(u'KsdfKSDFGT435Jwef45TJ6' + unicode(password)).hexdigest())
+        return self.options_collection.find_one({'username': username, 'password': prepared_pass})
 
     #### RANKING ####
     #TODO: Implement these!
@@ -206,9 +203,6 @@ class FShopMongoDB():
 
     def validate_tail(self, mane, tail):
         pass
-
-    #### USER ####
-    #TODO: Implement these!
 
 
 class FShopRedis():

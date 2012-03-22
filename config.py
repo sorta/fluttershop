@@ -15,7 +15,6 @@ DEF_CONF = {
     'route_db': 'sdb',
     'content_db': 'mongo',
     'rank_db': 'mongo',
-    'user_db': 'mongo',
     'options_db': 'mongo'
 }
 
@@ -45,7 +44,6 @@ class FShopConfig():
         self._route_db = conf.get('db', 'route_db')
         self._content_db = conf.get('db', 'content_db')
         self._rank_db = conf.get('db', 'rank_db')
-        self._user_db = conf.get('db', 'user_db')
         self._options_db = conf.get('db', 'options_db')
 
     @property
@@ -103,10 +101,6 @@ class FShopConfig():
     @property
     def rank_db(self):
         return self._rank_db
-
-    @property
-    def user_db(self):
-        return self._user_db
 
     @property
     def options_db(self):

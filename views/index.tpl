@@ -9,26 +9,43 @@
         <script language="javascript" src="/static/js/ws1.js"></script>
         <script language="javascript" src="/static/bootstrap/js/bootstrap.js"></script>
     </head>
+    <body style="padding-top: 40px;">
 
-        <body style="padding-top: 40px;">
-            <div class="modal hide fade" id="login_modal">
-                <div class="modal-header">
-                    <a class="close" data-dismiss="modal">×</a>
-                    <h3>Modal header</h3>
-                </div>
-                <div class="modal-body">
-                    <p>This is example text, see?</p>
-                </div>
-                <div class="modal-footer">
-                    <a href="#" class="btn">Close</a>
-                    <a href="#" class="btn btn-primary">Save changes</a>
-                </div>
+        <!-- MODALS -->
+        <div class="modal hide fade" id="login_modal">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">×</a>
+                <h3>Please Login</h3>
             </div>
+            <div class="modal-body">
+                <form action="/login" class="form-vertical" method="post">
+                    <label>Label name</label>
+                    <input id="login_username" name="login_username" type="text" class="span3" placeholder="Email" />
+                    <input id="login_pass" name="login_pass" type="text" class="span3" placeholder="Password" />
+
+                    %if get('selected_mane', None):
+                        %if get('selected_tail', None):
+                            %selected_route = "/{0}/{1}".format(selected_mane, selected_tail)
+                        %else:
+                            %selected_route = "/{0}".format(selected_mane)
+                        %end
+                    %else:
+                        selected_route = "/"
+                    %end
+                    <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+            </div>
+            <div class="modal-footer">
+                    <a class="btn" data-dismiss="modal">Close</a>
+                    <input class="btn btn-primary" type="submit" value="Login" />
+                </form>
+            </div>
+        </div>
 
         <!-- NAVBAR -->
         <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container-fluid">
+                    <!-- LEFT -->
                     <ul class="nav pull-left">
 
                         <li><a class="brand" href="/">{{ get('site_name', 'Unnamed Site') }}</a></li>
@@ -40,14 +57,46 @@
                             %end
                             <a href="/{{ link.name }}">{{ link['mane_name'] }}</a></li>
                         %end
+                        %if logged_in:
+                            <li><form action="/addmane" method="post">
+                                <div class="btn-group">
+                                    <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i></a>
+                                    <ul class="dropdown-menu">
+                                        <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                                        <li><input name="mane_name" type="text" /></li>
+                                        <li><input type="submit" class='btn' value="Submit" /></li>
+                                    </ul>
+                                </div>
+                            </form></li>
+                        %end
+
                     </ul>
+                    <!-- Right -->
                     <ul class="nav pull-right">
-                        <li><a class="pull-right" data-toggle="modal" href="#login_modal" ><span class="label label-info"><i class="icon-user"></i></span></a></li>
+                        %if logged_in:
+                            <li>
+                                <div class="btn-group">
+                                    <a class="btn btn-info dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i>Options<span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="">Set Username</a></li>
+                                        <li class="divider"></li>
+
+                                        <form action="/logout" method="post">
+                                            <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                                            <li><input type="submit" class='btn' value="Log Out" /></li>
+                                        </form>
+                                    </ul>
+                                </div>
+                            </li>
+                        %else:
+                            <li><a data-toggle="modal" href="#login_modal" ><span class="label label-info"><i class="icon-user"></i></span></a></li>
+                        %end
                     </ul>
 
                 </div>
             </div>
         </div>
+
         <div class="tabbable tabs-left">
             <ul class="nav nav-tabs">
                 %for link in get('taillinks', []):

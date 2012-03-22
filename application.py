@@ -1,8 +1,7 @@
 import os
-from bottle import run, Bottle, redirect, static_file, view, abort, debug
+from bottle import run, Bottle, redirect, static_file, view, abort, debug, request
 
 from beaker.middleware import SessionMiddleware
-from hashlib import sha512
 
 from config import FShopConfig
 from app.content import listify_posts
@@ -27,6 +26,7 @@ class FShopApp(object):
         fshop_bottle.get('/<mane>')(self.mane)
         fshop_bottle.get('/<mane>/<tail>')(self.tail)
         fshop_bottle.post('/login')(self.login)
+        fshop_bottle.post('/logout')(self.logout)
 
     #### Basic Routes ####
     def index(self):
@@ -62,20 +62,31 @@ class FShopApp(object):
 
     #### User Routes ####
     def login(self):
-        form = fshop_bottle.request.forms
-        user = self.verify_login(form['user_id'], form['password'])
-        session = fshop_bottle.request.environ.get('beaker.session')
-        session['logged_in'] = True
-        session['user_id'] = user
 
-        redirect(form['selected_url'])
+        form = request.forms
+        selected_url = form['selected_url']
+        user = self.verify_login(form['login_username'], form['login_pass'], selected_url)
+        session = request.environ.get('beaker.session')
+        session['logged_in'] = True
+        session['user'] = user
+
+        redirect(selected_url)
+
+    def logout(self):
+
+        form = request.forms
+        selected_url = form['selected_url']
+        session = request.environ.get('beaker.session')
+        session['logged_in'] = False
+        session['user'] = None
+
+        redirect(selected_url)
 
     #### Helpers ####
-    def verify_login(self, user_id, password):
-        prepared_pass = unicode(sha512(u'KsdfKSDFGT435Jwef45TJ6' + unicode(password)).hexdigest())
-        user = self._FSDBsys.user_db.get_user(user_id, prepared_pass)
+    def verify_login(self, user_id, password, selected_url):
+        user = self._FSDBsys.options_db.get_user(user_id, password)
         if not user:
-            redirect('/')
+            redirect(selected_url)
 
         return user
 
@@ -86,14 +97,21 @@ class FShopApp(object):
             tail = tail.lower()
         route = "{0}/{1}".format(mane, tail) if tail else mane
         rows = listify_posts(self._FSDBsys.content_db, route)
-        return {
+        return self.add_user_info({
             'manelinks': manes,
             'taillinks': tails,
             'selected_mane': mane,
             'selected_tail': tail,
             'site_name': self._config.site_name,
             'rows': rows
-        }
+        })
+
+    def add_user_info(self, pm):
+        session = request.environ.get('beaker.session')
+        pm['logged_in'] = session.get('logged_in', False)
+        if pm['logged_in']:
+            pm['user'] = session.get('user', None)
+        return pm
 
     def start(self):
         session_opts = {
