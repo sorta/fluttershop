@@ -65,13 +65,13 @@ class IFShopDB(object):
         return
 
     #### OPTIONS ####
-    #TODO: Implement these!
 
     #### RANKING ####
-    #TODO: Implement these!
 
     #### ROUTING ####
-    #TODO: Implement these!
+    def add_new_mane(self, mane):
+        return
+
     def get_manelinks(self):
         return
 
@@ -113,6 +113,13 @@ class FShopSimpleDB():
     #TODO: Implement these!
 
     #### Routing ####
+    def add_new_mane(self, mane_name, priority):
+        manes = self.get_manelinks()
+        new_mane = manes.new_item(mane_name.lower())
+        new_mane['mane_name'] = mane_name
+        new_mane['priority'] = priority
+        new_mane.save()
+
     def get_manelinks(self):
         return self._sdb.get_domain('ManeLink')
 
@@ -167,6 +174,10 @@ class FShopMongoDB():
     def options_collection(self):
         return self._mdb.options
 
+    @property
+    def ranks_collection(self):
+        return self._mdb.ranks
+
     #### CONTENT ####
     def get_parts_for_post(self, post_id):
         part_col = self.parts_collection
@@ -182,27 +193,30 @@ class FShopMongoDB():
         return self.options_collection.find_one({'username': username, 'password': prepared_pass})
 
     #### RANKING ####
-    #TODO: Implement these!
+    def get_next_rank(self, rank_type):
+        return self.ranks_collection.find_one({'rank_type': rank_type}, fields=['next_rank'])
+
+    def increment_rank(self, rank_type):
+        return self.ranks_collection.find_one({'rank_type': rank_type}, fields=['next_rank'])
 
     #### ROUTING ####
-    #TODO: Implement these!
     def get_manelinks(self):
-        pass
+        return
 
     def get_taillinks(self, mane):
-        pass
+        return
 
     def get_links_for_mane(self, mane):
-        pass
+        return
 
     def get_mane_mane(self):
-        pass
+        return
 
     def validate_mane(self, mane):
-        pass
+        return
 
     def validate_tail(self, mane, tail):
-        pass
+        return
 
 
 class FShopRedis():

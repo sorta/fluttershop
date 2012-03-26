@@ -60,11 +60,26 @@ class FShopApp(object):
         pm = self.get_page_model(mane, tail)
         return pm
 
-    #### User Routes ####
-    def login(self):
-
+    #### Add Routes ####
+    def add_mane(self):
         form = request.forms
         selected_url = form['selected_url']
+        mane = form['mane_name']
+
+        if self._FSDBsys.route_db.validate_mane(mane):
+            # Flash Error!
+            pass
+        else:
+            priority = self._FSDBsys.rank_db.get_next_rank('mane')
+            self._FSDBsys.route_db.add_new_mane(mane, priority)
+
+        redirect(selected_url)
+
+    #### User Routes ####
+    def login(self):
+        form = request.forms
+        selected_url = form['selected_url']
+
         user = self.verify_login(form['login_username'], form['login_pass'], selected_url)
         session = request.environ.get('beaker.session')
         session['logged_in'] = True
@@ -73,14 +88,12 @@ class FShopApp(object):
         redirect(selected_url)
 
     def logout(self):
-
-        form = request.forms
-        selected_url = form['selected_url']
+        selected_url = form
         session = request.environ.get('beaker.session')
         session['logged_in'] = False
         session['user'] = None
 
-        redirect(selected_url)
+        redirect(request.forms['selected_url'])
 
     #### Helpers ####
     def verify_login(self, user_id, password, selected_url):

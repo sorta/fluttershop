@@ -8,13 +8,19 @@
         <script language="javascript" src="/static/js/jquery-1.7.1.min.js"></script>
         <script language="javascript" src="/static/js/ws1.js"></script>
         <script language="javascript" src="/static/bootstrap/js/bootstrap.js"></script>
-        <script type="text/javascript">
-        $('.dropdown-menu').find('form').click(function (e) {
-            e.stopPropagation();
-        });
-        </script>
     </head>
     <body style="padding-top: 40px;">
+
+        %if get('selected_mane', None):
+            %if get('selected_tail', None):
+                %selected_route = "/{0}/{1}".format(selected_mane, selected_tail)
+            %else:
+                %selected_route = "/{0}".format(selected_mane)
+            %end
+        %else:
+            selected_route = "/"
+        %end
+        <input name="selected_url" type="hidden" form="loginForm logoutForm addManeForm" value="{{ selected_route }}" />
 
         <!-- MODALS -->
         <div class="modal hide fade" id="login_modal">
@@ -23,21 +29,11 @@
                 <h3>Please Login</h3>
             </div>
             <div class="modal-body">
-                <form action="/login" class="form-vertical" method="post">
-                    <label>Label name</label>
+                <form action="/login" class="form-vertical" id="loginForm" method="post">
+                    <label>User</label>
                     <input id="login_username" name="login_username" type="text" class="span3" placeholder="Username" />
+                    <label>Password</label>
                     <input id="login_pass" name="login_pass" type="password" class="span3" placeholder="Password" />
-
-                    %if get('selected_mane', None):
-                        %if get('selected_tail', None):
-                            %selected_route = "/{0}/{1}".format(selected_mane, selected_tail)
-                        %else:
-                            %selected_route = "/{0}".format(selected_mane)
-                        %end
-                    %else:
-                        selected_route = "/"
-                    %end
-                    <input name="selected_url" type="hidden" value="{{ selected_route }}" />
             </div>
             <div class="modal-footer">
                     <a class="btn" data-dismiss="modal">Close</a>
@@ -71,11 +67,7 @@
                                 <a href="/{{ link.name }}">{{ link['mane_name'] }}</a></li>
                             %end
                             %if logged_in:
-                                <li><form action="/addmane" method="post" class="form-inline" style="margin: 0;">
-                                    <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-
-
-
+                                <li><form action="/addmane" id="addManeForm" method="post" class="form-inline" style="margin: 0;">
                                     <a class="btn" data-toggle="collapse" data-target="#AddMane">
                                         <i class="icon-plus"></i>
                                     </a>
@@ -104,8 +96,7 @@
                                             <li><a href="">Set Username</a></li>
                                             <li class="divider"></li>
 
-                                            <form action="/logout" method="post">
-                                                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                                            <form action="/logout" method="post" id="logoutForm">
                                                 <li><input type="submit" class='btn' value="Log Out" /></li>
                                             </form>
                                         </ul>
