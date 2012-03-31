@@ -20,27 +20,9 @@
         %else:
             selected_route = "/"
         %end
-        <input name="selected_url" type="hidden" form="loginForm logoutForm addManeForm" value="{{ selected_route }}" />
+        <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
-        <!-- MODALS -->
-        <div class="modal hide fade" id="login_modal">
-            <div class="modal-header">
-                <a class="close" data-dismiss="modal">×</a>
-                <h3>Please Login</h3>
-            </div>
-            <div class="modal-body">
-                <form action="/login" class="form-vertical" id="loginForm" method="post">
-                    <label>User</label>
-                    <input id="login_username" name="login_username" type="text" class="span3" placeholder="Username" />
-                    <label>Password</label>
-                    <input id="login_pass" name="login_pass" type="password" class="span3" placeholder="Password" />
-            </div>
-            <div class="modal-footer">
-                    <a class="btn" data-dismiss="modal">Close</a>
-                    <input class="btn btn-primary" type="submit" value="Login" />
-                </form>
-            </div>
-        </div>
+        %include modals.tpl selected_route=selected_route
 
         <!-- NAVBAR -->
         <div class="navbar navbar-fixed-top">
@@ -59,30 +41,39 @@
 
                             <li><a class="brand" href="/">{{ get('site_name', 'Unnamed Site') }}</a></li>
                             %for link in manelinks:
+                                %class_str = ""
                                 %if defined('selected_mane') and selected_mane == link.name:
-                                    <li class="active">
+                                    %class_str += "active"
+                                %elif logged_in:
+                                    %class_str += " dropdown"
+                                %end
+
+                                %if class_str != "":
+                                    <li class="{{class_str}}">
                                 %else:
                                     <li>
                                 %end
-                                <a href="/{{ link.name }}">{{ link['mane_name'] }}</a></li>
+
+
+                                %if logged_in:
+                                    <a class="btn-group" data-toggle="dropdown" href="/{{ link.name }}">
+                                        <button class="btn">{{ link['mane_name'] }}</button>
+                                        <button class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <form action="/deletemane" method="post" id="deleteMane">
+                                                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                                                <input name="mane_name" type="hidden" value="{{ link.name }}" />
+                                                <li><input type="submit" class='label label-primary' value="Delete" /></li>
+                                            </form>
+                                        </ul>
+                                    </a>
+                                %else:
+                                    <a href="/{{ link.name }}">{{ link['mane_name'] }}</a>
+                                %end
+                            </li>
                             %end
                             %if logged_in:
-                                <li><form action="/addmane" id="addManeForm" method="post" class="form-inline" style="margin: 0;">
-                                    <a class="btn" data-toggle="collapse" data-target="#AddMane">
-                                        <i class="icon-plus"></i>
-                                    </a>
-                                    <div id="AddMane" class="collapse input-append">
-                                        <input name="mane_name" type="text" class="span2" />
-                                        <button class='btn btn-primary'>Add</button>
-                                    </div>
-
-
-<!--                                     <div class="btn-group">
-                                        <a class="dropdown-toggle" data-toggle="dropdown">Add</a>
-                                        <ul class="dropdown-menu">
-                                        </ul>
-                                    </div> -->
-                                </form></li>
+                                <li><a data-toggle="modal" href="#add_mane_modal" class="badge"><i class="icon-plus-sign"></i></a></li>
                             %end
 
                         </ul>
@@ -91,16 +82,22 @@
                             %if logged_in:
                                 <li>
                                     <div class="btn-group">
-                                        <button class="btn btn-info dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i>Options<span class="caret"></span></button>
+                                        <button class="btn btn-info dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i><span class="caret"></span></button>
                                         <ul class="dropdown-menu">
                                             <li><a href="">Set Username</a></li>
-                                            <li class="divider"></li>
-
-                                            <form action="/logout" method="post" id="logoutForm">
-                                                <li><input type="submit" class='btn' value="Log Out" /></li>
-                                            </form>
                                         </ul>
                                     </div>
+                                </li>
+                                <li class="divider-vertical"></li>
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown">{{ user.get("username", "User") }}<b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+
+                                        <form action="/logout" method="post" id="logoutForm">
+                                            <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                                            <li><input type="submit" class='btn' value="Log Out" /></li>
+                                        </form>
+                                    </ul>
                                 </li>
                             %else:
                                 <li><a data-toggle="modal" href="#login_modal" ><span class="label label-info"><i class="icon-user"></i></span></a></li>

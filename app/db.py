@@ -120,6 +120,18 @@ class FShopSimpleDB():
         new_mane['priority'] = priority
         new_mane.save()
 
+    def remove_mane(self, mane_name):
+        manes = self.get_manelinks()
+        result = manes.select("select * from `ManeLink` where priority >= '0' order by priority")
+        decrement = False
+        for mane in result:
+            if mane['mane_name'] == mane_name:
+                decrement = True
+                manes.delete_item(mane)
+                continue
+            if decrement:
+                mane['priority'] = mane['priority'] - 1
+
     def get_manelinks(self):
         return self._sdb.get_domain('ManeLink')
 
@@ -191,6 +203,9 @@ class FShopMongoDB():
     def get_user(self, username, password):
         prepared_pass = unicode(sha512(u'KsdfKSDFGT435Jwef45TJ6' + unicode(password)).hexdigest())
         return self.options_collection.find_one({'username': username, 'password': prepared_pass})
+
+    def user_exists(self, username):
+        return self.options_collection.find_one({'username': username})
 
     #### RANKING ####
     def get_next_rank(self, rank_type):
