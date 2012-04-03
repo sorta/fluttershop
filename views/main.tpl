@@ -44,8 +44,6 @@
                                 %class_str = ""
                                 %if defined('selected_mane') and selected_mane == link.name:
                                     %class_str += "active"
-                                %elif logged_in:
-                                    %class_str += " dropdown"
                                 %end
 
                                 %if class_str != "":
@@ -55,22 +53,16 @@
                                 %end
 
 
+                                <a href="/{{ link.name }}">{{ link['mane_name'] }}</a></li>
                                 %if logged_in:
-                                    <a class="btn-group" data-toggle="dropdown" href="/{{ link.name }}">
-                                        <button class="btn">{{ link['mane_name'] }}</button>
-                                        <button class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-                                        <ul class="dropdown-menu">
-                                            <form action="/deletemane" method="post" id="deleteMane">
-                                                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                                                <input name="mane_name" type="hidden" value="{{ link.name }}" />
-                                                <li><input type="submit" class='label label-primary' value="Delete" /></li>
-                                            </form>
-                                        </ul>
-                                    </a>
-                                %else:
-                                    <a href="/{{ link.name }}">{{ link['mane_name'] }}</a>
+                                    <li>
+                                        <form class="form-inline" action="/deletemane" method="post">
+                                            <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                                            <input name="mane_name" type="hidden" value="{{ link.name }}" />
+                                            <li><button type="submit" class='badge badge-info'><b class="icon-eject"></b></button></li>
+                                        </form>
+                                    </li>
                                 %end
-                            </li>
                             %end
                             %if logged_in:
                                 <li><a data-toggle="modal" href="#add_mane_modal" class="badge"><i class="icon-plus-sign"></i></a></li>

@@ -130,7 +130,7 @@ class FShopSimpleDB():
                 manes.delete_item(mane)
                 continue
             if decrement:
-                mane['priority'] = mane['priority'] - 1
+                mane['priority'] = int(mane['priority']) - 1
 
     def get_manelinks(self):
         return self._sdb.get_domain('ManeLink')
@@ -190,6 +190,10 @@ class FShopMongoDB():
     def ranks_collection(self):
         return self._mdb.ranks
 
+    @property
+    def routes_collection(self):
+        return self._mdb.routes
+
     #### CONTENT ####
     def get_parts_for_post(self, post_id):
         part_col = self.parts_collection
@@ -211,12 +215,23 @@ class FShopMongoDB():
     def get_next_rank(self, rank_type):
         return self.ranks_collection.find_one({'rank_type': rank_type}, fields=['next_rank'])
 
-    def increment_rank(self, rank_type):
-        return self.ranks_collection.find_one({'rank_type': rank_type}, fields=['next_rank'])
+    def increment_rank(self, rank_type, incr_value=1):
+        self.ranks_collection.update({'rank_type': rank_type}, {'$inc': {'next_rank': incr_value}})
 
     #### ROUTING ####
-    def get_manelinks(self):
+    def add_new_mane(self, mane_name, priority):
+        next_rank = self.get_next_rank('mane')
+        manes = self.get_manelinks()
+        for mane in manes:
+            if True:
+                pass
         return
+
+    def remove_mane(self, mane_name):
+        return
+
+    def get_manelinks(self):
+        return self.routes_collection.find({'route_type': 'mane'}).sort('rank', 1)
 
     def get_taillinks(self, mane):
         return

@@ -55,6 +55,6 @@ class FShopTabs(object):
         mane = form['mane_name']
 
         if self._FSDBsys.route_db.validate_mane(mane):
-            self._FSDBsys.route_db.remove_mane(self, mane)
+            self._FSDBsys.route_db.remove_mane(mane)
 
         redirect(selected_url)
