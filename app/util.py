@@ -14,10 +14,8 @@ class FShopUtil(object):
     #### Helpers ####
     def get_page_model(self, mane, tail=None):
         manes, tails = self._FSDBsys.route_db.get_links_for_mane(mane)
-        mane = mane.lower()
-        if tail:
-            tail = tail.lower()
-        route = "{0}/{1}".format(mane, tail) if tail else mane
+
+        route = u"/{0}/{1}".format(mane, tail) if tail else u"/{0}".format(mane)
         rows = listify_posts(self._FSDBsys.content_db, route)
         return self.add_user_info({
             'manelinks': manes,

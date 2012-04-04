@@ -42,7 +42,7 @@
                             <li><a class="brand" href="/">{{ get('site_name', 'Unnamed Site') }}</a></li>
                             %for link in manelinks:
                                 %class_str = ""
-                                %if defined('selected_mane') and selected_mane == link.name:
+                                %if defined('selected_mane') and selected_mane == link['mane_name']:
                                     %class_str += "active"
                                 %end
 
@@ -53,12 +53,12 @@
                                 %end
 
 
-                                <a href="/{{ link.name }}">{{ link['mane_name'] }}</a></li>
+                                <a href="/{{ link['mane_name'] }}">{{ link['display'] }}</a></li>
                                 %if logged_in:
                                     <li>
                                         <form class="form-inline" action="/deletemane" method="post">
                                             <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                                            <input name="mane_name" type="hidden" value="{{ link.name }}" />
+                                            <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
                                             <li><button type="submit" class='badge badge-info'><b class="icon-eject"></b></button></li>
                                         </form>
                                     </li>

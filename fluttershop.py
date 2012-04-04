@@ -32,7 +32,11 @@ class FShopApp(object):
     #### Basic Routes ####
     def index(self):
         mane = self._FSDBsys.route_db.get_mane_mane()
-        redirect("/{0}".format(mane))
+        if mane:
+            redirect(mane.get('route_name', '/Home'))
+        else:
+            pm = self._util.get_page_model(mane)
+            return pm
 
     def send_static(self, filepath):
         return static_file(filepath, root=self._static_dir)

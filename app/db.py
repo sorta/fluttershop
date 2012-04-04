@@ -201,7 +201,7 @@ class FShopMongoDB():
 
     def get_posts_for_route(self, route_id, post_limit=10):
         post_col = self.posts_collection
-        return post_col.find({'route_id': unicode(route_id)}).sort('rank', 1).limit(post_limit)
+        return post_col.find({'route_id': unicode(route_id).lower()}).sort('rank', 1).limit(post_limit)
 
     #### OPTIONS ####
     def get_user(self, username, password):
@@ -219,34 +219,75 @@ class FShopMongoDB():
         self.ranks_collection.update({'rank_type': rank_type}, {'$inc': {'next_rank': incr_value}})
 
     #### ROUTING ####
-    def add_new_mane(self, mane_name, priority):
-        next_rank = self.get_next_rank('mane')
+    def _insert_mane(self, mane_name, rank, title, desc):
+        mane_name = unicode(mane_name)
+        new_mane = {
+            'mane_name': mane_name.lower(),
+            'display': mane_name,
+            'route_type': u'mane',
+            'route_name': u'/{0}'.format(mane_name.lower()),
+            'rank': rank,
+            'title': unicode(title) if title else title,
+            'desc': unicode(desc) if desc else desc
+        }
+        self.routes_collection.insert(new_mane)
+
+    def add_new_mane(self, mane_name, rank, title=None, desc=None):
+        routes_to_increment = []
         manes = self.get_manelinks()
         for mane in manes:
-            if True:
-                pass
-        return
+            mane_rank = mane.get('rank', 9000)
+            if  mane_rank < rank:
+                continue
+            if mane_rank == rank:
+                self._insert_mane(mane_name, mane_rank, title, desc)
+            routes_to_increment.append(mane['route_name'])
+
+        if not routes_to_increment:
+            self._insert_mane(mane_name, rank, title, desc)
+        else:
+            self.routes_collection.update({'route_name': {'$in': routes_to_increment}}, {'$inc': {'rank': 1}}, multi=True)
+
+        self.increment_rank('mane')
 
     def remove_mane(self, mane_name):
-        return
+        routes_to_decrement = []
+        target_acquired = False
+        manes = self.get_manelinks()
+        for mane in manes:
+            if mane_name == mane['mane_name']:
+                target_acquired = True
+                self.routes_collection.remove({'route_name': mane['route_name']})
+            if target_acquired:
+                routes_to_decrement.append(mane['route_name'])
+
+        if routes_to_decrement:
+            self.routes_collection.update({'route_name': {'$in': routes_to_decrement}}, {'$inc': {'rank': -1}}, multi=True)
+
+        self.increment_rank('mane', -1)
 
     def get_manelinks(self):
         return self.routes_collection.find({'route_type': 'mane'}).sort('rank', 1)
 
     def get_taillinks(self, mane):
-        return
+        return self.routes_collection.find({'route_type': 'tail', 'mane_name': mane.lower()}).sort('rank', 1)
 
     def get_links_for_mane(self, mane):
-        return
+        manes = self.get_manelinks()
+        tails = self.get_taillinks(mane)
+        return manes, tails
 
     def get_mane_mane(self):
-        return
+        mm = self.routes_collection.find({'route_type': 'mane'}).sort('rank', 1).limit(1)
+        for mane in mm:
+            return mane
+        return None
 
-    def validate_mane(self, mane):
-        return
+    def get_mane(self, mane):
+        return self.routes_collection.find_one({'route_type': 'mane', 'route_name': '/{0}'.format(mane.lower())})
 
-    def validate_tail(self, mane, tail):
-        return
+    def get_tail(self, mane, tail):
+        return self.routes_collection.find_one({'route_type': 'tail', 'route_name': '/{0}/{1}'.format(mane.lower(), tail.lower())})
 
 
 class FShopRedis():
