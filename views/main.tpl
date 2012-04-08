@@ -22,7 +22,7 @@
         %end
         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
-        %include modals.tpl selected_route=selected_route
+        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/')
 
         <!-- NAVBAR -->
         <div class="navbar navbar-fixed-top">
@@ -59,13 +59,13 @@
                                         <form class="form-inline" action="/deletemane" method="post">
                                             <input name="selected_url" type="hidden" value="{{ selected_route }}" />
                                             <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
-                                            <li><button type="submit" class='badge badge-info'><b class="icon-eject"></b></button></li>
+                                            <li><button type="submit" class='label label-info'><b class="icon-eject"></b></button></li>
                                         </form>
                                     </li>
                                 %end
                             %end
                             %if logged_in:
-                                <li><a data-toggle="modal" href="#add_mane_modal" class="badge"><i class="icon-plus-sign"></i></a></li>
+                                <li><a data-toggle="modal" href="#add_mane_modal" class="badge badge-info"><i class="icon-plus-sign"></i></a></li>
                             %end
 
                         </ul>
@@ -111,6 +111,9 @@
                         <li>
                     %end
                     <a href="/{{ link.name }}">{{ link['tail_name'] }}</a></li>
+                %end
+                %if logged_in:
+                    <li><a data-toggle="modal" href="#add_tail_modal" class="badge badge-info"><i class="icon-plus-sign"></i></a></li>
                 %end
             </ul>
             <!-- CONTENT -->

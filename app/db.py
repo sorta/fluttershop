@@ -212,25 +212,63 @@ class FShopMongoDB():
         return self.options_collection.find_one({'username': username})
 
     #### RANKING ####
-    def get_next_rank(self, rank_type):
-        return self.ranks_collection.find_one({'rank_type': rank_type}, fields=['next_rank'])
 
-    def increment_rank(self, rank_type, incr_value=1):
-        self.ranks_collection.update({'rank_type': rank_type}, {'$inc': {'next_rank': incr_value}})
+    # Mane
+    def get_next_mane_rank(self):
+        return self.ranks_collection.find_one({'rank_type': 'mane'}).get('next_rank', 9000)
+
+    def increment_mane_rank(self, incr_value=1):
+        self.ranks_collection.update({'rank_type': 'mane'}, {'$inc': {'next_rank': incr_value}})
+
+    # Tail
+    def get_next_tail_rank(self, mane):
+        return self.ranks_collection.find_one({'rank_type': 'tail', 'mane_name': mane.lower()}).get('next_rank', 9000)
+
+    def increment_tail_rank(self, mane, incr_value=1):
+        self.ranks_collection.update({'rank_type': 'tail', 'mane_name': mane.lower()}, {'$inc': {'next_rank': incr_value}})
 
     #### ROUTING ####
     def _insert_mane(self, mane_name, rank, title, desc):
         mane_name = unicode(mane_name)
+        lowered_mane = mane_name.lower()
         new_mane = {
-            'mane_name': mane_name.lower(),
+            'mane_name': lowered_mane,
             'display': mane_name,
             'route_type': u'mane',
-            'route_name': u'/{0}'.format(mane_name.lower()),
+            'route_name': u'/{0}'.format(lowered_mane),
             'rank': rank,
             'title': unicode(title) if title else title,
             'desc': unicode(desc) if desc else desc
         }
         self.routes_collection.insert(new_mane)
+
+        new_tail_rank = {
+            'rank_type': 'tail',
+            'mane_name': lowered_mane,
+            'next_rank': 0
+        }
+        self.ranks_collection.insert(new_tail_rank)
+
+        self.increment_mane_rank()
+
+    def _insert_tail(self, mane_name, tail_name, rank, title, desc):
+        mane_name = unicode(mane_name).lower()
+        tail_name = unicode(tail_name)
+        lowered_tail = tail_name.lower()
+
+        new_tail = {
+            'mane_name': mane_name,
+            'tail_name': lowered_tail,
+            'display': tail_name,
+            'route_type': u'tail',
+            'route_name': u'/{0}/{1}'.format(mane_name, lowered_tail),
+            'rank': rank,
+            'title': unicode(title) if title else title,
+            'desc': unicode(desc) if desc else desc
+        }
+        self.routes_collection.insert(new_tail)
+
+        self.increment_tail_rank(mane_name)
 
     def add_new_mane(self, mane_name, rank, title=None, desc=None):
         routes_to_increment = []
@@ -248,7 +286,21 @@ class FShopMongoDB():
         else:
             self.routes_collection.update({'route_name': {'$in': routes_to_increment}}, {'$inc': {'rank': 1}}, multi=True)
 
-        self.increment_rank('mane')
+    def add_new_tail(self, mane_name, tail_name, rank, title=None, desc=None):
+        routes_to_increment = []
+        tails = self.get_taillinks(mane_name)
+        for tail in tails:
+            tail_rank = tail.get('rank', 9000)
+            if  tail_rank < rank:
+                continue
+            if tail_rank == rank:
+                self._insert_tail(mane_name, tail_name, tail_rank, title, desc)
+            routes_to_increment.append(tail['route_name'])
+
+        if not routes_to_increment:
+            self._insert_tail(mane_name, tail_name, tail_rank, title, desc)
+        else:
+            self.routes_collection.update({'route_name': {'$in': routes_to_increment}}, {'$inc': {'rank': 1}}, multi=True)
 
     def remove_mane(self, mane_name):
         routes_to_decrement = []
@@ -264,7 +316,7 @@ class FShopMongoDB():
         if routes_to_decrement:
             self.routes_collection.update({'route_name': {'$in': routes_to_decrement}}, {'$inc': {'rank': -1}}, multi=True)
 
-        self.increment_rank('mane', -1)
+        self.increment_mane_rank(-1)
 
     def get_manelinks(self):
         return self.routes_collection.find({'route_type': 'mane'}).sort('rank', 1)

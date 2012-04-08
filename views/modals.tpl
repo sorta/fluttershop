@@ -43,3 +43,27 @@
     </div>
 </div>
 
+<div class="modal hide fade" id="add_tail_modal">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Add Tail Tab</h3>
+    </div>
+    <div class="modal-body">
+        <form action="/addtail" class="form-vertical" id="addTail" method="post">
+            <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+            <input name="selected_mane" type="hidden" value="{{ selected_mane }}" />
+
+            <label>Name</label>
+            <input name="tail_name" type="text" class="span3" placeholder="Tab" />
+            <label>Title</label>
+            <input name="tail_title" type="text" class="span3" placeholder="Tab" />
+            <label>Description</label>
+            <input name="tail_desc" type="textarea" class="span3" placeholder="Tab" />
+    </div>
+    <div class="modal-footer">
+            <a class="btn" data-dismiss="modal">Close</a>
+            <input class="btn btn-primary" type="submit" value="Add" />
+        </form>
+    </div>
+</div>
+
