@@ -53,7 +53,7 @@
                                 %end
 
 
-                                <a href="/{{ link['mane_name'] }}">{{ link['display'] }}</a></li>
+                                <a href="{{ link['route_name'] }}">{{ link['display'] }}</a></li>
                                 %if logged_in:
                                     <li>
                                         <form class="form-inline" action="/deletemane" method="post">
@@ -110,7 +110,18 @@
                     %else:
                         <li>
                     %end
-                    <a href="/{{ link.name }}">{{ link['tail_name'] }}</a></li>
+                    %if logged_in:
+                            <a href="{{ link['route_name'] }}">{{ link['display'] }}
+                        <form class="form-inline" action="/deletetail" method="post">
+                            <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                            <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
+                            <input name="tail_name" type="hidden" value="{{ link['tail_name'] }}" /></a>
+                            <button type="submit" class='label label-info'><b class="icon-eject"></b></button>
+                        </form>
+                    %else:
+                        <a href="{{ link['route_name'] }}">{{ link['display'] }}</a>
+                    %end
+                    </li>
                 %end
                 %if logged_in:
                     <li><a data-toggle="modal" href="#add_tail_modal" class="badge badge-info"><i class="icon-plus-sign"></i></a></li>

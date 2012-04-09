@@ -298,7 +298,7 @@ class FShopMongoDB():
             routes_to_increment.append(tail['route_name'])
 
         if not routes_to_increment:
-            self._insert_tail(mane_name, tail_name, tail_rank, title, desc)
+            self._insert_tail(mane_name, tail_name, rank, title, desc)
         else:
             self.routes_collection.update({'route_name': {'$in': routes_to_increment}}, {'$inc': {'rank': 1}}, multi=True)
 
@@ -309,14 +309,31 @@ class FShopMongoDB():
         for mane in manes:
             if mane_name == mane['mane_name']:
                 target_acquired = True
-                self.routes_collection.remove({'route_name': mane['route_name']})
+                self.routes_collection.remove({'mane_name': mane['mane_name']}, multi=True)
+                self.ranks_collection.remove({'rank_type': 'tail', 'mane_name': mane['mane_name']})
+                self.increment_mane_rank(-1)
+                continue
             if target_acquired:
                 routes_to_decrement.append(mane['route_name'])
 
         if routes_to_decrement:
             self.routes_collection.update({'route_name': {'$in': routes_to_decrement}}, {'$inc': {'rank': -1}}, multi=True)
 
-        self.increment_mane_rank(-1)
+    def remove_tail(self, mane_name, tail_name):
+        routes_to_decrement = []
+        target_acquired = False
+        tails = self.get_taillinks(mane_name)
+        for tail in tails:
+            if tail_name == tail['tail_name']:
+                target_acquired = True
+                self.routes_collection.remove({'tail_name': tail['tail_name']})
+                self.increment_tail_rank(mane_name, -1)
+                continue
+            if target_acquired:
+                routes_to_decrement.append(tail['route_name'])
+
+        if routes_to_decrement:
+            self.routes_collection.update({'route_name': {'$in': routes_to_decrement}}, {'$inc': {'rank': -1}}, multi=True)
 
     def get_manelinks(self):
         return self.routes_collection.find({'route_type': 'mane'}).sort('rank', 1)

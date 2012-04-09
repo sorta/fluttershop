@@ -46,8 +46,8 @@ class FShopApp(object):
 
     @view('main')
     def error404(self, error):
-        mane = self._FSDBsys.route_db.get_mane_mane()
-        pm = self.get_page_model(mane)
+        mane = self._FSDBsys.route_db.get_mane_mane().get('mane_name', '/')
+        pm = self._util.get_page_model(mane)
         return pm
 
     def start(self):

@@ -19,6 +19,7 @@ class FShopTabs(object):
         fshop_bottle.post('/deletemane')(self.delete_mane)
 
         fshop_bottle.post('/addtail')(self.add_tail)
+        fshop_bottle.post('/deletetail')(self.delete_tail)
 
     #### View Routes ####
     @view('main')
@@ -76,6 +77,21 @@ class FShopTabs(object):
             pass
         else:
             priority = self._FSDBsys.rank_db.get_next_tail_rank(mane)
-            self._FSDBsys.route_db.add_new_tail(mane, tail, priority)
+            title = form.get('tail_title', None)
+            desc = form.get('tail_desc', None)
+
+            self._FSDBsys.route_db.add_new_tail(mane, tail, priority, title, desc)
+
+        redirect(selected_url)
+
+    def delete_tail(self):
+        self._auth.validate_session()
+        form = request.forms
+        selected_url = form.get('selected_url', '/')
+        mane = form['mane_name']
+        tail = form['tail_name']
+
+        if self._FSDBsys.route_db.get_tail(mane, tail):
+            self._FSDBsys.route_db.remove_tail(mane, tail)
 
         redirect(selected_url)
