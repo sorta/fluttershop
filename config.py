@@ -12,7 +12,7 @@ DEF_CONF = {
     'redis_port': 6379,
     'sdb_key': None,
     'sdb_secret_key': None,
-    'route_db': 'sdb',
+    'route_db': 'mongo',
     'content_db': 'mongo',
     'rank_db': 'mongo',
     'options_db': 'mongo'
