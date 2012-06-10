@@ -35,26 +35,27 @@ function expandInput()
 
 function hideText()
 {
-    $("#pe_text").collapse("hide");
+    $("#pe_txt").collapse("hide");
 }
 
-function enableTab(tabname)
+function spt(e)
 {
-    tabname += " a";
+    var x = e.target.toString().slice(-3);
+    $("#sel_post_type").attr("value", x);
+}
 
-    $(tabname).click(function (e)
-        {
-            e.preventDefault();
-            $(this).tab('show');
-        }
-    );
+function enableTab(tabname, val)
+{
+    // $(tabname).click(function (e)
+    //     {
+    //         e.preventDefault();
+    //         $(this).tab('show');
+    //     }
+    // );
 }
 
 $(document).ready(function()
 {
     $("#pe0").on('show', expandInput);
-    // enableTab("#pe_text");
-    // enableTab("#pe_pic");
-    // enableTab("#pe_link");
-    // enableTab("#pe_vid");
+    $('a[data-toggle="pill"]').on('show', spt);
 });

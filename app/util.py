@@ -2,7 +2,8 @@
 """
 
 from bottle import request
-from app.content import listify_posts
+from datetime import datetime
+from math import ceil
 
 
 class FShopUtil(object):
@@ -16,7 +17,7 @@ class FShopUtil(object):
         manes, tails = self._FSDBsys.route_db.get_links_for_mane(mane)
 
         route = u"/{0}/{1}".format(mane, tail) if tail else u"/{0}".format(mane)
-        rows = listify_posts(self._FSDBsys.content_db, route)
+        rows = self.listify_posts(route)
         return self.add_user_info({
             'manelinks': manes,
             'taillinks': tails,
@@ -32,3 +33,94 @@ class FShopUtil(object):
         if pm['logged_in']:
             pm['user'] = session.get('user', None)
         return pm
+
+    def parse_route(self, route):
+        if route == "/":
+            return None, None
+
+        mane = None
+        tail = None
+        sprout = route.split('/')
+        sprout_len = len(sprout)
+
+        if sprout_len > 1:
+            mane = sprout[1]
+
+            if sprout_len > 2:
+                tail = sprout[2]
+
+        return mane, tail
+
+    def get_width_str(self, h_loc, requested, alignment, new_row=False):
+        if h_loc + requested > 12:
+            h_loc = 0
+            return self.get_width_str(h_loc, requested, alignment, True)
+
+        if alignment == u'left':
+            h_loc += requested
+            return new_row, h_loc, requested, 0
+
+        if alignment == u'right':
+            offset = 12 - h_loc - requested
+            # width = "span{0} offset{1}".format(requested, offset) if offset > 0 else "span{0}".format(requested)
+            h_loc = 12
+            return new_row, h_loc, requested, offset
+
+        if alignment == u'center':
+            remainder = 12 - h_loc
+            offset = int(ceil((remainder - requested) / 2))
+            h_loc += requested + offset
+            # width = "span{0} offset{1}".format(requested, offset) if offset > 0 else "span{0}".format(requested)
+            return new_row, h_loc, requested, offset
+
+        if alignment > 0 and alignment < 12:
+
+            if requested + alignment > 12:
+                alignment = 12 - requested
+
+            if h_loc + requested + alignment > 12:
+                return self.get_width_str(h_loc, requested, alignment, True)
+
+            return new_row, h_loc, requested, alignment
+
+    def listify_posts(self, route_id):
+        posts = self._FSDBsys.content_db.get_posts_for_route(route_id, 10)
+
+        post_list = []
+        rows = []
+        h_loc = 0
+
+        for post in posts:
+            part_list = []
+            parts = self._FSDBsys.content_db.get_parts_for_post(post['_id'])
+            for part in parts:
+                part_list.append({
+                        'part_type': part.get('part_type', u'text'),
+                        'part_id': part['_id'],
+                        'body': part.get('body', u""),
+                        'alt_text': part.get('alt_text', u""),
+                        'caption': part.get('caption', u"")
+                    })
+
+            requested = post.get('width', 12)
+            alignment = post.get('alignment', u'left')
+            new_row, h_loc, width, offset = self.get_width_str(h_loc, requested, alignment)
+
+            if new_row:
+                rows.append(post_list)
+                post_list = []
+
+            post_list.append({
+                    'post_type': post.get('post_type', u'txt'),
+                    'post_id': post['_id'],
+                    'title': post.get('title', u""),
+                    'date': post.get('timestamp', datetime.now()),
+                    'width': width,
+                    'offset': offset,
+                    'parts': part_list
+                })
+
+        if len(post_list) > 0:
+            rows.append(post_list)
+
+        return rows

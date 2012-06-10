@@ -8,6 +8,7 @@ from app.db import FShopDBSys
 from app.util import FShopUtil
 from app.auth import FShopAuth
 from app.tabs import FShopTabs
+from app.content import FShopContent
 
 fshop_bottle = Bottle()
 
@@ -23,6 +24,7 @@ class FShopApp(object):
         self._util = FShopUtil(self._config, self._FSDBsys, fshop_bottle)
         self._auth = FShopAuth(self._config, self._FSDBsys, fshop_bottle)
         self._tabs = FShopTabs(self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
+        self._content = FShopContent(self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
 
         fshop_bottle.get('/')(self.index)
         fshop_bottle.route('/static/<filepath:path>')(self.send_static)

@@ -139,22 +139,27 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <form>
+                                                <form class="form-vertical" action="/addpost" method="post">
+                                                    <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                                                    <input name="sel_post_type" id="sel_post_type" type="hidden" value="txt" />
+                                                    <input name="enc_post_parts" id="enc_post_parts" type="hidden" value="" />
+
                                                     <div id="pe_title" class="collapse">
                                                         <label>Title</label>
                                                     </div>
-                                                    <input type="text" class="span4" placeholder="Post something..." data-toggle="collapse" data-target="#pe0"></input><div id="pe0" class="collapse"></div>
+                                                    <input name="post_title" type="text" class="span4" placeholder="Post something..." data-toggle="collapse" data-target="#pe0"></input>
+                                                    <div id="pe0" class="collapse"></div>
 
                                                     <div id="pe_details" class="collapse">
                                                         <ul class="nav nav-pills" id="post_pills">
-                                                            <li class="active"><a href="#pe_text" data-toggle="pill"><i class="icon-pencil"></i></a></li>
+                                                            <li class="active"><a href="#pe_txt" data-toggle="pill"><i class="icon-pencil"></i></a></li>
                                                             <li><a href="#pe_pic" data-toggle="pill"><i class="icon-picture"></i></a></li>
-                                                            <li><a href="#pe_link" data-toggle="pill"><i class="icon-globe"></i></a></li>
+                                                            <li><a href="#pe_lnk" data-toggle="pill"><i class="icon-globe"></i></a></li>
                                                             <li><a href="#pe_vid" data-toggle="pill"><i class="icon-film"></i></a></li>
                                                         </ul>
 
                                                         <div class="tab-content">
-                                                            <div id="pe_text" class="tab-pane active">
+                                                            <div id="pe_txt" class="tab-pane active">
                                                                 <label>Text</label>
                                                                 <textarea name="post_text" id="post_tb" class="span4"></textarea>
                                                             </div>
@@ -166,7 +171,7 @@
                                                                 <input name="post_pic_alt" type="text" class="span4"></input>
                                                             </div>
 
-                                                            <div id="pe_link" class="tab-pane">
+                                                            <div name="pe_lnk" id="pe_lnk" class="tab-pane">
                                                                 <label>Url</label>
                                                                 <input name="post_link_url" type="text" class="span4"></input>
                                                                 <label>Alt</label>
@@ -182,7 +187,7 @@
                                                         </div>
                                                     </div>
                                                     <div id="pe_post_buttons" class="collapse">
-                                                        <a data-toggle="modal" href="#add_tail_modal" class="btn btn-primary pull-right"><i class="icon-plus-sign"></i>Post</a>
+                                                        <button type="submit" class="btn btn-primary pull-right"><i class="icon-plus-sign"></i>Post</Button>
                                                     </div>
                                                 </form>
                                             </td>

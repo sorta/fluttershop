@@ -1,81 +1,71 @@
-from datetime import datetime
-from math import ceil
-from bottle import request
+from bottle import request, redirect
+
+
+class FShopPost(object):
+    def __init__(self, ptype, bfield, atfield="post_alt_text", capfield="post_caption"):
+        self._post_type = ptype
+        self._body_field = bfield
+        self._alt_text_field = atfield
+        self._caption_field = capfield
+
+    @property
+    def post_type(self):
+        return self._post_type
+
+    @property
+    def body_field(self):
+        return self._body_field
+
+    @property
+    def alt_text_field(self):
+        return self._alt_text_field
+
+    @property
+    def caption_field(self):
+        return self._caption_field
+
+
+POST_TYPE_MAP = {
+    'txt': FShopPost('txt', 'post_text'),
+    'pic': FShopPost('pic', 'post_pic_url', 'post_pic_alt'),
+    'lnk': FShopPost('lnk', 'post_link_url', 'post_link_alt'),
+    'vid': FShopPost('vid', 'post_vid_url', 'post_vid_alt')
+}
 
 
 class FShopContent(object):
 
-    def __init__(self, config, dbsys, fshop_bottle, auth):
+    def __init__(self, config, dbsys, fshop_bottle, auth, util):
         self._config = config
         self._FSDBsys = dbsys
         self._auth = auth
+        self._util = util
 
         fshop_bottle.post('/addpost')(self.add_post)
 
     def add_post(self):
         self._auth.validate_session()
         form = request.forms
+        route = form["selected_url"]
+        title = form["post_title"]
+        alignment = form.get("post_alignment", "left")
+        width = int(form.get("post_width", 12))
+        post_type = form["sel_post_type"]
+        mane, tail = self._util.parse_route(route)
+        next_post_rank = self._FSDBsys.rank_db.get_next_post_rank(route)
+        if alignment not in ['left', 'right', 'center']:
+            alignment = int(alignment)
 
+        post_id = self._FSDBsys.content_db.insert_new_post(route, mane, post_type, alignment, width, title, next_post_rank, tail)
+        self._FSDBsys.rank_db.increment_post_rank(route)
 
-def get_width_str(h_loc, requested, alignment, new_row=False):
-    if h_loc + requested > 12:
-        h_loc = 0
-        return get_width_str(h_loc, requested, alignment, True)
+        post_fields = POST_TYPE_MAP.get(post_type)
+        body = form.get(post_fields.body_field)
+        alt_text = form.get(post_fields.alt_text_field, None)
+        caption = form.get(post_fields.caption_field, None)
+        next_part_rank = self._FSDBsys.rank_db.get_next_post_part_rank(post_id)
 
-    if alignment == u'left':
-        h_loc += requested
-        return new_row, h_loc, requested, 0
+        self._FSDBsys.content_db.insert_new_post_part(post_id, post_type, body, next_part_rank, alt_text, caption)
+        self._FSDBsys.rank_db.increment_post_part_rank(post_id)
 
-    if alignment == u'right':
-        offset = 12 - h_loc - requested
-        # width = "span{0} offset{1}".format(requested, offset) if offset > 0 else "span{0}".format(requested)
-        h_loc = 12
-        return new_row, h_loc, requested, offset
-
-    if alignment == u'center':
-        remainder = 12 - h_loc
-        offset = int(ceil((remainder - requested) / 2))
-        h_loc += requested + offset
-        # width = "span{0} offset{1}".format(requested, offset) if offset > 0 else "span{0}".format(requested)
-        return new_row, h_loc, requested, offset
-
-
-def listify_posts(fshop_db, route_id):
-    posts = fshop_db.get_posts_for_route(route_id, 10)
-
-    post_list = []
-    rows = []
-    h_loc = 0
-
-    for post in posts:
-        part_list = []
-        parts = fshop_db.get_parts_for_post(post['_id'])
-        for part in parts:
-            part_list.append({
-                    'part_type': part.get('part_type', u'text'),
-                    'body': part.get('body', u""),
-                    'alt_text': part.get('alt_text', u""),
-                    'caption': part.get('caption', u"")
-                })
-
-        requested = post.get('width', 12)
-        alignment = post.get('alignment', u'left')
-        new_row, h_loc, width, offset = get_width_str(h_loc, requested, alignment)
-
-        if new_row:
-            rows.append(post_list)
-            post_list = []
-
-        post_list.append({
-                'post_type': post.get('post_type', u'text'),
-                'title': post.get('title', u""),
-                'date': post.get('timestamp', datetime.now()),
-                'width': width,
-                'offset': offset,
-                'parts': part_list
-            })
-
-    if len(post_list) > 0:
-        rows.append(post_list)
-
-    return rows
+        redirect(route)
