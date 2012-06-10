@@ -1,5 +1,20 @@
 from datetime import datetime
 from math import ceil
+from bottle import request
+
+
+class FShopContent(object):
+
+    def __init__(self, config, dbsys, fshop_bottle, auth):
+        self._config = config
+        self._FSDBsys = dbsys
+        self._auth = auth
+
+        fshop_bottle.post('/addpost')(self.add_post)
+
+    def add_post(self):
+        self._auth.validate_session()
+        form = request.forms
 
 
 def get_width_str(h_loc, requested, alignment, new_row=False):

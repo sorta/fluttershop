@@ -6,6 +6,7 @@ DEF_CONF = {
     'host_port': '80',
     'autoreload': True,
     'debug': False,
+    'server': 'auto',
     'mongo_address': '127.0.0.1',
     'mongo_port': 27017,
     'redis_address': '127.0.0.1',
@@ -34,6 +35,7 @@ class FShopConfig():
         self._host_port = conf.get('general', 'host_port')
         self._autoreload = conf.getboolean('general', 'autoreload')
         self._debug = conf.getboolean('general', 'debug')
+        self._server = conf.get('general', 'server')
 
         self._mongo_address = conf.get('db', 'mongo_address')
         self._mongo_port = conf.getint('db', 'mongo_port')
@@ -65,6 +67,10 @@ class FShopConfig():
     @property
     def debug(self):
         return self._debug
+
+    @property
+    def server(self):
+        return self._server
 
     @property
     def mongo_address(self):

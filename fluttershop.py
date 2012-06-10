@@ -60,7 +60,7 @@ class FShopApp(object):
             debug(True)
         wrapped_bottle = SessionMiddleware(fshop_bottle, session_opts)
 
-        run(wrapped_bottle, host=self._config.host_address, port=self._config.host_port, reloader=self._config.autoreload)
+        run(wrapped_bottle, host=self._config.host_address, port=self._config.host_port, reloader=self._config.autoreload, server=self._config.server)
 
 
 #### Main ####
