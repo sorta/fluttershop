@@ -53,6 +53,7 @@ class FShopContent(object):
         post_type = form["sel_post_type"]
         mane, tail = self._util.parse_route(route)
         next_post_rank = self._FSDBsys.rank_db.get_next_post_rank(route)
+
         if alignment not in ['left', 'right', 'center']:
             alignment = int(alignment)
 

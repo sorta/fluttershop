@@ -44,10 +44,10 @@ class FShopUtil(object):
         sprout_len = len(sprout)
 
         if sprout_len > 1:
-            mane = sprout[1]
+            mane = sprout[1].lower()
 
             if sprout_len > 2:
-                tail = sprout[2]
+                tail = sprout[2].lower()
 
         return mane, tail
 

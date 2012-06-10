@@ -37,8 +37,10 @@ class FShopApp(object):
         if mane:
             redirect(mane.get('route_name', '/Home'))
         else:
-            pm = self._util.get_page_model(mane)
-            return pm
+            priority = self._FSDBsys.rank_db.get_next_mane_rank()
+            self._FSDBsys.route_db.add_new_mane("Home", priority, "Site Home", "FlutterShop default home")
+            self._FSDBsys.rank_db.increment_mane_rank()
+            redirect("/home")
 
     def send_static(self, filepath):
         return static_file(filepath, root=self._static_dir)
@@ -55,7 +57,7 @@ class FShopApp(object):
     def start(self):
         session_opts = {
             'session.type': 'memory',
-            'session.cookie_expires': 900,
+            'session.timeout': 900,
             'session.auto': True
         }
         if self._config.debug:

@@ -23,7 +23,7 @@
         %end
         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
-        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/')
+        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/'), manelinks=manelinks, taillinks=get('taillinks', []), logged_in=logged_in
 
         <!-- NAVBAR -->
         <div class="navbar navbar-fixed-top">
@@ -53,17 +53,15 @@
                                     <li>
                                 %end
 
-
                                 <a href="{{ link['route_name'] }}">{{ link['display'] }}</a></li>
                                 %if logged_in:
                                     <li>
-                                        <form class="form-inline" action="/deletemane" method="post">
-                                            <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                                            <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
-                                            <li><button type="submit" class='close'><b class="icon-remove icon-white"></b></button></li>
-                                        </form>
+                                        <a data-toggle="modal" href="#delete_mane_modal_{{ link['mane_name'] }}">
+                                            <i class="icon-remove icon-white"></i>
+                                        </a>
                                     </li>
                                 %end
+
                             %end
                             %if logged_in:
                                 <li><a data-toggle="modal" href="#add_mane_modal" class="badge badge-info"><i class="icon-plus-sign"></i></a></li>
@@ -111,16 +109,13 @@
                     %else:
                         <li>
                     %end
+
+                    <a href="{{ link['route_name'] }}">{{ link['display'] }}</a>
+
                     %if logged_in:
-                            <a href="{{ link['route_name'] }}">{{ link['display'] }}</a>
-                        <form class="form-inline" action="/deletetail" method="post">
-                            <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                            <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
-                            <input name="tail_name" type="hidden" value="{{ link['tail_name'] }}" />
-                            <button type="submit" class='label label-info'><b class="icon-remove"></b></button>
-                        </form>
-                    %else:
-                        <a href="{{ link['route_name'] }}">{{ link['display'] }}</a>
+                        <a data-toggle="modal" href="#delete_tail_modal_{{ link['tail_name'] }}">
+                            <i class="icon-remove"></i>
+                        </a>
                     %end
                     </li>
                 %end

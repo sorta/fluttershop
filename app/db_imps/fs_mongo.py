@@ -41,6 +41,7 @@ class FShopMongoDB():
 
     def insert_new_post(self, route, mane, post_type, alignment, width, title, next_rank, tail=None):
         post_col = self.posts_collection
+        timestamp = datetime.now()
         new_post = {
             "route_id": route,
             "mane_id": mane,
@@ -48,7 +49,8 @@ class FShopMongoDB():
             "alignment": alignment,
             "width": width,
             "title": title,
-            "timestamp": datetime.now(),
+            "date_created": timestamp,
+            "timestamp": timestamp,
             "rank": next_rank
         }
 
@@ -59,12 +61,14 @@ class FShopMongoDB():
 
     def insert_new_post_part(self, post_id, part_type, body, next_rank, alt_text=None, caption=None):
         part_col = self.parts_collection
+        timestamp = datetime.now()
         new_part = {
             "post_id": post_id,
             "part_type": part_type,
             "body": body,
             "rank": next_rank,
-            "timestamp": datetime.now()
+            "date_created": timestamp,
+            "timestamp": timestamp,
         }
 
         if alt_text:
@@ -85,8 +89,19 @@ class FShopMongoDB():
     #### RANKING ####
 
     # Mane
+    def new_mane_rank(self):
+        new_rank = {
+            'rank_type': 'mane',
+            'next_rank': 0
+        }
+        self.ranks_collection.insert(new_rank)
+
     def get_next_mane_rank(self):
-        return self.ranks_collection.find_one({'rank_type': 'mane'}).get('next_rank', 9000)
+        rank = self.ranks_collection.find_one({'rank_type': 'mane'})
+        if not rank:
+            self.new_mane_rank()
+            return self.get_next_mane_rank()
+        return rank.get('next_rank', 0)
 
     def increment_mane_rank(self, incr_value=1):
         self.ranks_collection.update({'rank_type': 'mane'}, {'$inc': {'next_rank': incr_value}})
@@ -105,7 +120,7 @@ class FShopMongoDB():
         if not rank:
             self.new_tail_rank(mane)
             return self.get_next_tail_rank(mane)
-        return rank.get('next_rank', 9000)
+        return rank.get('next_rank', 0)
 
     def increment_tail_rank(self, mane, incr_value=1):
         self.ranks_collection.update({'rank_type': 'tail', 'mane_name': mane.lower()}, {'$inc': {'next_rank': incr_value}})
@@ -170,8 +185,6 @@ class FShopMongoDB():
         }
         self.ranks_collection.insert(new_tail_rank)
 
-        self.increment_mane_rank()
-
     def _insert_tail(self, mane_name, tail_name, rank, title, desc):
         mane_name = unicode(mane_name).lower()
         tail_name = unicode(tail_name)
@@ -189,13 +202,11 @@ class FShopMongoDB():
         }
         self.routes_collection.insert(new_tail)
 
-        self.increment_tail_rank(mane_name)
-
     def add_new_mane(self, mane_name, rank, title=None, desc=None):
         routes_to_increment = []
         manes = self.get_manelinks()
         for mane in manes:
-            mane_rank = mane.get('rank', 9000)
+            mane_rank = mane.get('rank', 0)
             if  mane_rank < rank:
                 continue
             if mane_rank == rank:
@@ -211,7 +222,7 @@ class FShopMongoDB():
         routes_to_increment = []
         tails = self.get_taillinks(mane_name)
         for tail in tails:
-            tail_rank = tail.get('rank', 9000)
+            tail_rank = tail.get('rank', 0)
             if  tail_rank < rank:
                 continue
             if tail_rank == rank:
@@ -232,7 +243,6 @@ class FShopMongoDB():
                 target_acquired = True
                 self.routes_collection.remove({'mane_name': mane['mane_name']}, multi=True)
                 self.ranks_collection.remove({'rank_type': 'tail', 'mane_name': mane['mane_name']})
-                self.increment_mane_rank(-1)
                 continue
             if target_acquired:
                 routes_to_decrement.append(mane['route_name'])
@@ -248,7 +258,6 @@ class FShopMongoDB():
             if tail_name == tail['tail_name']:
                 target_acquired = True
                 self.routes_collection.remove({'tail_name': tail['tail_name']})
-                self.increment_tail_rank(mane_name, -1)
                 continue
             if target_acquired:
                 routes_to_decrement.append(tail['route_name'])
@@ -263,8 +272,8 @@ class FShopMongoDB():
         return self.routes_collection.find({'route_type': 'tail', 'mane_name': mane.lower()}).sort('rank', 1)
 
     def get_links_for_mane(self, mane):
-        manes = self.get_manelinks()
-        tails = self.get_taillinks(mane)
+        manes = list(self.get_manelinks())
+        tails = list(self.get_taillinks(mane))
         return manes, tails
 
     def get_mane_mane(self):

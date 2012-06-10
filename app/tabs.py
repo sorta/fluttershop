@@ -51,6 +51,7 @@ class FShopTabs(object):
             desc = form.get('mane_desc', None)
             priority = self._FSDBsys.rank_db.get_next_mane_rank()
             self._FSDBsys.route_db.add_new_mane(mane, priority, title, desc)
+            self._FSDBsys.rank_db.increment_mane_rank()
 
         redirect(selected_url)
 
@@ -62,6 +63,7 @@ class FShopTabs(object):
 
         if self._FSDBsys.route_db.get_mane(mane):
             self._FSDBsys.route_db.remove_mane(mane)
+            self._FSDBsys.rank_db.increment_mane_rank(-1)
 
         redirect(selected_url)
 
@@ -81,6 +83,7 @@ class FShopTabs(object):
             desc = form.get('tail_desc', None)
 
             self._FSDBsys.route_db.add_new_tail(mane, tail, priority, title, desc)
+            self._FSDBsys.rank_db.increment_tail_rank(mane)
 
         redirect(selected_url)
 
@@ -93,5 +96,6 @@ class FShopTabs(object):
 
         if self._FSDBsys.route_db.get_tail(mane, tail):
             self._FSDBsys.route_db.remove_tail(mane, tail)
+            self._FSDBsys.rank_db.increment_tail_rank(mane, -1)
 
         redirect(selected_url)

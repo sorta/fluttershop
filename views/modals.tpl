@@ -67,3 +67,49 @@
     </div>
 </div>
 
+%if logged_in:
+    %for link in manelinks:
+
+        <div class="modal hide fade" id="delete_mane_modal_{{ link['mane_name'] }}">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">×</a>
+                <h3>Delete Mane Tab</h3>
+            </div>
+            <div class="modal-body">
+                <form action="/deletemane" class="form-vertical" method="post">
+                    <label>Are you sure you want to delete this Mane Tab ({{ link['mane_name'] }})?</label>
+                    <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                    <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
+            </div>
+            <div class="modal-footer">
+                    <a class="btn" data-dismiss="modal">Close</a>
+                    <input class="btn btn-danger" type="submit" value="delete" />
+                </form>
+            </div>
+        </div>
+
+    %end
+
+    %for link in taillinks:
+
+        <div class="modal hide fade" id="delete_tail_modal_{{ link['tail_name'] }}">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">×</a>
+                <h3>Delete Tail Tab</h3>
+            </div>
+            <div class="modal-body">
+                <form action="/deletetail" class="form-vertical" method="post">
+                    <label>Are you sure you want to delete this Tail Tab ({{ link['tail_name'] }})?</label>
+                    <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                    <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
+                    <input name="tail_name" type="hidden" value="{{ link['tail_name'] }}" />
+            </div>
+            <div class="modal-footer">
+                    <a class="btn" data-dismiss="modal">Close</a>
+                    <input class="btn btn-danger" type="submit" value="delete" />
+                </form>
+            </div>
+        </div>
+
+    %end
+%end
