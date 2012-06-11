@@ -9,6 +9,8 @@ from app.util import FShopUtil
 from app.auth import FShopAuth
 from app.tabs import FShopTabs
 from app.content import FShopContent
+from app.crypto import FShopCrypto
+from app.site_options import FShopSiteOptions
 
 fshop_bottle = Bottle()
 
@@ -20,11 +22,13 @@ class FShopApp(object):
         self._current_dir = os.path.dirname(os.path.abspath(__file__))
         self._static_dir = os.path.join(self._current_dir, 'static')
 
-        self._FSDBsys = FShopDBSys(self._config)
+        self._crypto = FShopCrypto()
+        self._FSDBsys = FShopDBSys(self._config, self._crypto)
         self._util = FShopUtil(self._config, self._FSDBsys, fshop_bottle)
         self._auth = FShopAuth(self._config, self._FSDBsys, fshop_bottle)
         self._tabs = FShopTabs(self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
         self._content = FShopContent(self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
+        self._content = FShopSiteOptions(self._FSDBsys, self._auth, self._crypto, fshop_bottle)
 
         fshop_bottle.get('/')(self.index)
         fshop_bottle.route('/static/<filepath:path>')(self.send_static)
@@ -54,15 +58,26 @@ class FShopApp(object):
         pm = self._util.get_page_model(mane)
         return pm
 
+    def init_db_if_necessary(self):
+        site_name = self._FSDBsys.options_db.get_site_name()
+        if not site_name:
+            self._FSDBsys.options_db._add_site_name("FlutterShop")
+
+        if not self._FSDBsys.options_db.at_least_one_user():
+            self._FSDBsys.options_db._add_user("admin", "12345", "example@email.com")
+
     def start(self):
+        self.init_db_if_necessary()
+
         session_opts = {
             'session.type': 'memory',
             'session.timeout': 900,
             'session.auto': True
         }
+        wrapped_bottle = SessionMiddleware(fshop_bottle, session_opts)
+
         if self._config.debug:
             debug(True)
-        wrapped_bottle = SessionMiddleware(fshop_bottle, session_opts)
 
         run(wrapped_bottle, host=self._config.host_address, port=self._config.host_port, reloader=self._config.autoreload, server=self._config.server)
 

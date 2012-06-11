@@ -1,13 +1,13 @@
-from hashlib import sha512
 from datetime import datetime
 import pymongo
 
 
 class FShopMongoDB():
 
-    def __init__(self, db_address, db_port=27017):
+    def __init__(self, crypto, db_address, db_port=27017):
         self._connection = pymongo.Connection(db_address, db_port)
         self._mdb = self._connection.fluttershop
+        self._crypto = crypto
 
     #### Collections ###
     @property
@@ -52,7 +52,7 @@ class FShopMongoDB():
             "show_title": show_title,
             "show_date": show_date,
             "date_created": timestamp,
-            "timestamp": timestamp,
+            "date_modified": timestamp,
             "rank": next_rank
         }
 
@@ -70,7 +70,7 @@ class FShopMongoDB():
             "body": body,
             "rank": next_rank,
             "date_created": timestamp,
-            "timestamp": timestamp,
+            "date_modified": timestamp,
         }
 
         if alt_text:
@@ -81,12 +81,70 @@ class FShopMongoDB():
         part_col.insert(new_part)
 
     #### OPTIONS ####
-    def get_user(self, username, password):
-        prepared_pass = unicode(sha512(u'KsdfKSDFGT435Jwef45TJ6' + unicode(password)).hexdigest())
+    def get_user_check_password(self, username, test_password):
+        user = self.get_user(username)
+        if not user:
+            return None
+        prepared_pass = self._crypto.generate_hash(test_password, user['salt'])
         return self.options_collection.find_one({'username': username, 'password': prepared_pass})
 
-    def user_exists(self, username):
+    def get_user(self, username):
         return self.options_collection.find_one({'username': username})
+
+    def user_exists(self, username):
+        user = self.get_user(username)
+        if user:
+            return True
+        else:
+            return False
+
+    def at_least_one_user(self):
+        item = self.options_collection.find_one({"option_type": "user"})
+        if item:
+            return True
+        else:
+            return False
+
+    def _add_user(self, username, password, email):
+        timestamp = datetime.now()
+        hashed_pass, salt = self._crypto.hash_password(password)
+        new_user = {
+            "option_type": "user",
+            "username": unicode(username),
+            "email": email,
+            "salt": salt,
+            "password": hashed_pass,
+            "date_created": timestamp,
+            "date_modified": timestamp,
+            "password_modified": timestamp,
+        }
+        self.options_collection.insert(new_user)
+
+    def modify_user(self, current_username, new_username, new_email):
+        timestamp = datetime.now()
+        update = {
+            "username": new_username,
+            "email": new_email,
+            "date_modified": timestamp
+        }
+        self.options_collection.update({"option_type": "user", "username": current_username}, {"$set": update})
+
+    def get_site_name(self):
+        return self.options_collection.find_one({"option_type": "site_name"})
+
+    def _add_site_name(self, site_name):
+        timestamp = datetime.now()
+        new_item = {
+            "option_type": "site_name",
+            "site_name": site_name,
+            "date_created": timestamp,
+            "date_modified": timestamp
+        }
+        self.options_collection.insert(new_item)
+
+    def modify_site_name(self, site_name):
+        timestamp = datetime.now()
+        self.options_collection.update({"option_type": "site_name"}, {"$set": {"site_name": site_name, "date_modified": timestamp}})
 
     #### RANKING ####
 

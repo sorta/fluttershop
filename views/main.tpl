@@ -23,7 +23,7 @@
         %end
         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
-        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/'), manelinks=manelinks, taillinks=get('taillinks', []), logged_in=logged_in, user=get('user', {})
+        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/'), manelinks=manelinks, taillinks=get('taillinks', []), logged_in=logged_in, user=get('user', {}), site_name=site_name
 
         <!-- NAVBAR -->
         <div class="navbar navbar-fixed-top">
@@ -40,7 +40,7 @@
                         <!-- LEFT -->
                         <ul class="nav pull-left">
 
-                            <li><a class="brand" href="/">{{ get('site_name', 'Unnamed Site') }}</a></li>
+                            <li><a class="brand" href="/">{{ site_name }}</a></li>
                             %for link in manelinks:
                                 %class_str = ""
                                 %if defined('selected_mane') and selected_mane == link['mane_name']:

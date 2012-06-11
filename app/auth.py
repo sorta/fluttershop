@@ -34,8 +34,9 @@ class FShopAuth(object):
         redirect(request.forms.get('selected_url', '/'))
 
     def verify_login(self, user_id, password, selected_url):
-        user = self._FSDBsys.options_db.get_user(user_id, password)
+        user = self._FSDBsys.options_db.get_user_check_password(user_id, password)
         if not user:
+            # Flash Message
             redirect(selected_url)
 
         return user

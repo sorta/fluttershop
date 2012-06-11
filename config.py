@@ -1,7 +1,6 @@
 import ConfigParser
 
 DEF_CONF = {
-    'site_name': 'Flutter Shop',
     'host_address': '127.0.0.1',
     'host_port': '80',
     'autoreload': True,
@@ -30,7 +29,6 @@ class FShopConfig():
         conf = ConfigParser.RawConfigParser(DEF_CONF)
         conf.read(path)
 
-        self._site_name = conf.get('general', 'site_name')
         self._host_address = conf.get('general', 'host_address')
         self._host_port = conf.get('general', 'host_port')
         self._autoreload = conf.getboolean('general', 'autoreload')
@@ -47,10 +45,6 @@ class FShopConfig():
         self._content_db = conf.get('db', 'content_db')
         self._rank_db = conf.get('db', 'rank_db')
         self._options_db = conf.get('db', 'options_db')
-
-    @property
-    def site_name(self):
-        return self._site_name
 
     @property
     def host_address(self):
