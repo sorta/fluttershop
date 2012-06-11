@@ -32,6 +32,8 @@ POST_TYPE_MAP = {
     'vid': FShopPost('vid', 'post_vid_url', 'post_vid_alt')
 }
 
+ALIGN_SET = set(['Left', 'Right', 'Center'])
+
 
 class FShopContent(object):
 
@@ -41,7 +43,7 @@ class FShopContent(object):
         self._auth = auth
         self._util = util
 
-        fshop_bottle.post('/addpost')(self.add_post)
+        fshop_bottle.post('/_sitefuncs_/addpost')(self.add_post)
 
     def add_post(self):
         self._auth.validate_session()
@@ -51,13 +53,17 @@ class FShopContent(object):
         alignment = form.get("post_alignment", "left")
         width = int(form.get("post_width", 12))
         post_type = form["sel_post_type"]
+        show_title = self._util.parse_checkbox(form.get("post_show_title", False))
+        show_date = self._util.parse_checkbox(form.get("post_show_date", False))
         mane, tail = self._util.parse_route(route)
         next_post_rank = self._FSDBsys.rank_db.get_next_post_rank(route)
 
-        if alignment not in ['left', 'right', 'center']:
+        if alignment in ALIGN_SET:
+            alignment = alignment.lower()
+        else:
             alignment = int(alignment)
 
-        post_id = self._FSDBsys.content_db.insert_new_post(route, mane, post_type, alignment, width, title, next_post_rank, tail)
+        post_id = self._FSDBsys.content_db.insert_new_post(route, mane, post_type, alignment, width, title, next_post_rank, show_title, show_date, tail)
         self._FSDBsys.rank_db.increment_post_rank(route)
 
         post_fields = POST_TYPE_MAP.get(post_type)

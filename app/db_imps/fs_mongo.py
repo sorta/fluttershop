@@ -39,7 +39,7 @@ class FShopMongoDB():
         post_col = self.posts_collection
         return post_col.find({'route_id': unicode(route_id).lower()}).sort('rank', -1).limit(post_limit)
 
-    def insert_new_post(self, route, mane, post_type, alignment, width, title, next_rank, tail=None):
+    def insert_new_post(self, route, mane, post_type, alignment, width, title, next_rank, show_title, show_date, tail=None):
         post_col = self.posts_collection
         timestamp = datetime.now()
         new_post = {
@@ -49,6 +49,8 @@ class FShopMongoDB():
             "alignment": alignment,
             "width": width,
             "title": title,
+            "show_title": show_title,
+            "show_date": show_date,
             "date_created": timestamp,
             "timestamp": timestamp,
             "rank": next_rank

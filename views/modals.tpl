@@ -6,7 +6,7 @@
         <h3>Please Login</h3>
     </div>
     <div class="modal-body">
-        <form action="/login" class="form-vertical" id="loginForm" method="post">
+        <form action="/_sitefuncs_/login" class="form-vertical" id="loginForm" method="post">
             <input name="selected_url" type="hidden" value="{{ selected_route }}" />
             <label>User</label>
             <input id="login_username" name="login_username" type="text" class="span3 offset2" placeholder="Username" />
@@ -20,13 +20,31 @@
     </div>
 </div>
 
+<div class="modal hide fade" id="logout_modal">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Logout</h3>
+    </div>
+    <div class="modal-body">
+
+        <form action="/_sitefuncs_/logout" method="post" id="logoutForm">
+            <label>Are you sure you want to log out?</label>
+            <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+    </div>
+    <div class="modal-footer">
+            <a class="btn" data-dismiss="modal">Close</a>
+            <input class="btn btn-primary" type="submit" value="Log Out" />
+        </form>
+    </div>
+</div>
+
 <div class="modal hide fade" id="add_mane_modal">
     <div class="modal-header">
         <a class="close" data-dismiss="modal">×</a>
         <h3>Add Mane Tab</h3>
     </div>
     <div class="modal-body">
-        <form action="/addmane" class="form-vertical" id="addMane" method="post">
+        <form action="/_sitefuncs_/addmane" class="form-vertical" id="addMane" method="post">
             <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
             <label>Name</label>
@@ -49,7 +67,7 @@
         <h3>Add Tail Tab</h3>
     </div>
     <div class="modal-body">
-        <form action="/addtail" class="form-vertical" id="addTail" method="post">
+        <form action="/_sitefuncs_/addtail" class="form-vertical" id="addTail" method="post">
             <input name="selected_url" type="hidden" value="{{ selected_route }}" />
             <input name="selected_mane" type="hidden" value="{{ selected_mane }}" />
 
@@ -68,6 +86,27 @@
 </div>
 
 %if logged_in:
+
+    <div class="modal hide fade" id="site_options_modal">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Site Options</h3>
+        </div>
+        <div class="modal-body">
+            <form action="/_sitefuncs_/options" class="form-vertical" id="addMane" method="post">
+                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+
+                <label>Username</label>
+                <input name="username" type="text" class="span3" value="{{user.get('username', 'User')}}" />
+        </div>
+        <div class="modal-footer">
+                <div class="pull-left">Password<input name="current_password" type="password" class="span3" /></div>
+                <a class="btn" data-dismiss="modal">Close</a>
+                <input class="btn btn-primary" type="submit" value="Submit" />
+            </form>
+        </div>
+    </div>
+
     %for link in manelinks:
 
         <div class="modal hide fade" id="delete_mane_modal_{{ link['mane_name'] }}">
@@ -76,14 +115,14 @@
                 <h3>Delete Mane Tab</h3>
             </div>
             <div class="modal-body">
-                <form action="/deletemane" class="form-vertical" method="post">
+                <form action="/_sitefuncs_/deletemane" class="form-vertical" method="post">
                     <label>Are you sure you want to delete this Mane Tab ({{ link['mane_name'] }})?</label>
                     <input name="selected_url" type="hidden" value="{{ selected_route }}" />
                     <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
             </div>
             <div class="modal-footer">
                     <a class="btn" data-dismiss="modal">Close</a>
-                    <input class="btn btn-danger" type="submit" value="delete" />
+                    <input class="btn btn-danger" type="submit" value="DESTROY!" />
                 </form>
             </div>
         </div>
@@ -98,7 +137,7 @@
                 <h3>Delete Tail Tab</h3>
             </div>
             <div class="modal-body">
-                <form action="/deletetail" class="form-vertical" method="post">
+                <form action="/_sitefuncs_/deletetail" class="form-vertical" method="post">
                     <label>Are you sure you want to delete this Tail Tab ({{ link['tail_name'] }})?</label>
                     <input name="selected_url" type="hidden" value="{{ selected_route }}" />
                     <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
@@ -106,7 +145,7 @@
             </div>
             <div class="modal-footer">
                     <a class="btn" data-dismiss="modal">Close</a>
-                    <input class="btn btn-danger" type="submit" value="delete" />
+                    <input class="btn btn-danger" type="submit" value="HULK SMASH!" />
                 </form>
             </div>
         </div>

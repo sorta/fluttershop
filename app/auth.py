@@ -10,8 +10,8 @@ class FShopAuth(object):
         self._config = config
         self._FSDBsys = dbsys
 
-        fshop_bottle.post('/login')(self.login)
-        fshop_bottle.post('/logout')(self.logout)
+        fshop_bottle.post('/_sitefuncs_/login')(self.login)
+        fshop_bottle.post('/_sitefuncs_/logout')(self.logout)
 
     #### User Routes ####
     def login(self):

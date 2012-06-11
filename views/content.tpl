@@ -8,12 +8,19 @@
         <div class="span{{ post['width'] }}">
             <table class="table table-bordered table-striped">
                 <tbody>
+                    %if post['show_title'] or post['show_date']:
                     <tr>
                         <td>
-                            <h1 style="display:inline;">{{ post['title'] }}</h1>
-                            <em> Posted: {{ post['date'].strftime('%B %d, %Y %H:%M %Z %x %X') }}</em>
+                            %if post['show_title']:
+                                <h2 style="display:inline;">{{ post['title'] }}</h2>
+                            %end
+
+                            %if post['show_date']:
+                                <em class="pull-right"> Posted: {{ post['date_created'].strftime('%B %d, %Y %H:%M %Z %x %X') }}</em>
+                            %end
                         </td>
                     </tr>
+                    %end
                     <tr>
                         <td>
                             %for part in post['parts']:

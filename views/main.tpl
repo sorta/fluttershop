@@ -23,7 +23,7 @@
         %end
         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
-        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/'), manelinks=manelinks, taillinks=get('taillinks', []), logged_in=logged_in
+        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/'), manelinks=manelinks, taillinks=get('taillinks', []), logged_in=logged_in, user=get('user', {})
 
         <!-- NAVBAR -->
         <div class="navbar navbar-fixed-top">
@@ -64,30 +64,19 @@
 
                             %end
                             %if logged_in:
-                                <li><a data-toggle="modal" href="#add_mane_modal" class="badge badge-info"><i class="icon-plus-sign"></i></a></li>
+                                <li><a data-toggle="modal" href="#add_mane_modal" class="badge badge-info"><i class="icon-plus"></i></a></li>
                             %end
 
                         </ul>
                         <!-- Right -->
                         <ul class="nav pull-right">
                             %if logged_in:
-                                <li>
-                                    <div class="btn-group">
-                                        <button class="btn btn-info dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i><span class="caret"></span></button>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="">Set Username</a></li>
-                                        </ul>
-                                    </div>
-                                </li>
                                 <li class="divider-vertical"></li>
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown">{{ user.get("username", "User") }}<b class="caret"></b></a>
                                     <ul class="dropdown-menu">
-
-                                        <form action="/logout" method="post" id="logoutForm">
-                                            <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                                            <li><input type="submit" class='btn' value="Log Out" /></li>
-                                        </form>
+                                        <li><a data-toggle="modal" href="#site_options_modal" >Site Options</a></li>
+                                        <li><a data-toggle="modal" href="#logout_modal" >Log Out</a></li>
                                     </ul>
                                 </li>
                             %else:
@@ -110,17 +99,17 @@
                         <li>
                     %end
 
-                    <a href="{{ link['route_name'] }}">{{ link['display'] }}</a>
 
                     %if logged_in:
-                        <a data-toggle="modal" href="#delete_tail_modal_{{ link['tail_name'] }}">
+                        <div class="close"><a data-toggle="modal" href="#delete_tail_modal_{{ link['tail_name'] }}">
                             <i class="icon-remove"></i>
-                        </a>
+                        </a></div>
                     %end
+                    <a href="{{ link['route_name'] }}">{{ link['display'] }}</a>
                     </li>
                 %end
                 %if logged_in:
-                    <li><a data-toggle="modal" href="#add_tail_modal" class="badge badge-info"><i class="icon-plus-sign"></i></a></li>
+                    <li><a data-toggle="modal" href="#add_tail_modal" class="badge badge-info"><i class="icon-plus"></i></a></li>
                 %end
             </ul>
             <!-- CONTENT -->
@@ -129,66 +118,120 @@
                 <div class="tab-pane active" id="ActiveTab">
                     <div class="container-fluid">
                         %if logged_in:
-                            <div class="span4">
-                                <table class="table table-bordered table-striped">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <form class="form-vertical" action="/addpost" method="post">
-                                                    <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                                                    <input name="sel_post_type" id="sel_post_type" type="hidden" value="txt" />
-                                                    <input name="enc_post_parts" id="enc_post_parts" type="hidden" value="" />
+                            <div class="row-fluid">
+                                <div class="span6">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <form class="form-vertical" action="/_sitefuncs_/addpost" method="post">
+                                                        <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                                                        <input name="sel_post_type" id="sel_post_type" type="hidden" value="txt" />
+                                                        <input name="enc_post_parts" id="enc_post_parts" type="hidden" value="" />
 
-                                                    <div id="pe_title" class="collapse">
-                                                        <label>Title</label>
-                                                    </div>
-                                                    <input name="post_title" type="text" class="span4" placeholder="Post something..." data-toggle="collapse" data-target="#pe0"></input>
-                                                    <div id="pe0" class="collapse"></div>
+                                                        <div id="pe_title" class="collapse">
+                                                            <label>Title</label>
+                                                        </div>
+                                                        <input name="post_title" type="text" class="span12" placeholder="Post something..." data-toggle="collapse" data-target="#pe0"></input>
+                                                        <div id="pe0" class="collapse"></div>
 
-                                                    <div id="pe_details" class="collapse">
-                                                        <ul class="nav nav-pills" id="post_pills">
-                                                            <li class="active"><a href="#pe_txt" data-toggle="pill"><i class="icon-pencil"></i></a></li>
-                                                            <li><a href="#pe_pic" data-toggle="pill"><i class="icon-picture"></i></a></li>
-                                                            <li><a href="#pe_lnk" data-toggle="pill"><i class="icon-globe"></i></a></li>
-                                                            <li><a href="#pe_vid" data-toggle="pill"><i class="icon-film"></i></a></li>
-                                                        </ul>
+                                                        <div id="pe_details" class="collapse">
+                                                            <ul class="nav nav-pills" id="post_pills">
+                                                                <li class="active"><a href="#pe_txt" data-toggle="pill"><i class="icon-pencil"></i></a></li>
+                                                                <li><a href="#pe_pic" data-toggle="pill"><i class="icon-picture"></i></a></li>
+                                                                <li><a href="#pe_lnk" data-toggle="pill"><i class="icon-globe"></i></a></li>
+                                                                <li><a href="#pe_vid" data-toggle="pill"><i class="icon-film"></i></a></li>
+                                                            </ul>
 
-                                                        <div class="tab-content">
-                                                            <div id="pe_txt" class="tab-pane active">
-                                                                <label>Text</label>
-                                                                <textarea name="post_text" id="post_tb" class="span4"></textarea>
-                                                            </div>
+                                                            <div class="tab-content">
+                                                                <div id="pe_txt" class="tab-pane active">
+                                                                    <label>Text</label>
+                                                                    <textarea name="post_text" id="post_tb" class="span12"></textarea>
+                                                                </div>
 
-                                                            <div id="pe_pic" class="tab-pane">
-                                                                <label>Url</label>
-                                                                <input name="post_pic_url" type="text" class="span4"></input>
-                                                                <label>Caption</label>
-                                                                <input name="post_pic_alt" type="text" class="span4"></input>
-                                                            </div>
+                                                                <div id="pe_pic" class="tab-pane">
+                                                                    <label>Url</label>
+                                                                    <input name="post_pic_url" type="text" class="span12"></input>
+                                                                    <label>Caption</label>
+                                                                    <input name="post_pic_alt" type="text" class="span12"></input>
+                                                                </div>
 
-                                                            <div name="pe_lnk" id="pe_lnk" class="tab-pane">
-                                                                <label>Url</label>
-                                                                <input name="post_link_url" type="text" class="span4"></input>
-                                                                <label>Alt</label>
-                                                                <input name="post_link_alt" type="text" class="span4"></input>
-                                                            </div>
+                                                                <div name="pe_lnk" id="pe_lnk" class="tab-pane">
+                                                                    <label>Url</label>
+                                                                    <input name="post_link_url" type="text" class="span12"></input>
+                                                                    <label>Alt</label>
+                                                                    <input name="post_link_alt" type="text" class="span12"></input>
+                                                                </div>
 
-                                                            <div id="pe_vid" class="tab-pane">
-                                                                <label>Url</label>
-                                                                <input name="post_vid_url" type="text" class="span4"></input>
-                                                                <label>Description</label>
-                                                                <input name="post_vid_alt" type="text" class="span4"></input>
+                                                                <div id="pe_vid" class="tab-pane">
+                                                                    <label>Url</label>
+                                                                    <input name="post_vid_url" type="text" class="span12"></input>
+                                                                    <label>Description</label>
+                                                                    <input name="post_vid_alt" type="text" class="span12"></input>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div id="pe_post_buttons" class="collapse">
-                                                        <button type="submit" class="btn btn-primary pull-right"><i class="icon-plus-sign"></i>Post</Button>
-                                                    </div>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                                        <div id="pe_post_buttons" class="collapse">
+                                                            <div class="row-fluid">
+                                                                <div class="span4">
+                                                                    <label>Show</label>
+                                                                    <div class="btn-group" data-toggle="buttons-checkbox">
+                                                                        <button type="button" id="pst_button" class="btn active">Title</button>
+                                                                        <button type="button" id="psd_button" class="btn active">Date</button>
+                                                                        <input type="checkbox" style="display: none;" id="post_show_title" name="post_show_title" checked="true"/>
+                                                                        <input type="checkbox" style="display: none;" id="post_show_date" name="post_show_date" checked="true"/>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="span4">
+                                                                    <label>Alignment</label>
+                                                                    <select class="span10" name="post_alignment">
+                                                                        <option>Left</option>
+                                                                        <option>Right</option>
+                                                                        <option>Center</option>
+                                                                        <option>1</option>
+                                                                        <option>2</option>
+                                                                        <option>3</option>
+                                                                        <option>4</option>
+                                                                        <option>5</option>
+                                                                        <option>6</option>
+                                                                        <option>7</option>
+                                                                        <option>8</option>
+                                                                        <option>9</option>
+                                                                        <option>10</option>
+                                                                        <option>11</option>
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="span4">
+                                                                    <label>Width</label>
+                                                                    <select class="span10" name="post_width">
+                                                                        <option>12</option>
+                                                                        <option>11</option>
+                                                                        <option>10</option>
+                                                                        <option>9</option>
+                                                                        <option>8</option>
+                                                                        <option>7</option>
+                                                                        <option>6</option>
+                                                                        <option>5</option>
+                                                                        <option>4</option>
+                                                                        <option>3</option>
+                                                                        <option>2</option>
+                                                                        <option>1</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div>
+                                                                <button style="display: inline;" type="submit" class="btn btn-primary pull-right"><i class="icon-plus"></i>Post</Button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         %end
                         %include content.tpl rows=get('rows', [])

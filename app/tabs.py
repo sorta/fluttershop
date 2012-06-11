@@ -15,11 +15,11 @@ class FShopTabs(object):
         fshop_bottle.get('/<mane>')(self.mane)
         fshop_bottle.get('/<mane>/<tail>')(self.tail)
 
-        fshop_bottle.post('/addmane')(self.add_mane)
-        fshop_bottle.post('/deletemane')(self.delete_mane)
+        fshop_bottle.post('/_sitefuncs_/addmane')(self.add_mane)
+        fshop_bottle.post('/_sitefuncs_/deletemane')(self.delete_mane)
 
-        fshop_bottle.post('/addtail')(self.add_tail)
-        fshop_bottle.post('/deletetail')(self.delete_tail)
+        fshop_bottle.post('/_sitefuncs_/addtail')(self.add_tail)
+        fshop_bottle.post('/_sitefuncs_/deletetail')(self.delete_tail)
 
     #### View Routes ####
     @view('main')

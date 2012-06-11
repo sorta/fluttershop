@@ -114,7 +114,10 @@ class FShopUtil(object):
                     'post_type': post.get('post_type', u'txt'),
                     'post_id': post['_id'],
                     'title': post.get('title', u""),
-                    'date': post.get('timestamp', datetime.now()),
+                    'timestamp': post.get('timestamp', datetime.now()),
+                    'date_created': post.get('date_created', datetime.now()),
+                    'show_title': post['show_title'],
+                    'show_date': post['show_date'],
                     'width': width,
                     'offset': offset,
                     'parts': part_list
@@ -124,3 +127,8 @@ class FShopUtil(object):
             rows.append(post_list)
 
         return rows
+
+    def parse_checkbox(self, data):
+        if data == "on":
+            return True
+        return False
