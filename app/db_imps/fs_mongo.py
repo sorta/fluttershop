@@ -129,6 +129,16 @@ class FShopMongoDB():
         }
         self.options_collection.update({"option_type": "user", "username": current_username}, {"$set": update})
 
+    def modify_password(self, current_username, new_password):
+        timestamp = datetime.now()
+        hashed_pass, salt = self._crypto.hash_password(new_password)
+        update = {
+            "salt": salt,
+            "password": hashed_pass,
+            "password_modified": timestamp
+        }
+        self.options_collection.update({"option_type": "user", "username": current_username}, {"$set": update})
+
     def get_site_name(self):
         return self.options_collection.find_one({"option_type": "site_name"})
 

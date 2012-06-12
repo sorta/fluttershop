@@ -70,13 +70,15 @@
                         </ul>
                         <!-- Right -->
                         <ul class="nav pull-right">
+                            <li class="divider-vertical"></li>
                             %if logged_in:
-                                <li class="divider-vertical"></li>
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown">{{ user.get("username", "User") }}<b class="caret"></b></a>
                                     <ul class="dropdown-menu">
-                                        <li><a data-toggle="modal" href="#site_options_modal" >Site Options</a></li>
-                                        <li><a data-toggle="modal" href="#logout_modal" >Log Out</a></li>
+                                        <li><a data-toggle="modal" href="#site_options_modal">Site Options</a></li>
+                                        <li><a data-toggle="modal" href="#passchange_modal">Change Password</a></li>
+                                        <li class="divider"></li>
+                                        <li><a data-toggle="modal" href="#logout_modal">Log Out</a></li>
                                     </ul>
                                 </li>
                             %else:

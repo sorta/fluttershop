@@ -69,6 +69,31 @@
         </div>
     </div>
 
+    <div class="modal hide fade" id="passchange_modal">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Change Password</h3>
+        </div>
+        <div class="modal-body">
+            <form action="/_sitefuncs_/changepassword" class="form-vertical" id="passChangeForm" method="post">
+
+                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                <input name="current_username" type="hidden" value="{{ user.get('username', 'User') }}" />
+
+                <label>New Password</label>
+                <input name="new_pass" type="password" class="span3"/>
+
+                <label>Confirm New Password</label>
+                <input name="confirm_new_pass" type="password" class="span3"/>
+        </div>
+        <div class="modal-footer">
+                <div class="pull-left">Current Password<input name="current_password" type="password" class="span3" /></div>
+                <a class="btn" data-dismiss="modal">Close</a>
+                <input class="btn btn-danger" type="submit" value="Change Password" />
+            </form>
+        </div>
+    </div>
+
     <div class="modal hide fade" id="add_mane_modal">
         <div class="modal-header">
             <a class="close" data-dismiss="modal">×</a>
