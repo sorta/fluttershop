@@ -61,7 +61,7 @@ class FShopMongoDB():
 
         return post_col.insert(new_post)
 
-    def insert_new_post_part(self, post_id, part_type, body, next_rank, alt_text=None, caption=None):
+    def insert_new_post_part(self, post_id, part_type, body, next_rank, alt_text=None, caption=None, url=None):
         part_col = self.parts_collection
         timestamp = datetime.now()
         new_part = {
@@ -77,6 +77,10 @@ class FShopMongoDB():
             new_part["alt_text"] = alt_text
         if caption:
             new_part["caption"] = caption
+        if url:
+            new_part["url"] = url
+        if part_type == "vid":
+            new_part["yt_id"] = self._crypto.yt_video_id(url)
 
         part_col.insert(new_part)
 

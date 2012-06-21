@@ -147,30 +147,35 @@
 
                                                             <div class="tab-content">
                                                                 <div id="pe_txt" class="tab-pane active">
-                                                                    <label>Text</label>
-                                                                    <textarea name="post_text" id="post_tb" class="span12"></textarea>
+                                                                    <label>Post Text*</label>
                                                                 </div>
 
                                                                 <div id="pe_pic" class="tab-pane">
-                                                                    <label>Url</label>
+                                                                    <label>Url*</label>
                                                                     <input name="post_pic_url" type="text" class="span12"></input>
-                                                                    <label>Caption</label>
+                                                                    <label>Alt-Text</label>
                                                                     <input name="post_pic_alt" type="text" class="span12"></input>
+                                                                    <label>Caption</label>
+                                                                    <input name="post_pic_cap" type="text" class="span12"></input>
+                                                                    <label>Post Text</label>
                                                                 </div>
 
                                                                 <div name="pe_lnk" id="pe_lnk" class="tab-pane">
-                                                                    <label>Url</label>
+                                                                    <label>Url*</label>
                                                                     <input name="post_link_url" type="text" class="span12"></input>
-                                                                    <label>Alt</label>
+                                                                    <label>Alt-Text</label>
                                                                     <input name="post_link_alt" type="text" class="span12"></input>
+                                                                    <label>Post Text</label>
                                                                 </div>
 
                                                                 <div id="pe_vid" class="tab-pane">
-                                                                    <label>Url</label>
+                                                                    <label>Url*</label>
                                                                     <input name="post_vid_url" type="text" class="span12"></input>
-                                                                    <label>Description</label>
-                                                                    <input name="post_vid_alt" type="text" class="span12"></input>
+                                                                    <label>Caption</label>
+                                                                    <input name="post_vid_cap" type="text" class="span12"></input>
+                                                                    <label>Post Text</label>
                                                                 </div>
+                                                                <textarea name="post_text" id="post_tb" class="span12"></textarea>
                                                             </div>
                                                         </div>
                                                         <div id="pe_post_buttons" class="collapse">

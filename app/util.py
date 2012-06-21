@@ -100,8 +100,10 @@ class FShopUtil(object):
                         'part_type': part.get('part_type', u'text'),
                         'part_id': part['_id'],
                         'body': part.get('body', u""),
+                        'url': part.get('url', u""),
                         'alt_text': part.get('alt_text', u""),
-                        'caption': part.get('caption', u"")
+                        'caption': part.get('caption', u""),
+                        'yt_id': part.get('yt_id', u""),
                     })
 
             requested = post.get('width', 12)

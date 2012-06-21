@@ -2,9 +2,10 @@ from bottle import request, redirect
 
 
 class FShopPost(object):
-    def __init__(self, ptype, bfield, atfield="post_alt_text", capfield="post_caption"):
+    def __init__(self, ptype, urlfield="post_url", atfield="post_alt_text", capfield="post_caption"):
         self._post_type = ptype
-        self._body_field = bfield
+        self._body_field = "post_text"
+        self._url_field = urlfield
         self._alt_text_field = atfield
         self._caption_field = capfield
 
@@ -17,6 +18,10 @@ class FShopPost(object):
         return self._body_field
 
     @property
+    def url_field(self):
+        return self._url_field
+
+    @property
     def alt_text_field(self):
         return self._alt_text_field
 
@@ -26,10 +31,10 @@ class FShopPost(object):
 
 
 POST_TYPE_MAP = {
-    'txt': FShopPost('txt', 'post_text'),
-    'pic': FShopPost('pic', 'post_pic_url', 'post_pic_alt'),
+    'txt': FShopPost('txt'),
+    'pic': FShopPost('pic', 'post_pic_url', 'post_pic_alt', 'post_pic_cap'),
     'lnk': FShopPost('lnk', 'post_link_url', 'post_link_alt'),
-    'vid': FShopPost('vid', 'post_vid_url', 'post_vid_alt')
+    'vid': FShopPost('vid', 'post_vid_url', capfield='post_vid_cap')
 }
 
 ALIGN_SET = set(['Left', 'Right', 'Center'])
@@ -68,11 +73,12 @@ class FShopContent(object):
 
         post_fields = POST_TYPE_MAP.get(post_type)
         body = form.get(post_fields.body_field)
+        url = form.get(post_fields.url_field, None)
         alt_text = form.get(post_fields.alt_text_field, None)
         caption = form.get(post_fields.caption_field, None)
         next_part_rank = self._FSDBsys.rank_db.get_next_post_part_rank(post_id)
 
-        self._FSDBsys.content_db.insert_new_post_part(post_id, post_type, body, next_part_rank, alt_text, caption)
+        self._FSDBsys.content_db.insert_new_post_part(post_id, post_type, body, next_part_rank, alt_text, caption, url)
         self._FSDBsys.rank_db.increment_post_part_rank(post_id)
 
         redirect(route)
