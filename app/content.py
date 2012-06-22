@@ -33,7 +33,7 @@ class FShopPost(object):
 POST_TYPE_MAP = {
     'txt': FShopPost('txt'),
     'pic': FShopPost('pic', 'post_pic_url', 'post_pic_alt', 'post_pic_cap'),
-    'lnk': FShopPost('lnk', 'post_link_url', 'post_link_alt'),
+    'lnk': FShopPost('lnk', 'post_link_url', 'post_link_alt', 'post_link_cap'),
     'vid': FShopPost('vid', 'post_vid_url', capfield='post_vid_cap')
 }
 

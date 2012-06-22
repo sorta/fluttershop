@@ -7,27 +7,30 @@
         %end
         <div class="span{{ post['width'] }}">
             <table class="table table-bordered table-striped">
-                <tbody>
-                    %if post['show_title'] or post['show_date']:
+                %if post['show_title'] or post['show_date']:
+                <thead>
                     <tr>
-                        <td>
+                        <th>
                             %if post['show_title']:
                                 <h2 style="display:inline;">{{ post['title'] }}</h2>
                             %end
 
                             %if post['show_date']:
-                                <em class="pull-right"> Posted: {{ post['date_created'].strftime('%B %d, %Y %H:%M %Z %x %X') }}</em>
+                                <em class="pull-right" style="font-weight: normal;">Posted: {{ post['date_created'].strftime('%B %d, %Y %H:%M %Z %x %X') }}</em>
                             %end
-                        </td>
+                        </th>
                     </tr>
-                    %end
-                    <tr>
-                        <td>
-                            %for part in post['parts']:
+                </thead>
+                %end
+                <tbody>
+                    %for part in post['parts']:
+                        <tr>
+                            <td>
                                 <p>{{ part['body'] }}</p>
                                 <div class="row-fluid">
 
                                     %if part["part_type"] == "pic":
+                                        </tr></td><tr><td>
                                         <div class="span3"></div>
                                         <div class="span6">
                                             <ul class="thumbnails">
@@ -40,10 +43,12 @@
                                             </ul>
                                         </div>
                                     %elif part["part_type"] == "lnk":
+                                        </tr></td><tr><td>
                                         <div style="text-align: center;">
                                             <a href="{{ part['url'] }}" title="{{ part['alt_text'] }}">{{ part['caption'] }}</a>
                                         </div>
                                     %elif part["part_type"] == "vid":
+                                        </tr></td><tr><td>
                                         <div class="span2"></div>
                                         <div class="span10">
                                             <ul class="thumbnails">
@@ -57,9 +62,9 @@
                                         </div>
                                     %end
                                 </div>
-                            %end
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    %end
                 </tbody>
             </table>
         </div>

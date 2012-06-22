@@ -163,6 +163,8 @@
                                                                 <div name="pe_lnk" id="pe_lnk" class="tab-pane">
                                                                     <label>Url*</label>
                                                                     <input name="post_link_url" type="text" class="span12"></input>
+                                                                    <label>Display Text*</label>
+                                                                    <input name="post_link_cap" type="text" class="span12"></input>
                                                                     <label>Alt-Text</label>
                                                                     <input name="post_link_alt" type="text" class="span12"></input>
                                                                     <label>Post Text</label>
