@@ -9,21 +9,21 @@ def get_db_sys(name, config, crypto):
         global FSM
         if FSM is None:
             from app.db_imps.fs_mongo import FShopMongoDB
-            FSM = FShopMongoDB(crypto, config.mongo_address, config.mongo_port)
+            FSM = FShopMongoDB(crypto, config)
         return FSM
 
     if name == 'sdb':
         global FSS
         if FSS is None:
             from db_imps.fs_sdb import FShopSimpleDB
-            FSS = FShopSimpleDB(crypto, config.sdb_key, config.sdb_secret_key)
+            FSS = FShopSimpleDB(crypto, config)
         return FSS
 
     if name == 'redis':
         global FSR
         if FSR is None:
             from app.db_imps.fs_redis import FShopRedis
-            FSR = FShopRedis(crypto, config.redis_address, config.redis_port)
+            FSR = FShopRedis(crypto, config)
         return FSR
 
 

@@ -4,9 +4,9 @@ import pymongo
 
 class FShopMongoDB():
 
-    def __init__(self, crypto, db_address, db_port=27017):
-        self._connection = pymongo.Connection(db_address, db_port)
-        self._mdb = self._connection.fluttershop
+    def __init__(self, crypto, config):
+        self._connection = pymongo.Connection(config.mongo_address, config.mongo_port)
+        self._mdb = self._connection[config.deployment]
         self._crypto = crypto
 
     #### Collections ###

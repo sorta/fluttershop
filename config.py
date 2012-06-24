@@ -6,6 +6,7 @@ DEF_CONF = {
     'autoreload': True,
     'debug': False,
     'server': 'auto',
+    'deployment': 'fluttershop',
     'mongo_address': '127.0.0.1',
     'mongo_port': 27017,
     'redis_address': '127.0.0.1',
@@ -34,6 +35,7 @@ class FShopConfig():
         self._autoreload = conf.getboolean('general', 'autoreload')
         self._debug = conf.getboolean('general', 'debug')
         self._server = conf.get('general', 'server')
+        self._deployment = conf.get('general', 'deployment')
 
         self._mongo_address = conf.get('db', 'mongo_address')
         self._mongo_port = conf.getint('db', 'mongo_port')
@@ -65,6 +67,10 @@ class FShopConfig():
     @property
     def server(self):
         return self._server
+
+    @property
+    def deployment(self):
+        return self._deployment
 
     @property
     def mongo_address(self):
