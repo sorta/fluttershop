@@ -12,8 +12,8 @@ class FShopTabs(object):
         self._util = util
         self._auth = auth
 
-        fshop_bottle.get('/<mane>')(self.mane)
-        fshop_bottle.get('/<mane>/<tail>')(self.tail)
+        fshop_bottle.get('/<mane_name>')(self.mane)
+        fshop_bottle.get('/<mane_name>/<tail_name>')(self.tail)
 
         fshop_bottle.post('/_sitefuncs_/addmane')(self.add_mane)
         fshop_bottle.post('/_sitefuncs_/deletemane')(self.delete_mane)
@@ -23,15 +23,20 @@ class FShopTabs(object):
 
     #### View Routes ####
     @view('main')
-    def mane(self, mane):
-        if not self._FSDBsys.route_db.get_mane(mane):
+    def mane(self, mane_name):
+
+        mane = self._FSDBsys.route_db.get_mane(mane_name)
+        if not mane:
             abort(404)
         pm = self._util.get_page_model(mane)
         return pm
 
     @view('main')
-    def tail(self, mane, tail):
-        if not self._FSDBsys.route_db.get_tail(mane, tail):
+    def tail(self, mane_name, tail_name):
+        mane = self._FSDBsys.route_db.get_mane(mane_name)
+        tail = self._FSDBsys.route_db.get_tail(mane_name, tail_name)
+
+        if not mane or not tail:
             abort(404)
         pm = self._util.get_page_model(mane, tail)
         return pm

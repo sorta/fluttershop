@@ -9,6 +9,8 @@
         <!-- <script language="javascript" src="/static/js/jquery-1.7.1.min.js"></script> -->
         <script language="javascript" src="/static/bootstrap/js/bootstrap.js"></script>
         <script language="javascript" src="/static/js/ws1.js"></script>
+        <title>{{ page_title }}</title>
+        <meta name="description" content="{{ page_desc }}" />
     </head>
     <body style="padding-top: 40px;">
 
@@ -119,6 +121,11 @@
                 <div style="height: 19px"></div>
                 <div class="tab-pane active" id="ActiveTab">
                     <div class="container-fluid">
+                        <div class="alert fade in">
+                            <button class="close" data-dismiss="alert">×</button>
+                            <strong>Warning!</strong> Best check yo self, you're not looking too good.
+                        </div>
+
                         %if logged_in:
                             <div class="row-fluid">
                                 <div class="span6">
@@ -146,11 +153,11 @@
                                                             </ul>
 
                                                             <div class="tab-content">
-                                                                <div id="pe_txt" class="tab-pane active">
+                                                                <div id="pe_txt" class="tab-pane active fade in">
                                                                     <label>Post Text*</label>
                                                                 </div>
 
-                                                                <div id="pe_pic" class="tab-pane">
+                                                                <div id="pe_pic" class="tab-pane fade in">
                                                                     <label>Url*</label>
                                                                     <input name="post_pic_url" type="text" class="span12"></input>
                                                                     <label>Alt-Text</label>
@@ -160,7 +167,7 @@
                                                                     <label>Post Text</label>
                                                                 </div>
 
-                                                                <div name="pe_lnk" id="pe_lnk" class="tab-pane">
+                                                                <div name="pe_lnk" id="pe_lnk" class="tab-pane fade in">
                                                                     <label>Url*</label>
                                                                     <input name="post_link_url" type="text" class="span12"></input>
                                                                     <label>Display Text*</label>
@@ -170,7 +177,7 @@
                                                                     <label>Post Text</label>
                                                                 </div>
 
-                                                                <div id="pe_vid" class="tab-pane">
+                                                                <div id="pe_vid" class="tab-pane fade in">
                                                                     <label>Url*</label>
                                                                     <input name="post_vid_url" type="text" class="span12"></input>
                                                                     <label>Caption</label>
@@ -243,6 +250,7 @@
                                 </div>
                             </div>
                         %end
+
                         %include content.tpl rows=get('rows', [])
                     </div>
                 </div>

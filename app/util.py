@@ -14,17 +14,29 @@ class FShopUtil(object):
 
     #### Helpers ####
     def get_page_model(self, mane, tail=None):
-        manes, tails = self._FSDBsys.route_db.get_links_for_mane(mane)
+        manes, tails = self._FSDBsys.route_db.get_links_for_mane(mane['mane_name'])
         site_name = self._FSDBsys.options_db.get_site_name()
 
-        route = u"/{0}/{1}".format(mane, tail) if tail else u"/{0}".format(mane)
+        if tail:
+            route = tail['route_name']
+            page_title = tail['title']
+            page_desc = tail['desc']
+            tail_name = tail['tail_name']
+        else:
+            route = mane['route_name']
+            page_title = mane['title']
+            page_desc = mane['desc']
+            tail_name = None
+
         rows = self.listify_posts(route)
 
         return self.add_user_info({
             'manelinks': manes,
             'taillinks': tails,
-            'selected_mane': mane,
-            'selected_tail': tail,
+            'selected_mane': mane['mane_name'],
+            'selected_tail': tail_name,
+            'page_title': page_title,
+            'page_desc': page_desc,
             'site_name': site_name["site_name"],
             'rows': rows
         })
