@@ -6,11 +6,12 @@ from bottle import view, abort, request, redirect
 
 class FShopTabs(object):
 
-    def __init__(self, config, dbsys, fshop_bottle, auth, util):
+    def __init__(self, b_util, config, dbsys, fshop_bottle, auth, util):
         self._config = config
         self._FSDBsys = dbsys
         self._util = util
         self._auth = auth
+        self._base_util = b_util
 
         fshop_bottle.get('/<mane_name>')(self.mane)
         fshop_bottle.get('/<mane_name>/<tail_name>')(self.tail)
@@ -49,8 +50,7 @@ class FShopTabs(object):
         mane = form['mane_name']
 
         if self._FSDBsys.route_db.get_mane(mane):
-            # Flash Error!
-            pass
+            self._base_util.flash_alert("Could not add specified mane tab. One with that name already exists.", "alert-error", "Operation Failed")
         else:
             title = form.get('mane_title', None)
             desc = form.get('mane_desc', None)
@@ -80,8 +80,7 @@ class FShopTabs(object):
         tail = form['tail_name']
 
         if self._FSDBsys.route_db.get_tail(mane, tail):
-            # Flash Error!
-            pass
+            self._base_util.flash_alert("Could not add specified tail tab. One with that name already exists.", "alert-error", "Operation Failed")
         else:
             priority = self._FSDBsys.rank_db.get_next_tail_rank(mane)
             title = form.get('tail_title', None)

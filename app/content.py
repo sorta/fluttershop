@@ -42,11 +42,12 @@ ALIGN_SET = set(['Left', 'Right', 'Center'])
 
 class FShopContent(object):
 
-    def __init__(self, config, dbsys, fshop_bottle, auth, util):
+    def __init__(self, b_util, config, dbsys, fshop_bottle, auth, util):
         self._config = config
         self._FSDBsys = dbsys
         self._auth = auth
         self._util = util
+        self._base_util = b_util
 
         fshop_bottle.post('/_sitefuncs_/addpost')(self.add_post)
 

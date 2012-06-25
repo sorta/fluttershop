@@ -4,9 +4,10 @@ import pymongo
 
 class FShopMongoDB():
 
-    def __init__(self, crypto, config):
+    def __init__(self, b_util, crypto, config):
         self._connection = pymongo.Connection(config.mongo_address, config.mongo_port)
         self._mdb = self._connection[config.deployment]
+        self._base_util = b_util
         self._crypto = crypto
 
     #### Collections ###
@@ -80,7 +81,7 @@ class FShopMongoDB():
         if url:
             new_part["url"] = url
         if part_type == "vid":
-            new_part["yt_id"] = self._crypto.yt_video_id(url)
+            new_part["yt_id"] = self._base_util.yt_video_id(url)
 
         part_col.insert(new_part)
 

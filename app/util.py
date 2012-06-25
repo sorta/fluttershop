@@ -4,13 +4,15 @@
 from bottle import request
 from datetime import datetime
 from math import ceil
+from urlparse import urlparse, parse_qs
 
 
 class FShopUtil(object):
 
-    def __init__(self, config, dbsys, fshop_bottle):
+    def __init__(self, b_util, config, dbsys, fshop_bottle):
         self._config = config
         self._FSDBsys = dbsys
+        self._base_util = b_util
 
     #### Helpers ####
     def get_page_model(self, mane, tail=None):
@@ -29,6 +31,7 @@ class FShopUtil(object):
             tail_name = None
 
         rows = self.listify_posts(route)
+        alerts = self.get_flash_alerts()
 
         return self.add_user_info({
             'manelinks': manes,
@@ -38,8 +41,15 @@ class FShopUtil(object):
             'page_title': page_title,
             'page_desc': page_desc,
             'site_name': site_name["site_name"],
-            'rows': rows
+            'rows': rows,
+            'flash_alerts': alerts
         })
+
+    def get_flash_alerts(self):
+        session = request.environ.get('beaker.session')
+        alerts = session.get('flash_alerts', [])
+        session['flash_alerts'] = []
+        return alerts
 
     def add_user_info(self, pm):
         session = request.environ.get('beaker.session')
@@ -148,3 +158,48 @@ class FShopUtil(object):
         if data == "on":
             return True
         return False
+
+
+class FShopBaseUtil(object):
+
+    def yt_video_id(self, url):
+        """
+        Examples:
+        - http://youtu.be/SA2iWivDJiE
+        - http://www.youtube.com/watch?v=_oPAwA_Udwc&feature=feedu
+        - http://www.youtube.com/embed/SA2iWivDJiE
+        - http://www.youtube.com/v/SA2iWivDJiE?version=3&amp;hl=en_US
+        """
+        query = urlparse(url)
+        if query.hostname == 'youtu.be':
+            return query.path[1:]
+        if query.hostname in ('www.youtube.com', 'youtube.com'):
+            if query.path == '/watch':
+                p = parse_qs(query.query)
+                return p['v'][0]
+            if query.path[:7] == '/embed/':
+                return query.path.split('/')[2]
+            if query.path[:3] == '/v/':
+                return query.path.split('/')[2]
+        # fail?
+        return None
+
+    def flash_alert(self, message, msg_class=None, msg_title=None, session=None):
+
+        if not session:
+            session = request.environ.get('beaker.session')
+
+        alerts = session.get('flash_alerts', [])
+        new_alert = {
+            'message': message,
+        }
+
+        if msg_title:
+            new_alert['title'] = msg_title
+
+        if msg_class:
+            new_alert['msg_classes'] = msg_class
+
+        alerts.append(new_alert)
+
+        session['flash_alerts'] = alerts

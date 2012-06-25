@@ -121,10 +121,16 @@
                 <div style="height: 19px"></div>
                 <div class="tab-pane active" id="ActiveTab">
                     <div class="container-fluid">
-                        <div class="alert fade in">
-                            <button class="close" data-dismiss="alert">×</button>
-                            <strong>Warning!</strong> Best check yo self, you're not looking too good.
-                        </div>
+
+                        %for msg in flash_alerts:
+                            <div class="alert alert-block fade in {{ msg['msg_classes'] }}">
+                                <button type="button" class="close" data-dismiss="alert">×</button>
+                                %if msg['title']:
+                                    <h4 class="alert-heading">{{ msg['title'] }}</h4>
+                                %end
+                                {{ msg['message'] }}
+                            </div>
+                        %end
 
                         %if logged_in:
                             <div class="row-fluid">
@@ -194,9 +200,9 @@
                                                                     <div class="btn-group" data-toggle="buttons-checkbox">
                                                                         <button type="button" id="pst_button" class="btn active">Title</button>
                                                                         <button type="button" id="psd_button" class="btn active">Date</button>
-                                                                        <input type="checkbox" style="display: none;" id="post_show_title" name="post_show_title" checked="true"/>
-                                                                        <input type="checkbox" style="display: none;" id="post_show_date" name="post_show_date" checked="true"/>
                                                                     </div>
+                                                                    <input type="checkbox" style="display: none;" id="post_show_title" name="post_show_title" checked="true"/>
+                                                                    <input type="checkbox" style="display: none;" id="post_show_date" name="post_show_date" checked="true"/>
                                                                 </div>
 
                                                                 <div class="span4">
@@ -205,35 +211,18 @@
                                                                         <option>Left</option>
                                                                         <option>Right</option>
                                                                         <option>Center</option>
-                                                                        <option>1</option>
-                                                                        <option>2</option>
-                                                                        <option>3</option>
-                                                                        <option>4</option>
-                                                                        <option>5</option>
-                                                                        <option>6</option>
-                                                                        <option>7</option>
-                                                                        <option>8</option>
-                                                                        <option>9</option>
-                                                                        <option>10</option>
-                                                                        <option>11</option>
+                                                                        %for num in range(1, 12):
+                                                                            <option>{{ num }}</option>
+                                                                        %end
                                                                     </select>
                                                                 </div>
 
                                                                 <div class="span4">
                                                                     <label>Width</label>
                                                                     <select class="span10" name="post_width">
-                                                                        <option>12</option>
-                                                                        <option>11</option>
-                                                                        <option>10</option>
-                                                                        <option>9</option>
-                                                                        <option>8</option>
-                                                                        <option>7</option>
-                                                                        <option>6</option>
-                                                                        <option>5</option>
-                                                                        <option>4</option>
-                                                                        <option>3</option>
-                                                                        <option>2</option>
-                                                                        <option>1</option>
+                                                                        %for num in range(12, 0, -1):
+                                                                            <option>{{ num }}</option>
+                                                                        %end
                                                                     </select>
                                                                 </div>
                                                             </div>

@@ -5,7 +5,7 @@ from beaker.middleware import SessionMiddleware
 
 from config import FShopConfig
 from app.db import FShopDBSys
-from app.util import FShopUtil
+from app.util import FShopUtil, FShopBaseUtil
 from app.auth import FShopAuth
 from app.tabs import FShopTabs
 from app.content import FShopContent
@@ -22,13 +22,14 @@ class FShopApp(object):
         self._current_dir = os.path.dirname(os.path.abspath(__file__))
         self._static_dir = os.path.join(self._current_dir, 'static')
 
+        self._base_util = FShopBaseUtil()
         self._crypto = FShopCrypto()
-        self._FSDBsys = FShopDBSys(self._config, self._crypto)
-        self._util = FShopUtil(self._config, self._FSDBsys, fshop_bottle)
-        self._auth = FShopAuth(self._config, self._FSDBsys, fshop_bottle)
-        self._tabs = FShopTabs(self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
-        self._content = FShopContent(self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
-        self._content = FShopSiteOptions(self._FSDBsys, self._auth, self._crypto, fshop_bottle)
+        self._FSDBsys = FShopDBSys(self._base_util, self._config, self._crypto)
+        self._util = FShopUtil(self._base_util, self._config, self._FSDBsys, fshop_bottle)
+        self._auth = FShopAuth(self._base_util, self._config, self._FSDBsys, fshop_bottle)
+        self._tabs = FShopTabs(self._base_util, self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
+        self._content = FShopContent(self._base_util, self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
+        self._content = FShopSiteOptions(self._base_util, self._FSDBsys, self._auth, self._crypto, fshop_bottle)
 
         fshop_bottle.get('/')(self.index)
         fshop_bottle.route('/static/<filepath:path>')(self.send_static)

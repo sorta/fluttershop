@@ -2,7 +2,7 @@
 <!-- MODALS -->
 <div class="modal hide fade" id="login_modal">
     <div class="modal-header">
-        <a class="close" data-dismiss="modal">×</a>
+        <button type="button" class="close" data-dismiss="modal">×</button>
         <h3>Please Login</h3>
     </div>
     <div class="modal-body">
@@ -14,7 +14,7 @@
             <input id="login_pass" name="login_pass" type="password" class="span3 offset2" placeholder="Password" />
     </div>
     <div class="modal-footer">
-            <a class="btn" data-dismiss="modal">Close</a>
+            <button type="button" class="btn" data-dismiss="modal">Close</button>
             <input class="btn btn-primary" type="submit" value="Login" />
         </form>
     </div>
@@ -24,7 +24,7 @@
 
     <div class="modal hide fade" id="logout_modal">
         <div class="modal-header">
-            <a class="close" data-dismiss="modal">×</a>
+            <button type="button" class="close" data-dismiss="modal">×</button>
             <h3>Logout</h3>
         </div>
         <div class="modal-body">
@@ -34,7 +34,7 @@
                 <input name="selected_url" type="hidden" value="{{ selected_route }}" />
         </div>
         <div class="modal-footer">
-                <a class="btn" data-dismiss="modal">Close</a>
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
                 <input class="btn btn-primary" type="submit" value="Log Out" />
             </form>
         </div>
@@ -42,7 +42,7 @@
 
     <div class="modal hide fade" id="site_options_modal">
         <div class="modal-header">
-            <a class="close" data-dismiss="modal">×</a>
+            <button type="button" class="close" data-dismiss="modal">×</button>
             <h3>Site Options</h3>
         </div>
         <div class="modal-body">
@@ -63,7 +63,7 @@
         </div>
         <div class="modal-footer">
                 <div class="pull-left">Password<input name="current_password" type="password" class="span3" /></div>
-                <a class="btn" data-dismiss="modal">Close</a>
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
                 <input class="btn btn-primary" type="submit" value="Save" />
             </form>
         </div>
@@ -71,7 +71,7 @@
 
     <div class="modal hide fade" id="passchange_modal">
         <div class="modal-header">
-            <a class="close" data-dismiss="modal">×</a>
+            <button type="button" class="close" data-dismiss="modal">×</button>
             <h3>Change Password</h3>
         </div>
         <div class="modal-body">
@@ -88,7 +88,7 @@
         </div>
         <div class="modal-footer">
                 <div class="pull-left">Current Password<input name="current_password" type="password" class="span3" /></div>
-                <a class="btn" data-dismiss="modal">Close</a>
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
                 <input class="btn btn-danger" type="submit" value="Change Password" />
             </form>
         </div>
@@ -96,7 +96,7 @@
 
     <div class="modal hide fade" id="add_mane_modal">
         <div class="modal-header">
-            <a class="close" data-dismiss="modal">×</a>
+            <button type="button" class="close" data-dismiss="modal">×</button>
             <h3>Add Mane Tab</h3>
         </div>
         <div class="modal-body">
@@ -111,7 +111,7 @@
                 <input name="mane_desc" type="textarea" class="span3" placeholder="Tab" />
         </div>
         <div class="modal-footer">
-                <a class="btn" data-dismiss="modal">Close</a>
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
                 <input class="btn btn-primary" type="submit" value="Add" />
             </form>
         </div>
@@ -119,7 +119,7 @@
 
     <div class="modal hide fade" id="add_tail_modal">
         <div class="modal-header">
-            <a class="close" data-dismiss="modal">×</a>
+            <button type="button" class="close" data-dismiss="modal">×</button>
             <h3>Add Tail Tab</h3>
         </div>
         <div class="modal-body">
@@ -135,7 +135,7 @@
                 <input name="tail_desc" type="textarea" class="span3" placeholder="Tab" />
         </div>
         <div class="modal-footer">
-                <a class="btn" data-dismiss="modal">Close</a>
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
                 <input class="btn btn-primary" type="submit" value="Add" />
             </form>
         </div>
@@ -145,7 +145,7 @@
 
         <div class="modal hide fade" id="delete_mane_modal_{{ link['mane_name'] }}">
             <div class="modal-header">
-                <a class="close" data-dismiss="modal">×</a>
+                <button type="button" class="close" data-dismiss="modal">×</button>
                 <h3>Delete Mane Tab</h3>
             </div>
             <div class="modal-body">
@@ -155,7 +155,7 @@
                     <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
             </div>
             <div class="modal-footer">
-                    <a class="btn" data-dismiss="modal">Close</a>
+                    <button type="button" class="btn" data-dismiss="modal">Close</button>
                     <input class="btn btn-danger" type="submit" value="DESTROY!" />
                 </form>
             </div>
@@ -167,7 +167,7 @@
 
         <div class="modal hide fade" id="delete_tail_modal_{{ link['tail_name'] }}">
             <div class="modal-header">
-                <a class="close" data-dismiss="modal">×</a>
+                <button type="button" class="close" data-dismiss="modal">×</button>
                 <h3>Delete Tail Tab</h3>
             </div>
             <div class="modal-body">
@@ -178,7 +178,7 @@
                     <input name="tail_name" type="hidden" value="{{ link['tail_name'] }}" />
             </div>
             <div class="modal-footer">
-                    <a class="btn" data-dismiss="modal">Close</a>
+                    <button type="button" class="btn" data-dismiss="modal">Close</button>
                     <input class="btn btn-danger" type="submit" value="HULK SMASH!" />
                 </form>
             </div>
