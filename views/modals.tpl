@@ -88,7 +88,7 @@
                 <input name="new_password" type="password" class="span3"/>
 
                 <label>Confirm New Password</label>
-                <input name="confirm_new_pass" type="password" class="span3"/>
+                <input name="confirm_new_password" type="password" class="span3"/>
         </div>
         <div class="modal-footer">
                 <div class="pull-left">Current Password<input name="current_password" type="password" class="span3" /></div>

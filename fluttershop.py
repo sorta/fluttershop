@@ -69,7 +69,7 @@ class FShopApp(object):
             self._FSDBsys.options_db._add_def_ppp(10)
 
         if not self._FSDBsys.options_db.at_least_one_user():
-            self._FSDBsys.options_db._add_user("admin", "12345", "example@email.com")
+            self._FSDBsys.options_db._add_user("admin", "123456", "example@email.com")
 
     def start(self):
         self.init_db_if_necessary()

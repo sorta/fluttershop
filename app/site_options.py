@@ -11,7 +11,7 @@ class FShopSiteOptions(object):
         self._base_util = b_util
 
         self._mod_opts_sv = ['new_username', 'new_email', 'default_posts_per_page']
-        self._pass_change_sv = ["new_password", "confirm_new_pass"]
+        self._pass_change_sv = ["new_password", "confirm_new_password"]
 
         fshop_bottle.post("/_sitefuncs_/options")(self.modify_options)
         fshop_bottle.post("/_sitefuncs_/changepassword")(self.modify_password)
@@ -53,5 +53,7 @@ class ModOptsSchema(Schema):
 
 
 class PassChangeSchema(Schema):
-    chained_validators = [validators.FieldsMatch("confirm_new_pass", "new_password")]
+    new_password = validators.String(min=6)
+    confirm_new_password = validators.String(not_empty=True)
+    chained_validators = [validators.FieldsMatch("confirm_new_password", "new_password")]
     allow_extra_fields = True
