@@ -1,5 +1,5 @@
 
-<!-- MODALS -->
+<!-- Login -->
 <div class="modal hide fade" id="login_modal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
@@ -22,6 +22,7 @@
 
 %if logged_in:
 
+    <!-- Logout -->
     <div class="modal hide fade" id="logout_modal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
@@ -40,6 +41,7 @@
         </div>
     </div>
 
+    <!-- Settings -->
     <div class="modal hide fade" id="site_options_modal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
@@ -50,7 +52,6 @@
                 <input name="selected_url" type="hidden" value="{{ selected_route }}" />
                 <input name="current_username" type="hidden" value="{{ user.get('username', 'User') }}" />
                 <input name="current_email" type="hidden" value="{{ user.get('email', 'user@sortasoftware.com') }}" />
-                <input name="current_site_name" type="hidden" value="{{ site_name }}" />
 
                 <label>Username</label>
                 <input name="new_username" type="text" class="span3" value="{{ user.get('username', 'User') }}" />
@@ -60,6 +61,9 @@
 
                 <label>Site Name</label>
                 <input name="new_site_name" type="text" class="span3" value="{{ site_name }}" />
+
+                <label>Default Posts Per Page</label>
+                <input name="default_posts_per_page" type="text" class="span3" value="{{ def_ppp['def_ppp'] }}" />
         </div>
         <div class="modal-footer">
                 <div class="pull-left">Password<input name="current_password" type="password" class="span3" /></div>
@@ -81,7 +85,7 @@
                 <input name="current_username" type="hidden" value="{{ user.get('username', 'User') }}" />
 
                 <label>New Password</label>
-                <input name="new_pass" type="password" class="span3"/>
+                <input name="new_password" type="password" class="span3"/>
 
                 <label>Confirm New Password</label>
                 <input name="confirm_new_pass" type="password" class="span3"/>
@@ -94,6 +98,7 @@
         </div>
     </div>
 
+    <!-- Add Tabs -->
     <div class="modal hide fade" id="add_mane_modal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
@@ -108,7 +113,7 @@
                 <label>Title</label>
                 <input name="mane_title" type="text" class="span3" placeholder="Tab" />
                 <label>Description</label>
-                <input name="mane_desc" type="textarea" class="span3" placeholder="Tab" />
+                <textarea name="mane_desc"></textarea>
         </div>
         <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
@@ -132,7 +137,7 @@
                 <label>Title</label>
                 <input name="tail_title" type="text" class="span3" placeholder="Tab" />
                 <label>Description</label>
-                <input name="tail_desc" type="textarea" class="span3" placeholder="Tab" />
+                <textarea name="tail_desc"></textarea>
         </div>
         <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
@@ -143,6 +148,9 @@
 
     %for link in manelinks:
 
+        <!-- Manes -->
+
+        <!-- Delete -->
         <div class="modal hide fade" id="delete_mane_modal_{{ link['mane_name'] }}">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">×</button>
@@ -161,10 +169,37 @@
             </div>
         </div>
 
+        <!-- Edit -->
+        <div class="modal hide fade" id="edit_mane_modal_{{ link['mane_name'] }}">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h3>Edit Mane Tab</h3>
+            </div>
+            <div class="modal-body">
+                <form action="/_sitefuncs_/editmane" class="form-vertical" method="post">
+                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+
+                <label>Name</label>
+                <input name="mane_name" type="text" class="span3" placeholder="Tab" />
+                <label>Title</label>
+                <input name="mane_title" type="text" class="span3" placeholder="Tab" />
+                <label>Description</label>
+                <input name="mane_desc" type="textarea" class="span3" placeholder="Tab" />
+
+            </div>
+            <div class="modal-footer">
+                    <button type="button" class="btn" data-dismiss="modal">Close</button>
+                    <input class="btn btn-primary" type="submit" value="Save" />
+                </form>
+            </div>
+        </div>
+
     %end
 
     %for link in taillinks:
 
+        <!-- Tails -->
+        <!-- Delete -->
         <div class="modal hide fade" id="delete_tail_modal_{{ link['tail_name'] }}">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">×</button>

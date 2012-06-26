@@ -64,6 +64,10 @@ class FShopApp(object):
         if not site_name:
             self._FSDBsys.options_db._add_site_name("FlutterShop")
 
+        def_ppp = self._FSDBsys.options_db.get_def_ppp()
+        if not def_ppp:
+            self._FSDBsys.options_db._add_def_ppp(10)
+
         if not self._FSDBsys.options_db.at_least_one_user():
             self._FSDBsys.options_db._add_user("admin", "12345", "example@email.com")
 

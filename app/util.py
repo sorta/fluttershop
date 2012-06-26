@@ -5,6 +5,8 @@ from bottle import request
 from datetime import datetime
 from math import ceil
 from urlparse import urlparse, parse_qs
+from formencode import Invalid
+from string import capwords
 
 
 class FShopUtil(object):
@@ -18,6 +20,7 @@ class FShopUtil(object):
     def get_page_model(self, mane, tail=None):
         manes, tails = self._FSDBsys.route_db.get_links_for_mane(mane['mane_name'])
         site_name = self._FSDBsys.options_db.get_site_name()
+        def_ppp = self._FSDBsys.options_db.get_def_ppp()
 
         if tail:
             route = tail['route_name']
@@ -42,7 +45,8 @@ class FShopUtil(object):
             'page_desc': page_desc,
             'site_name': site_name["site_name"],
             'rows': rows,
-            'flash_alerts': alerts
+            'flash_alerts': alerts,
+            'def_ppp': def_ppp
         })
 
     def get_flash_alerts(self):
@@ -203,3 +207,26 @@ class FShopBaseUtil(object):
         alerts.append(new_alert)
 
         session['flash_alerts'] = alerts
+
+    def run_validator(self, validator, value):
+        try:
+            resp = validator.to_python(value)
+            return True, resp
+        except Invalid, e:
+            return False, e
+
+    def validate_schema(self, schema, form, vals):
+        val_dict = dict(self.populate_val_dict(form, vals))
+        response, val = self.run_validator(schema, val_dict)
+        if not response:
+            error_dict = val.error_dict
+            if error_dict:
+                for error in error_dict:
+                    pez = capwords(error.replace("_", " "))
+                    self.flash_alert("{0}: {1}".format(pez, error_dict[error]), 'alert-error', 'Error')
+            return False
+        return True
+
+    def populate_val_dict(self, form, vals):
+        for val in vals:
+            yield val, form[val]

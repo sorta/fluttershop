@@ -161,6 +161,23 @@ class FShopMongoDB():
         timestamp = datetime.now()
         self.options_collection.update({"option_type": "site_name"}, {"$set": {"site_name": site_name, "date_modified": timestamp}})
 
+    def get_def_ppp(self):
+        return self.options_collection.find_one({"option_type": "def_ppp"})
+
+    def _add_def_ppp(self, def_ppp):
+        timestamp = datetime.now()
+        new_item = {
+            "option_type": "def_ppp",
+            "def_ppp": def_ppp,
+            "date_created": timestamp,
+            "date_modified": timestamp
+        }
+        self.options_collection.insert(new_item)
+
+    def modify_def_ppp(self, def_ppp):
+        timestamp = datetime.now()
+        self.options_collection.update({"option_type": "def_ppp"}, {"$set": {"def_ppp": def_ppp, "date_modified": timestamp}})
+
     #### RANKING ####
 
     # Mane
