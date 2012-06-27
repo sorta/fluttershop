@@ -108,12 +108,14 @@
             <form action="/_sitefuncs_/addmane" class="form-vertical" id="addMane" method="post">
                 <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
-                <label>Name</label>
-                <input name="mane_name" type="text" class="span3" placeholder="Tab" />
+                <label>Name*</label>
+                <input name="mane_name" type="text" class="span6" placeholder="Name" />
+                <label>Rank*</label>
+                <input name="mane_rank" type="text" class="span6" value="{{ next_mane_rank }}" />
                 <label>Title</label>
-                <input name="mane_title" type="text" class="span3" placeholder="Tab" />
+                <input name="mane_title" type="text" class="span6" placeholder="Quick basic description" />
                 <label>Description</label>
-                <textarea name="mane_desc"></textarea>
+                <textarea name="mane_desc" class="span6" placeholder="Detailed description"></textarea>
         </div>
         <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
@@ -132,12 +134,14 @@
                 <input name="selected_url" type="hidden" value="{{ selected_route }}" />
                 <input name="selected_mane" type="hidden" value="{{ selected_mane }}" />
 
-                <label>Name</label>
-                <input name="tail_name" type="text" class="span3" placeholder="Tab" />
+                <label>Name*</label>
+                <input name="tail_name" type="text" class="span6" placeholder="Name" />
+                <label>Rank*</label>
+                <input name="tail_rank" type="text" class="span6" value="{{ next_tail_rank }}" />
                 <label>Title</label>
-                <input name="tail_title" type="text" class="span3" placeholder="Tab" />
+                <input name="tail_title" type="text" class="span6" placeholder="Quick basic description" />
                 <label>Description</label>
-                <textarea name="tail_desc"></textarea>
+                <textarea name="tail_desc" class="span6" placeholder="Detailed description"></textarea>
         </div>
         <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>

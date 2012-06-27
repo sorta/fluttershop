@@ -2,6 +2,7 @@
 """
 
 from bottle import view, abort, request, redirect
+from formencode import validators, Schema
 
 
 class FShopTabs(object):
@@ -21,6 +22,9 @@ class FShopTabs(object):
 
         fshop_bottle.post('/_sitefuncs_/addtail')(self.add_tail)
         fshop_bottle.post('/_sitefuncs_/deletetail')(self.delete_tail)
+
+        self._add_mane_sv = ["mane_name", "mane_rank"]
+        self._add_tail_sv = ["tail_name", "tail_rank"]
 
     #### View Routes ####
     @view('main')
@@ -49,13 +53,19 @@ class FShopTabs(object):
         selected_url = form['selected_url']
         mane = form['mane_name']
 
+        valid_req = self._base_util.validate_schema(AddManeSchema(), form, self._add_mane_sv)
+
         if self._FSDBsys.route_db.get_mane(mane):
-            self._base_util.flash_alert("Could not add specified mane tab. One with that name already exists.", "alert-error", "Operation Failed")
-        else:
+            self._base_util.flash_alert("Could not add specified mane tab. One with that name already exists.", "alert-error", "Error")
+            valid_req = False
+
+        if valid_req:
             title = form.get('mane_title', None)
             desc = form.get('mane_desc', None)
-            priority = self._FSDBsys.rank_db.get_next_mane_rank()
+            priority = form["mane_rank"]
+
             self._FSDBsys.route_db.add_new_mane(mane, priority, title, desc)
+            self._FSDBsys.rank_db.new_tail_rank(mane)
             self._FSDBsys.rank_db.increment_mane_rank()
 
         redirect(selected_url)
@@ -68,6 +78,7 @@ class FShopTabs(object):
 
         if self._FSDBsys.route_db.get_mane(mane):
             self._FSDBsys.route_db.remove_mane(mane)
+            self._FSDBsys.rank_db.remove_tail_rank(mane)
             self._FSDBsys.rank_db.increment_mane_rank(-1)
 
         redirect(selected_url)
@@ -79,10 +90,14 @@ class FShopTabs(object):
         mane = form['selected_mane']
         tail = form['tail_name']
 
+        valid_req = self._base_util.validate_schema(AddTailSchema(), form, self._add_tail_sv)
+
         if self._FSDBsys.route_db.get_tail(mane, tail):
             self._base_util.flash_alert("Could not add specified tail tab. One with that name already exists.", "alert-error", "Operation Failed")
-        else:
-            priority = self._FSDBsys.rank_db.get_next_tail_rank(mane)
+            valid_req = False
+
+        if valid_req:
+            priority = form["tail_rank"]
             title = form.get('tail_title', None)
             desc = form.get('tail_desc', None)
 
@@ -103,3 +118,13 @@ class FShopTabs(object):
             self._FSDBsys.rank_db.increment_tail_rank(mane, -1)
 
         redirect(selected_url)
+
+
+class AddManeSchema(Schema):
+    mane_name = validators.String(not_empty=True)
+    mane_rank = validators.Int()
+
+
+class AddTailSchema(Schema):
+    tail_name = validators.String(not_empty=True)
+    tail_rank = validators.Int()

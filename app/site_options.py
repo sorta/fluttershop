@@ -49,7 +49,7 @@ class FShopSiteOptions(object):
 class ModOptsSchema(Schema):
     new_username = validators.String(not_empty=True)
     new_email = validators.Email()
-    default_posts_per_page = validators.Int()
+    default_posts_per_page = validators.Int(min=1)
 
 
 class PassChangeSchema(Schema):

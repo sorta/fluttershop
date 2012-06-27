@@ -25,7 +25,7 @@
         %end
         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
-        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/'), manelinks=manelinks, taillinks=get('taillinks', []), logged_in=logged_in, user=get('user', {}), site_name=site_name, def_ppp=def_ppp
+        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/'), manelinks=manelinks, taillinks=get('taillinks', []), logged_in=logged_in, user=get('user', {}), site_name=site_name, def_ppp=def_ppp, next_mane_rank=next_mane_rank, next_tail_rank=next_tail_rank
 
         <!-- NAVBAR -->
         <div class="navbar navbar-fixed-top">

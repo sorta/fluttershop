@@ -21,6 +21,8 @@ class FShopUtil(object):
         manes, tails = self._FSDBsys.route_db.get_links_for_mane(mane['mane_name'])
         site_name = self._FSDBsys.options_db.get_site_name()
         def_ppp = self._FSDBsys.options_db.get_def_ppp()
+        next_mane_rank = self._FSDBsys.rank_db.get_next_mane_rank()
+        next_tail_rank = self._FSDBsys.rank_db.get_next_tail_rank(mane['mane_name'])
 
         if tail:
             route = tail['route_name']
@@ -46,7 +48,9 @@ class FShopUtil(object):
             'site_name': site_name["site_name"],
             'rows': rows,
             'flash_alerts': alerts,
-            'def_ppp': def_ppp
+            'def_ppp': def_ppp,
+            'next_mane_rank': next_mane_rank,
+            'next_tail_rank': next_tail_rank
         })
 
     def get_flash_alerts(self):

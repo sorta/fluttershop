@@ -217,6 +217,9 @@ class FShopMongoDB():
     def increment_tail_rank(self, mane, incr_value=1):
         self.ranks_collection.update({'rank_type': 'tail', 'mane_name': mane.lower()}, {'$inc': {'next_rank': incr_value}})
 
+    def remove_tail_rank(self, mane):
+        self.ranks_collection.remove({'rank_type': 'tail', 'mane_name': mane.lower()})
+
     # Post
     def new_post_rank(self, route_id):
         new_rank = {
@@ -270,13 +273,6 @@ class FShopMongoDB():
         }
         self.routes_collection.insert(new_mane)
 
-        new_tail_rank = {
-            'rank_type': 'tail',
-            'mane_name': lowered_mane,
-            'next_rank': 0
-        }
-        self.ranks_collection.insert(new_tail_rank)
-
     def _insert_tail(self, mane_name, tail_name, rank, title, desc):
         mane_name = unicode(mane_name).lower()
         tail_name = unicode(tail_name)
@@ -295,67 +291,35 @@ class FShopMongoDB():
         self.routes_collection.insert(new_tail)
 
     def add_new_mane(self, mane_name, rank, title=None, desc=None):
-        routes_to_increment = []
-        manes = self.get_manelinks()
-        for mane in manes:
-            mane_rank = mane.get('rank', 0)
-            if  mane_rank < rank:
-                continue
-            if mane_rank == rank:
-                self._insert_mane(mane_name, mane_rank, title, desc)
-            routes_to_increment.append(mane['route_name'])
+        rank = int(rank)
 
-        if not routes_to_increment:
-            self._insert_mane(mane_name, rank, title, desc)
-        else:
-            self.routes_collection.update({'route_name': {'$in': routes_to_increment}}, {'$inc': {'rank': 1}}, multi=True)
+        self.routes_collection.update({'route_type': 'mane', 'rank': {'$gte': rank}},
+                                    {'$inc': {'rank': 1}}, multi=True)
+
+        self._insert_mane(mane_name, rank, title, desc)
 
     def add_new_tail(self, mane_name, tail_name, rank, title=None, desc=None):
-        routes_to_increment = []
-        tails = self.get_taillinks(mane_name)
-        for tail in tails:
-            tail_rank = tail.get('rank', 0)
-            if  tail_rank < rank:
-                continue
-            if tail_rank == rank:
-                self._insert_tail(mane_name, tail_name, tail_rank, title, desc)
-            routes_to_increment.append(tail['route_name'])
+        rank = int(rank)
 
-        if not routes_to_increment:
-            self._insert_tail(mane_name, tail_name, rank, title, desc)
-        else:
-            self.routes_collection.update({'route_name': {'$in': routes_to_increment}}, {'$inc': {'rank': 1}}, multi=True)
+        self.routes_collection.update({'route_type': 'tail', 'mane_name': mane_name, 'rank': {'$gte': rank}},
+                                    {'$inc': {'rank': 1}}, multi=True)
+
+        self._insert_tail(mane_name, tail_name, rank, title, desc)
 
     def remove_mane(self, mane_name):
-        routes_to_decrement = []
-        target_acquired = False
-        manes = self.get_manelinks()
-        for mane in manes:
-            if mane_name == mane['mane_name']:
-                target_acquired = True
-                self.routes_collection.remove({'mane_name': mane['mane_name']}, multi=True)
-                self.ranks_collection.remove({'rank_type': 'tail', 'mane_name': mane['mane_name']})
-                continue
-            if target_acquired:
-                routes_to_decrement.append(mane['route_name'])
+        mane = self.get_mane(mane_name)
+        self.routes_collection.remove({'mane_name': mane['mane_name']}, multi=True)
 
-        if routes_to_decrement:
-            self.routes_collection.update({'route_name': {'$in': routes_to_decrement}}, {'$inc': {'rank': -1}}, multi=True)
+        self.routes_collection.update({'route_type': 'mane', 'rank': {'$gt': mane['rank']}},
+                                    {'$inc': {'rank': -1}}, multi=True)
 
     def remove_tail(self, mane_name, tail_name):
-        routes_to_decrement = []
-        target_acquired = False
-        tails = self.get_taillinks(mane_name)
-        for tail in tails:
-            if tail_name == tail['tail_name']:
-                target_acquired = True
-                self.routes_collection.remove({'tail_name': tail['tail_name']})
-                continue
-            if target_acquired:
-                routes_to_decrement.append(tail['route_name'])
 
-        if routes_to_decrement:
-            self.routes_collection.update({'route_name': {'$in': routes_to_decrement}}, {'$inc': {'rank': -1}}, multi=True)
+        tail = self.get_tail(mane_name, tail_name)
+        self.routes_collection.remove({'tail_name': tail['tail_name']})
+
+        self.routes_collection.update({'route_type': 'tail', 'mane_name': tail['mane_name'], 'rank': {'$gt': tail['rank']}},
+                                    {'$inc': {'rank': -1}}, multi=True)
 
     def get_manelinks(self):
         return self.routes_collection.find({'route_type': 'mane'}).sort('rank', 1)
