@@ -17,3 +17,7 @@ div.stretchedMargin {
 li.first-tab {
     margin-top: 19px;
 }
+
+.fright {
+    float: right;
+}

@@ -148,6 +148,7 @@ class FShopUtil(object):
                     'post_type': post.get('post_type', u'txt'),
                     'post_id': post['_id'],
                     'title': post.get('title', u""),
+                    'alignment': post['alignment'],
                     'timestamp': post.get('timestamp', datetime.now()),
                     'date_created': post.get('date_created', datetime.now()),
                     'show_title': post['show_title'],

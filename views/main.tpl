@@ -21,7 +21,7 @@
                 %selected_route = "/{0}".format(selected_mane)
             %end
         %else:
-            selected_route = "/"
+            %selected_route = "/"
         %end
         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
@@ -94,7 +94,7 @@
         </div>
 
         <!-- TABS -->
-        <div class="tabbable tabs-left">
+        <div class="tabbable">
             <ul class="nav nav-tabs">
                 %for link in get('taillinks', []):
                     %if defined('selected_tail') and selected_tail == link['tail_name'].lower():
