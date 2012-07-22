@@ -26,7 +26,7 @@
                     %for part in post['parts']:
                         <tr>
                             <td>
-                                <p>{{ part['body'] }}</p>
+                                <p>{{! part['body'] }}</p>
                                 <div class="row-fluid">
 
                                     %if part["part_type"] == "pic":

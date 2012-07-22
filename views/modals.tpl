@@ -155,7 +155,7 @@
         <!-- Manes -->
 
         <!-- Delete -->
-        <div class="modal hide fade" id="delete_mane_modal_{{ link['mane_name'] }}">
+        <div class="modal hide fade" id="delete_mane_modal_{{ link['mane_name'].replace(" ", "_") }}">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">×</button>
                 <h3>Delete Mane Tab</h3>
@@ -174,7 +174,7 @@
         </div>
 
         <!-- Edit -->
-        <div class="modal hide fade" id="edit_mane_modal_{{ link['mane_name'] }}">
+        <div class="modal hide fade" id="edit_mane_modal_{{ link['mane_name'].replace(" ", "_") }}">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">×</button>
                 <h3>Edit Mane Tab</h3>
@@ -204,7 +204,7 @@
 
         <!-- Tails -->
         <!-- Delete -->
-        <div class="modal hide fade" id="delete_tail_modal_{{ link['tail_name'] }}">
+        <div class="modal hide fade" id="delete_tail_modal_{{ link['tail_name'].replace(" ", "_") }}">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">×</button>
                 <h3>Delete Tail Tab</h3>

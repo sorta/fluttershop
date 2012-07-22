@@ -58,7 +58,7 @@
                                 <a href="{{ link['route_name'] }}">{{ link['display'] }}</a></li>
                                 %if logged_in:
                                     <li>
-                                        <a data-toggle="modal" href="#delete_mane_modal_{{ link['mane_name'] }}">
+                                        <a data-toggle="modal" href="#delete_mane_modal_{{ link['mane_name'].replace(" ", "_") }}">
                                             <i class="icon-remove icon-white"></i>
                                         </a>
                                     </li>
@@ -105,7 +105,7 @@
 
 
                     %if logged_in:
-                        <div class="close"><a data-toggle="modal" href="#delete_tail_modal_{{ link['tail_name'] }}">
+                        <div class="close"><a data-toggle="modal" href="#delete_tail_modal_{{ link['tail_name'].replace(" ", "_") }}">
                             <i class="icon-remove"></i>
                         </a></div>
                     %end
