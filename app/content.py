@@ -58,9 +58,10 @@ class FShopContent(object):
         title = form["post_title"]
         alignment = form.get("post_alignment", "left")
         width = int(form.get("post_width", 12))
-        post_type = form["sel_post_type"]
         show_title = self._util.parse_checkbox(form.get("post_show_title", False))
         show_date = self._util.parse_checkbox(form.get("post_show_date", False))
+        content = form.get("post_content")
+
         mane, tail = self._util.parse_route(route)
         next_post_rank = self._FSDBsys.rank_db.get_next_post_rank(route)
 
@@ -69,17 +70,7 @@ class FShopContent(object):
         else:
             alignment = int(alignment)
 
-        post_id = self._FSDBsys.content_db.insert_new_post(route, mane, post_type, alignment, width, title, next_post_rank, show_title, show_date, tail)
+        self._FSDBsys.content_db.insert_new_post(route, mane, alignment, width, title, next_post_rank, show_title, show_date, content, tail)
         self._FSDBsys.rank_db.increment_post_rank(route)
-
-        post_fields = POST_TYPE_MAP.get(post_type)
-        body = form.get(post_fields.body_field)
-        url = form.get(post_fields.url_field, None)
-        alt_text = form.get(post_fields.alt_text_field, None)
-        caption = form.get(post_fields.caption_field, None)
-        next_part_rank = self._FSDBsys.rank_db.get_next_post_part_rank(post_id)
-
-        self._FSDBsys.content_db.insert_new_post_part(post_id, post_type, body, next_part_rank, alt_text, caption, url)
-        self._FSDBsys.rank_db.increment_post_part_rank(post_id)
 
         redirect(route)

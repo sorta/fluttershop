@@ -94,7 +94,6 @@ class FShopUtil(object):
 
         if alignment == u'right':
             offset = 12 - h_loc - requested
-            # width = "span{0} offset{1}".format(requested, offset) if offset > 0 else "span{0}".format(requested)
             h_loc = 12
             return new_row, h_loc, requested, offset
 
@@ -102,7 +101,6 @@ class FShopUtil(object):
             remainder = 12 - h_loc
             offset = int(ceil((remainder - requested) / 2))
             h_loc += requested + offset
-            # width = "span{0} offset{1}".format(requested, offset) if offset > 0 else "span{0}".format(requested)
             return new_row, h_loc, requested, offset
 
         if alignment > 0 and alignment < 12:
@@ -123,18 +121,6 @@ class FShopUtil(object):
         h_loc = 0
 
         for post in posts:
-            part_list = []
-            parts = self._FSDBsys.content_db.get_parts_for_post(post['_id'])
-            for part in parts:
-                part_list.append({
-                        'part_type': part.get('part_type', u'text'),
-                        'part_id': part['_id'],
-                        'body': part.get('body', u""),
-                        'url': part.get('url', u""),
-                        'alt_text': part.get('alt_text', u""),
-                        'caption': part.get('caption', u""),
-                        'yt_id': part.get('yt_id', u""),
-                    })
 
             requested = post.get('width', 12)
             alignment = post.get('alignment', u'left')
@@ -155,7 +141,7 @@ class FShopUtil(object):
                     'show_date': post['show_date'],
                     'width': width,
                     'offset': offset,
-                    'parts': part_list
+                    'post_content': post['post_content']
                 })
 
         if len(post_list) > 0:

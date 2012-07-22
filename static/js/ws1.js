@@ -33,17 +33,6 @@ function expandInput()
     $("#pe_post_buttons").collapse("show");
 }
 
-function hideText()
-{
-    $("#pe_txt").collapse("hide");
-}
-
-function spt(e)
-{
-    var x = e.target.toString().slice(-3);
-    $("#sel_post_type").attr("value", x);
-}
-
 function flip_pst_cb()
 {
     var pst_cb = $("#post_show_title");
@@ -59,7 +48,7 @@ function flip_psd_cb()
 $(document).ready(function()
 {
     $("#pe0").on('show', expandInput);
-    $('a[data-toggle="pill"]').on('show', spt);
     $("#pst_button").click(flip_pst_cb);
     $("#psd_button").click(flip_psd_cb);
+    $('#post_tb').redactor();
 });

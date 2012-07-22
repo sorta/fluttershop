@@ -5,8 +5,10 @@
         <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css" type="text/css" />
         <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.css" type="text/css" />
         <link rel="stylesheet" href="/static/css/ws1.css" type="text/css" />
+        <link rel="stylesheet" href="/static/css/redactor/redactor.css" />
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
-        <!-- <script language="javascript" src="/static/js/jquery-1.7.1.min.js"></script> -->
+        <script src="/static/js/redactor/redactor.js"></script>
         <script language="javascript" src="/static/bootstrap/js/bootstrap.js"></script>
         <script language="javascript" src="/static/js/ws1.js"></script>
         <title>{{ page_title }}</title>
@@ -134,15 +136,13 @@
 
                         %if logged_in:
                             <div class="row-fluid">
-                                <div class="span6">
+                                <div class="span12">
                                     <table class="table table-bordered">
                                         <tbody>
                                             <tr>
                                                 <td>
                                                     <form class="form-vertical" action="/_sitefuncs_/addpost" method="post">
                                                         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                                                        <input name="sel_post_type" id="sel_post_type" type="hidden" value="txt" />
-                                                        <input name="enc_post_parts" id="enc_post_parts" type="hidden" value="" />
 
                                                         <div id="pe_title" class="collapse">
                                                             <label>Title</label>
@@ -151,47 +151,8 @@
                                                         <div id="pe0" class="collapse"></div>
 
                                                         <div id="pe_details" class="collapse">
-                                                            <ul class="nav nav-pills" id="post_pills">
-                                                                <li class="active"><a href="#pe_txt" data-toggle="pill"><i class="icon-pencil"></i></a></li>
-                                                                <li><a href="#pe_pic" data-toggle="pill"><i class="icon-picture"></i></a></li>
-                                                                <li><a href="#pe_lnk" data-toggle="pill"><i class="icon-globe"></i></a></li>
-                                                                <li><a href="#pe_vid" data-toggle="pill"><i class="icon-film"></i></a></li>
-                                                            </ul>
-
-                                                            <div class="tab-content">
-                                                                <div id="pe_txt" class="tab-pane active fade in">
-                                                                    <label>Post Text*</label>
-                                                                </div>
-
-                                                                <div id="pe_pic" class="tab-pane fade in">
-                                                                    <label>Url*</label>
-                                                                    <input name="post_pic_url" type="text" class="span12"></input>
-                                                                    <label>Alt-Text</label>
-                                                                    <input name="post_pic_alt" type="text" class="span12"></input>
-                                                                    <label>Caption</label>
-                                                                    <input name="post_pic_cap" type="text" class="span12"></input>
-                                                                    <label>Post Text</label>
-                                                                </div>
-
-                                                                <div name="pe_lnk" id="pe_lnk" class="tab-pane fade in">
-                                                                    <label>Url*</label>
-                                                                    <input name="post_link_url" type="text" class="span12"></input>
-                                                                    <label>Display Text*</label>
-                                                                    <input name="post_link_cap" type="text" class="span12"></input>
-                                                                    <label>Alt-Text</label>
-                                                                    <input name="post_link_alt" type="text" class="span12"></input>
-                                                                    <label>Post Text</label>
-                                                                </div>
-
-                                                                <div id="pe_vid" class="tab-pane fade in">
-                                                                    <label>Url*</label>
-                                                                    <input name="post_vid_url" type="text" class="span12"></input>
-                                                                    <label>Caption</label>
-                                                                    <input name="post_vid_cap" type="text" class="span12"></input>
-                                                                    <label>Post Text</label>
-                                                                </div>
-                                                                <textarea name="post_text" id="post_tb" class="span12"></textarea>
-                                                            </div>
+                                                            <label>Post Content*</label>
+                                                            <textarea name="post_content" id="post_tb" class="span12"></textarea>
                                                         </div>
                                                         <div id="pe_post_buttons" class="collapse">
                                                             <div class="row-fluid">

@@ -16,10 +16,6 @@ class FShopMongoDB():
         return self._mdb.posts
 
     @property
-    def parts_collection(self):
-        return self._mdb.postparts
-
-    @property
     def options_collection(self):
         return self._mdb.options
 
@@ -32,21 +28,18 @@ class FShopMongoDB():
         return self._mdb.routes
 
     #### CONTENT ####
-    def get_parts_for_post(self, post_id):
-        part_col = self.parts_collection
-        return part_col.find({'post_id': post_id}).sort('rank', 1)
 
     def get_posts_for_route(self, route_id, post_limit=10):
         post_col = self.posts_collection
         return post_col.find({'route_id': unicode(route_id).lower()}).sort('rank', -1).limit(post_limit)
 
-    def insert_new_post(self, route, mane, post_type, alignment, width, title, next_rank, show_title, show_date, tail=None):
+    def insert_new_post(self, route, mane, alignment, width, title, next_rank, show_title, show_date, post_content, tail=None):
         post_col = self.posts_collection
         timestamp = datetime.now()
         new_post = {
             "route_id": route,
             "mane_id": mane,
-            "post_type": post_type,
+            "post_content": post_content,
             "alignment": alignment,
             "width": width,
             "title": title,
@@ -61,29 +54,6 @@ class FShopMongoDB():
             new_post["tail_id"] = tail
 
         return post_col.insert(new_post)
-
-    def insert_new_post_part(self, post_id, part_type, body, next_rank, alt_text=None, caption=None, url=None):
-        part_col = self.parts_collection
-        timestamp = datetime.now()
-        new_part = {
-            "post_id": post_id,
-            "part_type": part_type,
-            "body": body,
-            "rank": next_rank,
-            "date_created": timestamp,
-            "date_modified": timestamp,
-        }
-
-        if alt_text:
-            new_part["alt_text"] = alt_text
-        if caption:
-            new_part["caption"] = caption
-        if url:
-            new_part["url"] = url
-        if part_type == "vid":
-            new_part["yt_id"] = self._base_util.yt_video_id(url)
-
-        part_col.insert(new_part)
 
     #### OPTIONS ####
     def get_user_check_password(self, username, test_password):
@@ -238,25 +208,6 @@ class FShopMongoDB():
 
     def increment_post_rank(self, route_id, incr_value=1):
         self.ranks_collection.update({'rank_type': 'post', 'route_id': route_id}, {'$inc': {'next_rank': incr_value}})
-
-    # Post Parts
-    def new_post_part_rank(self, post_id):
-        new_rank = {
-            'rank_type': 'post_part',
-            'post_id': post_id,
-            'next_rank': 0
-        }
-        self.ranks_collection.insert(new_rank)
-
-    def get_next_post_part_rank(self, post_id):
-        rank = self.ranks_collection.find_one({'rank_type': 'post_part', 'post_id': post_id})
-        if not rank:
-            self.new_post_part_rank(post_id)
-            return self.get_next_post_part_rank(post_id)
-        return rank.get('next_rank', 0)
-
-    def increment_post_part_rank(self, post_id, incr_value=1):
-        self.ranks_collection.update({'rank_type': 'post_part', 'post_id': post_id}, {'$inc': {'next_rank': incr_value}})
 
     #### ROUTING ####
     def _insert_mane(self, mane_name, rank, title, desc):

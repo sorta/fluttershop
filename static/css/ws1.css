@@ -21,3 +21,8 @@ li.first-tab {
 .fright {
     float: right;
 }
+
+textarea#post_tb
+{
+    height: 200px;
+}
