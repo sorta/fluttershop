@@ -212,7 +212,7 @@ class FShopMongoDB():
     #### ROUTING ####
     def _insert_mane(self, mane_name, rank, title, desc):
         mane_name = unicode(mane_name)
-        lowered_mane = mane_name.lower()
+        lowered_mane = mane_name.lower().replace(" ", "_")
         new_mane = {
             'mane_name': lowered_mane,
             'display': mane_name,
@@ -225,9 +225,9 @@ class FShopMongoDB():
         self.routes_collection.insert(new_mane)
 
     def _insert_tail(self, mane_name, tail_name, rank, title, desc):
-        mane_name = unicode(mane_name).lower()
+        mane_name = unicode(mane_name).lower().replace(" ", "_")
         tail_name = unicode(tail_name)
-        lowered_tail = tail_name.lower()
+        lowered_tail = tail_name.lower().replace(" ", "_")
 
         new_tail = {
             'mane_name': mane_name,

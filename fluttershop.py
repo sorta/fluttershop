@@ -51,12 +51,12 @@ class FShopApp(object):
         return static_file(filepath, root=self._static_dir)
 
     def send_favicon(self):
-        return static_file('fluttershop16.ico', root=self._static_dir)
+        return static_file('favicon.ico', root=self._static_dir)
 
     @view('main')
     def error404(self, error):
-        mane = self._FSDBsys.route_db.get_mane_mane().get('mane_name', '/')
-        pm = self._util.get_page_model(mane)
+        mane = self._FSDBsys.route_db.get_mane_mane()
+        pm = self._util.get_page_model_error(mane)
         return pm
 
     def init_db_if_necessary(self):
@@ -70,6 +70,11 @@ class FShopApp(object):
 
         if not self._FSDBsys.options_db.at_least_one_user():
             self._FSDBsys.options_db._add_user("admin", "123456", "example@email.com")
+
+        page_404 = self._FSDBsys.content_db.get_posts_for_route("/404")
+        if not page_404.count():
+            self._FSDBsys.content_db.insert_new_post("/404", "404", "left", 12, "Page Not Found", 0, True, False, "You've tried to access a non-existant page.")
+            self._FSDBsys.rank_db.increment_post_rank("/404")
 
     def start(self):
         self.init_db_if_necessary()

@@ -53,6 +53,35 @@ class FShopUtil(object):
             'next_tail_rank': next_tail_rank
         })
 
+    def get_page_model_error(self, mane, tail=None):
+        manes, tails = self._FSDBsys.route_db.get_links_for_mane(mane['mane_name'])
+        site_name = self._FSDBsys.options_db.get_site_name()
+        def_ppp = self._FSDBsys.options_db.get_def_ppp()
+        next_mane_rank = self._FSDBsys.rank_db.get_next_mane_rank()
+        next_tail_rank = self._FSDBsys.rank_db.get_next_tail_rank(mane['mane_name'])
+
+        route = "/404"
+        page_title = "Page Not Found"
+        page_desc = "Page Not Found"
+
+        rows = self.listify_posts(route)
+        alerts = self.get_flash_alerts()
+
+        return self.add_user_info({
+            'manelinks': manes,
+            'taillinks': tails,
+            'selected_mane': None,
+            'selected_tail': None,
+            'page_title': page_title,
+            'page_desc': page_desc,
+            'site_name': site_name["site_name"],
+            'rows': rows,
+            'flash_alerts': alerts,
+            'def_ppp': def_ppp,
+            'next_mane_rank': next_mane_rank,
+            'next_tail_rank': next_tail_rank
+        })
+
     def get_flash_alerts(self):
         session = request.environ.get('beaker.session')
         alerts = session.get('flash_alerts', [])
