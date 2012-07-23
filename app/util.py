@@ -20,9 +20,6 @@ class FShopUtil(object):
     def get_page_model(self, mane, tail=None):
         manes, tails = self._FSDBsys.route_db.get_links_for_mane(mane['mane_name'])
         site_name = self._FSDBsys.options_db.get_site_name()
-        def_ppp = self._FSDBsys.options_db.get_def_ppp()
-        next_mane_rank = self._FSDBsys.rank_db.get_next_mane_rank()
-        next_tail_rank = self._FSDBsys.rank_db.get_next_tail_rank(mane['mane_name'])
 
         if tail:
             route = tail['route_name']
@@ -38,7 +35,7 @@ class FShopUtil(object):
         rows = self.listify_posts(route)
         alerts = self.get_flash_alerts()
 
-        return self.add_user_info({
+        pm = self.add_user_info({
             'manelinks': manes,
             'taillinks': tails,
             'selected_mane': mane['mane_name'],
@@ -47,18 +44,20 @@ class FShopUtil(object):
             'page_desc': page_desc,
             'site_name': site_name["site_name"],
             'rows': rows,
-            'flash_alerts': alerts,
-            'def_ppp': def_ppp,
-            'next_mane_rank': next_mane_rank,
-            'next_tail_rank': next_tail_rank
+            'flash_alerts': alerts
         })
+
+        if pm['logged_in']:
+            pm['def_ppp'] = self._FSDBsys.options_db.get_def_ppp()
+            pm['next_post_rank'] = self._FSDBsys.rank_db.get_next_post_rank(route)
+            pm['next_mane_rank'] = self._FSDBsys.rank_db.get_next_mane_rank()
+            pm['next_tail_rank'] = self._FSDBsys.rank_db.get_next_tail_rank(mane['mane_name'])
+
+        return pm
 
     def get_page_model_error(self, mane, tail=None):
         manes, tails = self._FSDBsys.route_db.get_links_for_mane(mane['mane_name'])
         site_name = self._FSDBsys.options_db.get_site_name()
-        def_ppp = self._FSDBsys.options_db.get_def_ppp()
-        next_mane_rank = self._FSDBsys.rank_db.get_next_mane_rank()
-        next_tail_rank = self._FSDBsys.rank_db.get_next_tail_rank(mane['mane_name'])
 
         route = "/404"
         page_title = "Page Not Found"
@@ -67,20 +66,24 @@ class FShopUtil(object):
         rows = self.listify_posts(route)
         alerts = self.get_flash_alerts()
 
-        return self.add_user_info({
+        pm = self.add_user_info({
             'manelinks': manes,
             'taillinks': tails,
-            'selected_mane': None,
-            'selected_tail': None,
+            'selected_mane': "",
             'page_title': page_title,
             'page_desc': page_desc,
             'site_name': site_name["site_name"],
             'rows': rows,
-            'flash_alerts': alerts,
-            'def_ppp': def_ppp,
-            'next_mane_rank': next_mane_rank,
-            'next_tail_rank': next_tail_rank
+            'flash_alerts': alerts
         })
+
+        if pm['logged_in']:
+            pm['def_ppp'] = self._FSDBsys.options_db.get_def_ppp()
+            pm['next_post_rank'] = self._FSDBsys.rank_db.get_next_post_rank(route)
+            pm['next_mane_rank'] = self._FSDBsys.rank_db.get_next_mane_rank()
+            pm['next_tail_rank'] = self._FSDBsys.rank_db.get_next_tail_rank(mane['mane_name'])
+
+        return pm
 
     def get_flash_alerts(self):
         session = request.environ.get('beaker.session')
@@ -170,7 +173,8 @@ class FShopUtil(object):
                     'show_date': post['show_date'],
                     'width': width,
                     'offset': offset,
-                    'post_content': post['post_content']
+                    'post_content': post['post_content'],
+                    'rank': post['rank']
                 })
 
         if len(post_list) > 0:

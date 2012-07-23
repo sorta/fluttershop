@@ -26,3 +26,20 @@ textarea#post_tb
 {
     height: 200px;
 }
+
+div.fakeTable
+{
+    border: solid #AAAAAA 1px;
+    margin: 20px 0px;
+    border-radius: 5px;
+}
+
+div.fakeTable div
+{
+    margin: 10px;
+}
+
+textarea.red_tb
+{
+    min-height: 300px;
+}

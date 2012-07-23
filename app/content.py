@@ -51,6 +51,8 @@ class FShopContent(object):
 
         fshop_bottle.post('/_sitefuncs_/addpost')(self.add_post)
 
+        fshop_bottle.post('/_sitefuncs_/editpost')(self.edit_post)
+
     def add_post(self):
         self._auth.validate_session()
         form = request.forms
@@ -61,16 +63,46 @@ class FShopContent(object):
         show_title = self._util.parse_checkbox(form.get("post_show_title", False))
         show_date = self._util.parse_checkbox(form.get("post_show_date", False))
         content = form.get("post_content")
+        try:
+            post_rank = int(form["post_rank"])
+        except ValueError:
+            post_rank = self._FSDBsys.rank_db.get_next_post_rank(route)
 
         mane, tail = self._util.parse_route(route)
-        next_post_rank = self._FSDBsys.rank_db.get_next_post_rank(route)
 
         if alignment in ALIGN_SET:
             alignment = alignment.lower()
         else:
             alignment = int(alignment)
 
-        self._FSDBsys.content_db.insert_new_post(route, mane, alignment, width, title, next_post_rank, show_title, show_date, content, tail)
+        self._FSDBsys.content_db.insert_new_post(route, mane, alignment, width, title, post_rank, show_title, show_date, content, tail)
         self._FSDBsys.rank_db.increment_post_rank(route)
+
+        redirect(route)
+
+    def edit_post(self):
+        self._auth.validate_session()
+        form = request.forms
+        route = form["selected_url"]
+        title = form["post_title"]
+        alignment = form.get("post_alignment", "left")
+        width = int(form.get("post_width", 12))
+        show_title = self._util.parse_checkbox(form.get("post_show_title", False))
+        show_date = self._util.parse_checkbox(form.get("post_show_date", False))
+        content = form.get("post_content")
+        post_id = form['post_id']
+
+        try:
+            post_rank = int(form["post_rank"])
+        except ValueError:
+            post_rank = self._FSDBsys.rank_db.get_next_post_rank(route)
+
+        if alignment in ALIGN_SET:
+            alignment = alignment.lower()
+        else:
+            alignment = int(alignment)
+
+        self._FSDBsys.content_db.update_post(post_id, route, alignment, width, title, post_rank, show_title, show_date, content)
+        self._FSDBsys.rank_db.one_up_post_rank(route, post_rank)
 
         redirect(route)

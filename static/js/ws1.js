@@ -33,22 +33,17 @@ function expandInput()
     $("#pe_post_buttons").collapse("show");
 }
 
-function flip_pst_cb()
+function flip_cb()
 {
-    var pst_cb = $("#post_show_title");
-    pst_cb.attr('checked', !pst_cb.attr('checked'));
-}
-
-function flip_psd_cb()
-{
-    var pst_cb = $("#post_show_date");
+    var thisid = "#" + this.id + "_c";
+    var pst_cb = $(thisid);
     pst_cb.attr('checked', !pst_cb.attr('checked'));
 }
 
 $(document).ready(function()
 {
     $("#pe0").on('show', expandInput);
-    $("#pst_button").click(flip_pst_cb);
-    $("#psd_button").click(flip_psd_cb);
     $('#post_tb').redactor();
+    $('.red_tb').redactor();
+    $(".hidden_flipper").click(flip_cb);
 });

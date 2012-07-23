@@ -5,7 +5,7 @@
         <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css" type="text/css" />
         <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.css" type="text/css" />
         <link rel="stylesheet" href="/static/css/ws1.css" type="text/css" />
-        <link rel="stylesheet" href="/static/css/redactor/redactor.css" />
+        <link rel="stylesheet" href="/static/js/redactor/css/redactor.css" />
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
         <script src="/static/js/redactor/redactor.js"></script>
@@ -25,6 +25,9 @@
         %else:
             %selected_route = "/"
         %end
+        %setdefault('def_ppp', 10)
+        %setdefault('next_mane_rank', 0)
+        %setdefault('next_tail_rank', 0)
         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
         %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/'), manelinks=manelinks, taillinks=get('taillinks', []), logged_in=logged_in, user=get('user', {}), site_name=site_name, def_ppp=def_ppp, next_mane_rank=next_mane_rank, next_tail_rank=next_tail_rank
@@ -156,17 +159,22 @@
                                                         </div>
                                                         <div id="pe_post_buttons" class="collapse">
                                                             <div class="row-fluid">
-                                                                <div class="span4">
+                                                                <div class="span2">
                                                                     <label>Show</label>
                                                                     <div class="btn-group" data-toggle="buttons-checkbox">
-                                                                        <button type="button" id="pst_button" class="btn active">Title</button>
-                                                                        <button type="button" id="psd_button" class="btn active">Date</button>
+                                                                        <button type="button" id="pst_button" class="btn hidden_flipper active">Title</button>
+                                                                        <button type="button" id="psd_button" class="btn hidden_flipper active">Date</button>
                                                                     </div>
-                                                                    <input type="checkbox" style="display: none;" id="post_show_title" name="post_show_title" checked="true"/>
-                                                                    <input type="checkbox" style="display: none;" id="post_show_date" name="post_show_date" checked="true"/>
+                                                                    <input type="checkbox" id="pst_button_c" class="hide" name="post_show_title" checked="true"/>
+                                                                    <input type="checkbox" id="psd_button_c" class="hide" name="post_show_date" checked="true"/>
                                                                 </div>
 
-                                                                <div class="span4">
+                                                                <div class="span3">
+                                                                    <label>Rank</label>
+                                                                    <input name="post_rank" type="text" class="span12" value="{{ next_post_rank }}" ></input>
+                                                                </div>
+
+                                                                <div class="span3">
                                                                     <label>Alignment</label>
                                                                     <select class="span10" name="post_alignment">
                                                                         <option>Left</option>
@@ -178,7 +186,7 @@
                                                                     </select>
                                                                 </div>
 
-                                                                <div class="span4">
+                                                                <div class="span3">
                                                                     <label>Width</label>
                                                                     <select class="span10" name="post_width">
                                                                         %for num in range(12, 0, -1):
@@ -201,7 +209,7 @@
                             </div>
                         %end
 
-                        %include content.tpl rows=get('rows', [])
+                        %include content.tpl rows=get('rows', []), logged_in=logged_in, selected_route=selected_route
                     </div>
                 </div>
             </div>

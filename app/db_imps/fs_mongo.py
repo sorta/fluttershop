@@ -1,5 +1,6 @@
 from datetime import datetime
 import pymongo
+from pymongo.objectid import ObjectId
 
 
 class FShopMongoDB():
@@ -33,8 +34,11 @@ class FShopMongoDB():
         post_col = self.posts_collection
         return post_col.find({'route_id': unicode(route_id).lower()}).sort('rank', -1).limit(post_limit)
 
-    def insert_new_post(self, route, mane, alignment, width, title, next_rank, show_title, show_date, post_content, tail=None):
+    def insert_new_post(self, route, mane, alignment, width, title, rank, show_title, show_date, post_content, tail=None):
         post_col = self.posts_collection
+        rank = int(rank)
+        post_col.update({'route_id': route, 'rank': {'$gte': rank}}, {'$inc': {'rank': 1}}, multi=True)
+
         timestamp = datetime.now()
         new_post = {
             "route_id": route,
@@ -47,13 +51,38 @@ class FShopMongoDB():
             "show_date": show_date,
             "date_created": timestamp,
             "date_modified": timestamp,
-            "rank": next_rank
+            "rank": rank
         }
 
         if tail:
             new_post["tail_id"] = tail
 
         return post_col.insert(new_post)
+
+    def update_post(self, post_id, route, alignment, width, title, rank, show_title, show_date, post_content):
+        post_col = self.posts_collection
+        rank = int(rank)
+        post_col.update({'route_id': route, 'rank': {'$gte': rank}}, {'$inc': {'rank': 1}}, multi=True)
+
+        post_id = ObjectId(post_id)
+
+        timestamp = datetime.now()
+        updates = {
+            "post_content": post_content,
+            "alignment": alignment,
+            "width": width,
+            "title": title,
+            "show_title": show_title,
+            "show_date": show_date,
+            "date_modified": timestamp,
+            "rank": rank
+        }
+
+        post_col.update({'_id': post_id}, {'$set': updates})
+
+        zero_post = post_col.find({'route_id': route, 'rank': 0})
+        if not zero_post.count():
+            post_col.update({'rank': {'$gt': 0}}, {'$inc': {'rank': -1}}, multi=True)
 
     #### OPTIONS ####
     def get_user_check_password(self, username, test_password):
@@ -208,6 +237,12 @@ class FShopMongoDB():
 
     def increment_post_rank(self, route_id, incr_value=1):
         self.ranks_collection.update({'rank_type': 'post', 'route_id': route_id}, {'$inc': {'next_rank': incr_value}})
+
+    def one_up_post_rank(self, route_id, rank):
+        next_rank = self.get_next_post_rank(route_id)
+        if rank >= next_rank:
+            rank += 1
+            self.ranks_collection.update({'rank_type': 'post', 'route_id': route_id}, {'$set': {'next_rank': rank}})
 
     #### ROUTING ####
     def _insert_mane(self, mane_name, rank, title, desc):
