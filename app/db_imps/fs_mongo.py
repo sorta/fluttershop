@@ -1,6 +1,6 @@
 from datetime import datetime
 import pymongo
-from pymongo.objectid import ObjectId
+from bson.objectid import ObjectId
 
 
 class FShopMongoDB():
