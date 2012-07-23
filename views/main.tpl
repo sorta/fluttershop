@@ -125,7 +125,7 @@
             <div class="tab-content">
                 <div style="height: 19px"></div>
                 <div class="tab-pane active" id="ActiveTab">
-                    <div class="container-fluid">
+                    <div class="container">
 
                         %for msg in flash_alerts:
                             <div class="alert alert-block fade in {{ msg['msg_classes'] }}">

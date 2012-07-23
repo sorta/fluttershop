@@ -1,6 +1,6 @@
 
 %for row in rows:
-    <div class="row-fluid">
+    <div class="row">
     %for post in row:
         %if post['offset'] > 0:
             <div class="span{{ post['offset'] }}"><br /></div>
