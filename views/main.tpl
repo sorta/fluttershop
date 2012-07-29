@@ -30,7 +30,7 @@
         %setdefault('next_tail_rank', 0)
         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
-        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/'), manelinks=manelinks, taillinks=get('taillinks', []), logged_in=logged_in, user=get('user', {}), site_name=site_name, def_ppp=def_ppp, next_mane_rank=next_mane_rank, next_tail_rank=next_tail_rank
+        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/'), manelinks=manelinks, taillinks=get('taillinks', []), logged_in=logged_in, user=get('user', {}), site_name=site_name, def_ppp=def_ppp
 
         <!-- NAVBAR -->
         <div class="navbar navbar-fixed-top">
@@ -63,15 +63,19 @@
                                 <a href="{{ link['route_name'] }}">{{ link['display'] }}</a></li>
                                 %if logged_in:
                                     <li>
-                                        <a data-toggle="modal" href="#delete_mane_modal_{{ link['mane_name'].replace(" ", "_") }}">
+                                        <a data-toggle="modal" href="#delete_tab_modal" onclick="setDeleteTab('{{ link['_id'] }}', '{{ link['mane_name'] }}');" class="mane_funcs">
                                             <i class="icon-remove icon-white"></i>
+                                        </a>
+                                        <a data-toggle="modal" href="#edit_tab_modal"
+                                            onclick="setEditTab('edit', '', '{{ link['mane_name'] }}', '{{ link['rank'] }}', '{{ link['title'] }}', '{{ link['desc'] }}');" class="mane_funcs">
+                                                <i class="icon-edit icon-white"></i>
                                         </a>
                                     </li>
                                 %end
 
                             %end
                             %if logged_in:
-                                <li><a data-toggle="modal" href="#add_mane_modal" class="badge badge-info"><i class="icon-plus"></i></a></li>
+                                <li><a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add');" class="badge badge-info"><i class="icon-plus"></i></a></li>
                             %end
 
                         </ul>
@@ -146,6 +150,7 @@
                                                 <td>
                                                     <form class="form-vertical" action="/_sitefuncs_/addpost" method="post">
                                                         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                                                        <input name="selected_rob" type="hidden" value="{{ selected_rob }}" />
 
                                                         <div id="pe_title" class="collapse">
                                                             <label>Title</label>

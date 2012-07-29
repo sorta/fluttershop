@@ -18,6 +18,11 @@ fshop_bottle = Bottle()
 class FShopApp(object):
 
     def __init__(self):
+        fshop_bottle.get('/')(self.index)
+        fshop_bottle.route('/static/<filepath:path>')(self.send_static)
+        fshop_bottle.route('/favicon.ico')(self.send_favicon)
+        fshop_bottle.error(404)(self.error404)
+
         self._config = FShopConfig()
         self._current_dir = os.path.dirname(os.path.abspath(__file__))
         self._static_dir = os.path.join(self._current_dir, 'static')
@@ -27,14 +32,11 @@ class FShopApp(object):
         self._FSDBsys = FShopDBSys(self._base_util, self._config, self._crypto)
         self._util = FShopUtil(self._base_util, self._config, self._FSDBsys, fshop_bottle)
         self._auth = FShopAuth(self._base_util, self._config, self._FSDBsys, fshop_bottle)
-        self._tabs = FShopTabs(self._base_util, self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
         self._content = FShopContent(self._base_util, self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
         self._content = FShopSiteOptions(self._base_util, self._FSDBsys, self._auth, self._crypto, fshop_bottle)
 
-        fshop_bottle.get('/')(self.index)
-        fshop_bottle.route('/static/<filepath:path>')(self.send_static)
-        fshop_bottle.route('/favicon.ico')(self.send_favicon)
-        fshop_bottle.error(404)(self.error404)
+        # For routing reasons, tabs should be the last module to load
+        self._tabs = FShopTabs(self._base_util, self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
 
     #### Basic Routes ####
     def index(self):
@@ -71,7 +73,7 @@ class FShopApp(object):
         if not self._FSDBsys.options_db.at_least_one_user():
             self._FSDBsys.options_db._add_user("admin", "123456", "example@email.com")
 
-        page_404 = self._FSDBsys.content_db.get_posts_for_route("/404")
+        page_404 = self._FSDBsys.content_db.get_posts_for_route_by_name("/404")
         if not page_404.count():
             self._FSDBsys.content_db.insert_new_post("/404", "404", "left", 12, "Page Not Found", 0, True, False, "You've tried to access a non-existant page.")
             self._FSDBsys.rank_db.increment_post_rank("/404")

@@ -32,7 +32,8 @@ class FShopUtil(object):
             page_desc = mane['desc']
             tail_name = None
 
-        rows = self.listify_posts(route)
+        selected_rob = self._FSDBsys.route_db.get_route(route)
+        rows = self.listify_posts(selected_rob)
         alerts = self.get_flash_alerts()
 
         pm = self.add_user_info({
@@ -40,6 +41,7 @@ class FShopUtil(object):
             'taillinks': tails,
             'selected_mane': mane['mane_name'],
             'selected_tail': tail_name,
+            'selected_rob': selected_rob,
             'page_title': page_title,
             'page_desc': page_desc,
             'site_name': site_name["site_name"],
@@ -63,7 +65,8 @@ class FShopUtil(object):
         page_title = "Page Not Found"
         page_desc = "Page Not Found"
 
-        rows = self.listify_posts(route)
+        selected_rob = self._FSDBsys.route_db.get_route(route)
+        rows = self.listify_posts(selected_rob)
         alerts = self.get_flash_alerts()
 
         pm = self.add_user_info({

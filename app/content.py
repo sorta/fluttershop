@@ -57,6 +57,7 @@ class FShopContent(object):
         self._auth.validate_session()
         form = request.forms
         route = form["selected_url"]
+        rob = form["selected_rob"]
         title = form["post_title"]
         alignment = form.get("post_alignment", "left")
         width = int(form.get("post_width", 12))

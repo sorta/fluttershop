@@ -21,18 +21,18 @@ class FShopMongoDB():
         return self._mdb.options
 
     @property
-    def ranks_collection(self):
-        return self._mdb.ranks
-
-    @property
     def routes_collection(self):
         return self._mdb.routes
 
     #### CONTENT ####
 
-    def get_posts_for_route(self, route_id, post_limit=10):
+    def get_posts_for_route_by_name(self, route_id, post_limit=10):
         post_col = self.posts_collection
         return post_col.find({'route_id': unicode(route_id).lower()}).sort('rank', -1).limit(post_limit)
+
+    def get_posts_for_route(self, route_id, post_limit=10):
+        post_col = self.posts_collection
+        return post_col.find({'route_id': ObjectId(route_id)}).sort('rank', -1).limit(post_limit)
 
     def insert_new_post(self, route, mane, alignment, width, title, rank, show_title, show_date, post_content, tail=None):
         post_col = self.posts_collection
@@ -179,153 +179,74 @@ class FShopMongoDB():
 
     #### RANKING ####
 
-    # Mane
-    def new_mane_rank(self):
-        new_rank = {
-            'rank_type': 'mane',
-            'next_rank': 0
-        }
-        self.ranks_collection.insert(new_rank)
+    # Tab
 
-    def get_next_mane_rank(self):
-        rank = self.ranks_collection.find_one({'rank_type': 'mane'})
-        if not rank:
-            self.new_mane_rank()
-            return self.get_next_mane_rank()
-        return rank.get('next_rank', 0)
-
-    def increment_mane_rank(self, incr_value=1):
-        self.ranks_collection.update({'rank_type': 'mane'}, {'$inc': {'next_rank': incr_value}})
-
-    # Tail
-    def new_tail_rank(self, mane):
-        new_rank = {
-            'rank_type': 'tail',
-            'mane_name': mane.lower(),
-            'next_rank': 0
-        }
-        self.ranks_collection.insert(new_rank)
-
-    def get_next_tail_rank(self, mane):
-        rank = self.ranks_collection.find_one({'rank_type': 'tail', 'mane_name': mane.lower()})
-        if not rank:
-            self.new_tail_rank(mane)
-            return self.get_next_tail_rank(mane)
-        return rank.get('next_rank', 0)
-
-    def increment_tail_rank(self, mane, incr_value=1):
-        self.ranks_collection.update({'rank_type': 'tail', 'mane_name': mane.lower()}, {'$inc': {'next_rank': incr_value}})
-
-    def remove_tail_rank(self, mane):
-        self.ranks_collection.remove({'rank_type': 'tail', 'mane_name': mane.lower()})
-
-    # Post
-    def new_post_rank(self, route_id):
-        new_rank = {
-            'rank_type': 'post',
-            'route_id': route_id,
-            'next_rank': 0
-        }
-        self.ranks_collection.insert(new_rank)
-
-    def get_next_post_rank(self, route_id):
-        rank = self.ranks_collection.find_one({'rank_type': 'post', 'route_id': route_id})
-        if not rank:
-            self.new_post_rank(route_id)
-            return self.get_next_post_rank(route_id)
-        return rank.get('next_rank', 0)
-
-    def increment_post_rank(self, route_id, incr_value=1):
-        self.ranks_collection.update({'rank_type': 'post', 'route_id': route_id}, {'$inc': {'next_rank': incr_value}})
-
-    def one_up_post_rank(self, route_id, rank):
-        next_rank = self.get_next_post_rank(route_id)
-        if rank >= next_rank:
-            rank += 1
-            self.ranks_collection.update({'rank_type': 'post', 'route_id': route_id}, {'$set': {'next_rank': rank}})
+    def get_next_tab_rank(self, parent):
+        if parent:
+            parent = ObjectId(parent)
+        return self.routes_collection.find({'parent': parent}).count()
 
     #### ROUTING ####
-    def _insert_mane(self, mane_name, rank, title, desc):
-        mane_name = unicode(mane_name)
-        lowered_mane = mane_name.lower().replace(" ", "_")
-        new_mane = {
-            'mane_name': lowered_mane,
-            'display': mane_name,
-            'route_type': u'mane',
-            'route_name': u'/{0}'.format(lowered_mane),
+    def _insert_tab(self, tab_name, rank, title, desc, parent, nav_display):
+        tab_name = unicode(tab_name)
+        lowered_tab = tab_name.lower().replace(" ", "_")
+        new_tab = {
+            'name': lowered_tab,
+            'display': tab_name,
+            'path': u'/{0}'.format(lowered_tab),
             'rank': rank,
             'title': unicode(title) if title else title,
-            'desc': unicode(desc) if desc else desc
+            'desc': unicode(desc) if desc else desc,
+            'parent': parent,
+            'nav_display': nav_display
         }
-        self.routes_collection.insert(new_mane)
+        self.routes_collection.insert(new_tab)
 
-    def _insert_tail(self, mane_name, tail_name, rank, title, desc):
-        mane_name = unicode(mane_name).lower().replace(" ", "_")
-        tail_name = unicode(tail_name)
-        lowered_tail = tail_name.lower().replace(" ", "_")
-
-        new_tail = {
-            'mane_name': mane_name,
-            'tail_name': lowered_tail,
-            'display': tail_name,
-            'route_type': u'tail',
-            'route_name': u'/{0}/{1}'.format(mane_name, lowered_tail),
-            'rank': rank,
-            'title': unicode(title) if title else title,
-            'desc': unicode(desc) if desc else desc
-        }
-        self.routes_collection.insert(new_tail)
-
-    def add_new_mane(self, mane_name, rank, title=None, desc=None):
+    def add_new_tab(self, tab_name, rank, title=None, desc=None, parent=None, nav_display=True):
         rank = int(rank)
 
-        self.routes_collection.update({'route_type': 'mane', 'rank': {'$gte': rank}},
-                                    {'$inc': {'rank': 1}}, multi=True)
+        if nav_display:
+            self.routes_collection.update({'parent': parent, 'rank': {'$gte': rank}},
+                                        {'$inc': {'rank': 1}}, multi=True)
 
-        self._insert_mane(mane_name, rank, title, desc)
+        self._insert_tab(tab_name, rank, title, desc, parent, nav_display)
 
-    def add_new_tail(self, mane_name, tail_name, rank, title=None, desc=None):
+    def edit_tab(self, tab_id, tab_name, rank, title=None, desc=None, parent=None, nav_display=True):
         rank = int(rank)
+        route_col = self.routes_collection
 
-        self.routes_collection.update({'route_type': 'tail', 'mane_name': mane_name, 'rank': {'$gte': rank}},
+        self.routes_collection.update({'route_type': 'tab', 'rank': {'$gte': rank}},
                                     {'$inc': {'rank': 1}}, multi=True)
 
-        self._insert_tail(mane_name, tail_name, rank, title, desc)
+        updates = {
 
-    def remove_mane(self, mane_name):
-        mane = self.get_mane(mane_name)
-        self.routes_collection.remove({'mane_name': mane['mane_name']}, multi=True)
+        }
 
-        self.routes_collection.update({'route_type': 'mane', 'rank': {'$gt': mane['rank']}},
+        route_col.update({'_id': tab_id}, {'$set': updates})
+
+        zero_route = route_col.find({'route_type': 'tab', 'rank': 0})
+        if not zero_route.count():
+            route_col.update({'rank': {'$gt': 0}}, {'$inc': {'rank': -1}}, multi=True)
+
+    def remove_tab(self, tab_id):
+        tab = self.get_tab(tab_id)
+        self.routes_collection.remove({'_id': tab['_id']})
+        self.routes_collection.remove({'parent': tab['_id']}, multi=True)
+
+        self.routes_collection.update({'route_type': 'tab', 'rank': {'$gt': tab['rank']}},
                                     {'$inc': {'rank': -1}}, multi=True)
 
-    def remove_tail(self, mane_name, tail_name):
+    def get_tab_links(self):
+        return self.routes_collection.find({'route_type': 'tab'}).sort('rank', 1)
 
-        tail = self.get_tail(mane_name, tail_name)
-        self.routes_collection.remove({'tail_name': tail['tail_name']})
-
-        self.routes_collection.update({'route_type': 'tail', 'mane_name': tail['mane_name'], 'rank': {'$gt': tail['rank']}},
-                                    {'$inc': {'rank': -1}}, multi=True)
-
-    def get_manelinks(self):
-        return self.routes_collection.find({'route_type': 'mane'}).sort('rank', 1)
-
-    def get_taillinks(self, mane):
-        return self.routes_collection.find({'route_type': 'tail', 'mane_name': mane.lower()}).sort('rank', 1)
-
-    def get_links_for_mane(self, mane):
-        manes = list(self.get_manelinks())
-        tails = list(self.get_taillinks(mane))
-        return manes, tails
-
-    def get_mane_mane(self):
+    def get_mane_route(self):
         mm = self.routes_collection.find({'route_type': 'mane'}).sort('rank', 1).limit(1)
         for mane in mm:
             return mane
         return None
 
-    def get_mane(self, mane):
-        return self.routes_collection.find_one({'route_type': 'mane', 'route_name': '/{0}'.format(mane.lower())})
+    def get_tab(self, route_id):
+        return self.routes_collection.find_one({'_id': ObjectId(route_id)})
 
-    def get_tail(self, mane, tail):
-        return self.routes_collection.find_one({'route_type': 'tail', 'route_name': '/{0}/{1}'.format(mane.lower(), tail.lower())})
+    def get_tab_by_name(self, route_name):
+        return self.routes_collection.find_one({'route_id': route_name.lower()})

@@ -14,10 +14,11 @@ class FShopTabs(object):
         self._auth = auth
         self._base_util = b_util
 
-        fshop_bottle.get('/<mane_name>')(self.mane)
-        fshop_bottle.get('/<mane_name>/<tail_name>')(self.tail)
+        fshop_bottle.get('/<mane_name:path>')(self.mane)
+        # fshop_bottle.get('/<mane_name>/<tail_name>')(self.tail)
 
         fshop_bottle.post('/_sitefuncs_/addmane')(self.add_mane)
+        fshop_bottle.post('/_sitefuncs_/editmane')(self.edit_mane)
         fshop_bottle.post('/_sitefuncs_/deletemane')(self.delete_mane)
 
         fshop_bottle.post('/_sitefuncs_/addtail')(self.add_tail)
@@ -66,6 +67,29 @@ class FShopTabs(object):
 
             self._FSDBsys.route_db.add_new_mane(mane, priority, title, desc)
             self._FSDBsys.rank_db.new_tail_rank(mane)
+            self._FSDBsys.rank_db.increment_mane_rank()
+
+        redirect(selected_url)
+
+    def edit_mane(self):
+        self._auth.validate_session()
+        form = request.forms
+        selected_url = form['selected_url']
+        mane = form['mane_name']
+
+        valid_req = self._base_util.validate_schema(AddManeSchema(), form, self._add_mane_sv)
+
+        if self._FSDBsys.route_db.get_mane(mane):
+            self._base_util.flash_alert("Could not edit specified mane tab. One with that name already exists.", "alert-error", "Error")
+            valid_req = False
+
+        if valid_req:
+            title = form.get('mane_title', None)
+            desc = form.get('mane_desc', None)
+            priority = form["mane_rank"]
+            mane_id = form['mane_id']
+
+            self._FSDBsys.route_db.add_new_mane(mane, priority, title, desc)
             self._FSDBsys.rank_db.increment_mane_rank()
 
         redirect(selected_url)

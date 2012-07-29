@@ -1,25 +1,5 @@
 
 
-function processScroll() {
-    var i, scrollTop = $win.scrollTop();
-    if (scrollTop >= navTop && !isFixed) {
-        isFixed = 1;
-        $nav.addClass('subnav-fixed');
-    } else if (scrollTop <= navTop && isFixed) {
-        isFixed = 0;
-        $nav.removeClass('subnav-fixed');
-    }
-}
-
-function loadTab()
-{
-    /* grabs URL from HREF attribute then adds an  */
-    /* ID from the DIV I want to grab data from    */
-    var myUrl = $(this).attr("href");
-    $("#ActiveTab").load(myUrl);
-    return false;
-}
-
 function collapseInput()
 {
     $("#pe_radio_buttons").collapse("hide");
@@ -38,6 +18,23 @@ function flip_cb()
     var thisid = "#" + this.id + "_c";
     var pst_cb = $(thisid);
     pst_cb.attr('checked', !pst_cb.attr('checked'));
+}
+
+function setDeleteTab(id, name)
+{
+    $("input#delete_tab_id").val(id);
+    $("input#delete_tab_name").val(name);
+    $("span#delete_tab_label").text(name);
+}
+
+function setEditTab(action, parent, rank, name, title, desc)
+{
+    $("input#edit_tab_action").val(action);
+    $("input#edit_tab_parent").val(parent);
+    $("input#edit_tab_name").val(name);
+    $("input#edit_tab_rank").val(rank);
+    $("input#edit_tab_title").val(title);
+    $("textarea#edit_tab_desc").val(desc);
 }
 
 $(document).ready(function()

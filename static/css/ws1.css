@@ -43,3 +43,9 @@ textarea.red_tb
 {
     min-height: 300px;
 }
+
+.navbar .nav > li > a.mane_funcs
+{
+    margin: 0px auto;
+    padding: 0px;
+}

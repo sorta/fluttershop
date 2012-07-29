@@ -98,130 +98,51 @@
         </div>
     </div>
 
-    <!-- Add Tabs -->
-    <div class="modal hide fade" id="add_mane_modal">
+    <!-- Add/Edit Tab -->
+    <div class="modal hide fade" id="edit_tab_modal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
-            <h3>Add Mane Tab</h3>
+            <h3>Add/Edit Tab</h3>
         </div>
         <div class="modal-body">
-            <form action="/_sitefuncs_/addmane" class="form-vertical" id="addMane" method="post">
+            <form action="/_sitefuncs_/editTab" class="form-vertical" id="editTab" method="post">
                 <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                <input name="action" id="edit_tab_action" type="hidden" value="add" />
+                <input name="parent" id="edit_tab_parent" type="hidden" value="" />
 
                 <label>Name*</label>
-                <input name="mane_name" type="text" class="span6" placeholder="Name" />
+                <input name="tab_name" id="edit_tab_name" type="text" class="span5" placeholder="Name" />
                 <label>Rank*</label>
-                <input name="mane_rank" type="text" class="span6" value="{{ next_mane_rank }}" />
+                <input name="tab_rank" id="edit_tab_rank" type="text" class="span5" value="" />
                 <label>Title</label>
-                <input name="mane_title" type="text" class="span6" placeholder="Quick basic description" />
+                <input name="tab_title" id="edit_tab_title" type="text" class="span5" placeholder="Quick basic description" />
                 <label>Description</label>
-                <textarea name="mane_desc" class="span6" placeholder="Detailed description"></textarea>
+                <textarea name="tab_desc" id="edit_tab_desc" class="span5" placeholder="Detailed description"></textarea>
         </div>
         <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
-                <input class="btn btn-primary" type="submit" value="Add" />
+                <input class="btn btn-primary" type="submit" value="Save" />
             </form>
         </div>
     </div>
 
-    <div class="modal hide fade" id="add_tail_modal">
+    <!-- Delete Tab -->
+    <div class="modal hide fade" id="delete_tab_modal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
-            <h3>Add Tail Tab</h3>
+            <h3>Delete Tab</h3>
         </div>
         <div class="modal-body">
-            <form action="/_sitefuncs_/addtail" class="form-vertical" id="addTail" method="post">
+            <form action="/_sitefuncs_/deletetab" class="form-vertical" method="post">
+                <label>Are you sure you want to delete this Tab (<span id="delete_tab_label"></span>)?</label>
                 <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                <input name="selected_mane" type="hidden" value="{{ selected_mane }}" />
-
-                <label>Name*</label>
-                <input name="tail_name" type="text" class="span6" placeholder="Name" />
-                <label>Rank*</label>
-                <input name="tail_rank" type="text" class="span6" value="{{ next_tail_rank }}" />
-                <label>Title</label>
-                <input name="tail_title" type="text" class="span6" placeholder="Quick basic description" />
-                <label>Description</label>
-                <textarea name="tail_desc" class="span6" placeholder="Detailed description"></textarea>
+                <input name="tab_id" id="delete_tab_id" type="hidden" value="" />
+                <input name="tab_name" id="delete_tab_name" type="hidden" value="" />
         </div>
         <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
-                <input class="btn btn-primary" type="submit" value="Add" />
+                <input class="btn btn-danger" type="submit" value="DESTROY!" />
             </form>
         </div>
     </div>
-
-    %for link in manelinks:
-
-        <!-- Manes -->
-
-        <!-- Delete -->
-        <div class="modal hide fade" id="delete_mane_modal_{{ link['mane_name'].replace(" ", "_") }}">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">×</button>
-                <h3>Delete Mane Tab</h3>
-            </div>
-            <div class="modal-body">
-                <form action="/_sitefuncs_/deletemane" class="form-vertical" method="post">
-                    <label>Are you sure you want to delete this Mane Tab ({{ link['mane_name'] }})?</label>
-                    <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                    <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
-            </div>
-            <div class="modal-footer">
-                    <button type="button" class="btn" data-dismiss="modal">Close</button>
-                    <input class="btn btn-danger" type="submit" value="DESTROY!" />
-                </form>
-            </div>
-        </div>
-
-        <!-- Edit -->
-        <div class="modal hide fade" id="edit_mane_modal_{{ link['mane_name'].replace(" ", "_") }}">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">×</button>
-                <h3>Edit Mane Tab</h3>
-            </div>
-            <div class="modal-body">
-                <form action="/_sitefuncs_/editmane" class="form-vertical" method="post">
-                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-
-                <label>Name</label>
-                <input name="mane_name" type="text" class="span3" placeholder="Tab" />
-                <label>Title</label>
-                <input name="mane_title" type="text" class="span3" placeholder="Tab" />
-                <label>Description</label>
-                <input name="mane_desc" type="textarea" class="span3" placeholder="Tab" />
-
-            </div>
-            <div class="modal-footer">
-                    <button type="button" class="btn" data-dismiss="modal">Close</button>
-                    <input class="btn btn-primary" type="submit" value="Save" />
-                </form>
-            </div>
-        </div>
-
-    %end
-
-    %for link in taillinks:
-
-        <!-- Tails -->
-        <!-- Delete -->
-        <div class="modal hide fade" id="delete_tail_modal_{{ link['tail_name'].replace(" ", "_") }}">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">×</button>
-                <h3>Delete Tail Tab</h3>
-            </div>
-            <div class="modal-body">
-                <form action="/_sitefuncs_/deletetail" class="form-vertical" method="post">
-                    <label>Are you sure you want to delete this Tail Tab ({{ link['tail_name'] }})?</label>
-                    <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                    <input name="mane_name" type="hidden" value="{{ link['mane_name'] }}" />
-                    <input name="tail_name" type="hidden" value="{{ link['tail_name'] }}" />
-            </div>
-            <div class="modal-footer">
-                    <button type="button" class="btn" data-dismiss="modal">Close</button>
-                    <input class="btn btn-danger" type="submit" value="HULK SMASH!" />
-                </form>
-            </div>
-        </div>
-
-    %end
 %end
