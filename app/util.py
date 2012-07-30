@@ -235,6 +235,14 @@ class FShopBaseUtil(object):
 
         session['flash_alerts'] = alerts
 
+    def clean_name(self, name):
+        return unicode(name.lower().replace(" ", "_"))
+
+    def pathify_name(self, name, is_clean=False):
+        if not is_clean:
+            name = self.clean_name(name)
+        return u'/{0}'.format(name)
+
     def run_validator(self, validator, value):
         try:
             resp = validator.to_python(value)

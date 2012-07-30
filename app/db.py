@@ -33,7 +33,6 @@ class FShopDBSys(object):
 
         self._route_db = get_db_sys(config.route_db, b_util, config, crypto)
         self._content_db = get_db_sys(config.content_db, b_util, config, crypto)
-        self._rank_db = get_db_sys(config.rank_db, b_util, config, crypto)
         self._options_db = get_db_sys(config.options_db, b_util, config, crypto)
 
     @property
@@ -43,10 +42,6 @@ class FShopDBSys(object):
     @property
     def content_db(self):
         return self._content_db
-
-    @property
-    def rank_db(self):
-        return self._rank_db
 
     @property
     def options_db(self):

@@ -14,141 +14,86 @@ class FShopTabs(object):
         self._auth = auth
         self._base_util = b_util
 
-        fshop_bottle.get('/<mane_name:path>')(self.mane)
-        # fshop_bottle.get('/<mane_name>/<tail_name>')(self.tail)
+        fshop_bottle.get('/<tab_name:path>')(self.tab)
 
-        fshop_bottle.post('/_sitefuncs_/addmane')(self.add_mane)
-        fshop_bottle.post('/_sitefuncs_/editmane')(self.edit_mane)
-        fshop_bottle.post('/_sitefuncs_/deletemane')(self.delete_mane)
+        fshop_bottle.post('/_sitefuncs_/edittab')(self.add_or_edit_tab)
+        fshop_bottle.post('/_sitefuncs_/deletetab')(self.delete_tab)
 
-        fshop_bottle.post('/_sitefuncs_/addtail')(self.add_tail)
-        fshop_bottle.post('/_sitefuncs_/deletetail')(self.delete_tail)
-
-        self._add_mane_sv = ["mane_name", "mane_rank"]
-        self._add_tail_sv = ["tail_name", "tail_rank"]
+        self._add_tab_sv = ["tab_name", "tab_rank"]
 
     #### View Routes ####
     @view('main')
-    def mane(self, mane_name):
+    def tab(self, tab_name):
 
-        mane = self._FSDBsys.route_db.get_mane(mane_name)
-        if not mane:
+        tab = self._FSDBsys.route_db.get_tab_by_name(tab_name)
+        if not tab:
             abort(404)
-        pm = self._util.get_page_model(mane)
-        return pm
-
-    @view('main')
-    def tail(self, mane_name, tail_name):
-        mane = self._FSDBsys.route_db.get_mane(mane_name)
-        tail = self._FSDBsys.route_db.get_tail(mane_name, tail_name)
-
-        if not mane or not tail:
-            abort(404)
-        pm = self._util.get_page_model(mane, tail)
+        pm = self._util.get_page_model(tab)
         return pm
 
     #### Edit Routes ####
-    def add_mane(self):
+    def add_or_edit_tab(self):
         self._auth.validate_session()
         form = request.forms
         selected_url = form['selected_url']
-        mane = form['mane_name']
+        tab = form['tab_name']
 
-        valid_req = self._base_util.validate_schema(AddManeSchema(), form, self._add_mane_sv)
+        valid_req = self._base_util.validate_schema(AddEditTabSchema(), form, self._add_tab_sv)
 
-        if self._FSDBsys.route_db.get_mane(mane):
-            self._base_util.flash_alert("Could not add specified mane tab. One with that name already exists.", "alert-error", "Error")
+    def add_tab(self):
+
+        if self._FSDBsys.route_db.get_tab(tab):
+            self._base_util.flash_alert("Could not add specified tab tab. One with that name already exists.", "alert-error", "Error")
             valid_req = False
 
         if valid_req:
-            title = form.get('mane_title', None)
-            desc = form.get('mane_desc', None)
-            priority = form["mane_rank"]
+            title = form.get('tab_title', None)
+            desc = form.get('tab_desc', None)
+            priority = form["tab_rank"]
 
-            self._FSDBsys.route_db.add_new_mane(mane, priority, title, desc)
-            self._FSDBsys.rank_db.new_tail_rank(mane)
-            self._FSDBsys.rank_db.increment_mane_rank()
+            self._FSDBsys.route_db.add_new_tab(tab, priority, title, desc)
+            self._FSDBsys.rank_db.new_tail_rank(tab)
+            self._FSDBsys.rank_db.increment_tab_rank()
 
         redirect(selected_url)
 
-    def edit_mane(self):
+    def edit_tab(self):
         self._auth.validate_session()
         form = request.forms
         selected_url = form['selected_url']
-        mane = form['mane_name']
+        tab = form['tab_name']
 
-        valid_req = self._base_util.validate_schema(AddManeSchema(), form, self._add_mane_sv)
+        valid_req = self._base_util.validate_schema(AddtabSchema(), form, self._add_tab_sv)
 
-        if self._FSDBsys.route_db.get_mane(mane):
-            self._base_util.flash_alert("Could not edit specified mane tab. One with that name already exists.", "alert-error", "Error")
+        if self._FSDBsys.route_db.get_tab(tab):
+            self._base_util.flash_alert("Could not edit specified tab tab. One with that name already exists.", "alert-error", "Error")
             valid_req = False
 
         if valid_req:
-            title = form.get('mane_title', None)
-            desc = form.get('mane_desc', None)
-            priority = form["mane_rank"]
-            mane_id = form['mane_id']
+            title = form.get('tab_title', None)
+            desc = form.get('tab_desc', None)
+            priority = form["tab_rank"]
+            tab_id = form['tab_id']
 
-            self._FSDBsys.route_db.add_new_mane(mane, priority, title, desc)
-            self._FSDBsys.rank_db.increment_mane_rank()
+            self._FSDBsys.route_db.add_new_tab(tab, priority, title, desc)
+            self._FSDBsys.rank_db.increment_tab_rank()
 
         redirect(selected_url)
 
-    def delete_mane(self):
+    def delete_tab(self):
         self._auth.validate_session()
         form = request.forms
         selected_url = form.get('selected_url', '/')
-        mane = form['mane_name']
+        tab = form['tab_name']
 
-        if self._FSDBsys.route_db.get_mane(mane):
-            self._FSDBsys.route_db.remove_mane(mane)
-            self._FSDBsys.rank_db.remove_tail_rank(mane)
-            self._FSDBsys.rank_db.increment_mane_rank(-1)
-
-        redirect(selected_url)
-
-    def add_tail(self):
-        self._auth.validate_session()
-        form = request.forms
-        selected_url = form['selected_url']
-        mane = form['selected_mane']
-        tail = form['tail_name']
-
-        valid_req = self._base_util.validate_schema(AddTailSchema(), form, self._add_tail_sv)
-
-        if self._FSDBsys.route_db.get_tail(mane, tail):
-            self._base_util.flash_alert("Could not add specified tail tab. One with that name already exists.", "alert-error", "Operation Failed")
-            valid_req = False
-
-        if valid_req:
-            priority = form["tail_rank"]
-            title = form.get('tail_title', None)
-            desc = form.get('tail_desc', None)
-
-            self._FSDBsys.route_db.add_new_tail(mane, tail, priority, title, desc)
-            self._FSDBsys.rank_db.increment_tail_rank(mane)
-
-        redirect(selected_url)
-
-    def delete_tail(self):
-        self._auth.validate_session()
-        form = request.forms
-        selected_url = form.get('selected_url', '/')
-        mane = form['mane_name']
-        tail = form['tail_name']
-
-        if self._FSDBsys.route_db.get_tail(mane, tail):
-            self._FSDBsys.route_db.remove_tail(mane, tail)
-            self._FSDBsys.rank_db.increment_tail_rank(mane, -1)
+        if self._FSDBsys.route_db.get_tab(tab):
+            self._FSDBsys.route_db.remove_tab(tab)
+            self._FSDBsys.rank_db.remove_tail_rank(tab)
+            self._FSDBsys.rank_db.increment_tab_rank(-1)
 
         redirect(selected_url)
 
 
-class AddManeSchema(Schema):
+class AddEditManeSchema(Schema):
     mane_name = validators.String(not_empty=True)
     mane_rank = validators.Int()
-
-
-class AddTailSchema(Schema):
-    tail_name = validators.String(not_empty=True)
-    tail_rank = validators.Int()

@@ -42,11 +42,10 @@ class FShopApp(object):
     def index(self):
         mane = self._FSDBsys.route_db.get_mane_mane()
         if mane:
-            redirect(mane.get('route_name', '/Home'))
+            redirect(mane.get('path', '/Home'))
         else:
-            priority = self._FSDBsys.rank_db.get_next_mane_rank()
-            self._FSDBsys.route_db.add_new_mane("Home", priority, "Site Home", "FlutterShop default home")
-            self._FSDBsys.rank_db.increment_mane_rank()
+            rank = self._FSDBsys.route_db.get_next_tab_rank(None)
+            self._FSDBsys.route_db.add_new_tab("Home", rank, "Site Home", "FlutterShop default home", parent=None, nav_display=True)
             redirect("/home")
 
     def send_static(self, filepath):
@@ -73,10 +72,10 @@ class FShopApp(object):
         if not self._FSDBsys.options_db.at_least_one_user():
             self._FSDBsys.options_db._add_user("admin", "123456", "example@email.com")
 
-        page_404 = self._FSDBsys.content_db.get_posts_for_route_by_name("/404")
-        if not page_404.count():
-            self._FSDBsys.content_db.insert_new_post("/404", "404", "left", 12, "Page Not Found", 0, True, False, "You've tried to access a non-existant page.")
-            self._FSDBsys.rank_db.increment_post_rank("/404")
+        # page_404 = self._FSDBsys.content_db.get_posts_for_route_by_name("/404")
+        # if not page_404.count():
+        #     self._FSDBsys.content_db.insert_new_post("/404", "404", "left", 12, "Page Not Found", 0, True, False, "You've tried to access a non-existant page.")
+        #     self._FSDBsys.rank_db.increment_post_rank("/404")
 
     def start(self):
         self.init_db_if_necessary()

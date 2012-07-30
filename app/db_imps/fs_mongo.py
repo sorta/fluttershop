@@ -186,58 +186,60 @@ class FShopMongoDB():
             parent = ObjectId(parent)
         return self.routes_collection.find({'parent': parent}).count()
 
+    def update_tab_ranks(self, parent, rank):
+        self.routes_collection.update({'parent': parent, 'rank': {'$gte': rank}},
+                                    {'$inc': {'rank': 1}}, multi=True)
+
     #### ROUTING ####
-    def _insert_tab(self, tab_name, rank, title, desc, parent, nav_display):
+    def _build_tab_data(self, tab_name, rank, title, desc, parent, nav_display):
+        rank = int(rank)
         tab_name = unicode(tab_name)
-        lowered_tab = tab_name.lower().replace(" ", "_")
-        new_tab = {
-            'name': lowered_tab,
+        clean_name = self._base_util.clean_name(tab_name)
+        path = self._base_util.pathify_name(clean_name, True)
+        tab = {
+            'name': clean_name,
             'display': tab_name,
-            'path': u'/{0}'.format(lowered_tab),
+            'path': path,
             'rank': rank,
             'title': unicode(title) if title else title,
             'desc': unicode(desc) if desc else desc,
-            'parent': parent,
+            'parent': ObjectId(parent) if parent else parent,
             'nav_display': nav_display
         }
+        return tab
+
+    def _insert_tab(self, tab_name, rank, title, desc, parent, nav_display):
+        new_tab = self._build_tab_data(tab_name, rank, title, desc, parent, nav_display)
         self.routes_collection.insert(new_tab)
 
     def add_new_tab(self, tab_name, rank, title=None, desc=None, parent=None, nav_display=True):
-        rank = int(rank)
-
         if nav_display:
-            self.routes_collection.update({'parent': parent, 'rank': {'$gte': rank}},
-                                        {'$inc': {'rank': 1}}, multi=True)
-
+            self.update_tab_ranks(parent, rank)
         self._insert_tab(tab_name, rank, title, desc, parent, nav_display)
 
     def edit_tab(self, tab_id, tab_name, rank, title=None, desc=None, parent=None, nav_display=True):
-        rank = int(rank)
-        route_col = self.routes_collection
+        if nav_display:
+            self.update_tab_ranks(parent, rank)
 
-        self.routes_collection.update({'route_type': 'tab', 'rank': {'$gte': rank}},
-                                    {'$inc': {'rank': 1}}, multi=True)
+        updates = self._build_tab_data(tab_name, rank, title, desc, parent, nav_display)
+        self.routes_collection.update({'_id': tab_id}, {'$set': updates})
 
-        updates = {
-
-        }
-
-        route_col.update({'_id': tab_id}, {'$set': updates})
-
-        zero_route = route_col.find({'route_type': 'tab', 'rank': 0})
-        if not zero_route.count():
-            route_col.update({'rank': {'$gt': 0}}, {'$inc': {'rank': -1}}, multi=True)
+        zero_route = self.routes_collection.find_one({'route_type': 'tab', 'rank': 0})
+        if not zero_route:
+            self.routes_collection.update({'rank': {'$gt': 0}}, {'$inc': {'rank': -1}}, multi=True)
 
     def remove_tab(self, tab_id):
         tab = self.get_tab(tab_id)
         self.routes_collection.remove({'_id': tab['_id']})
-        self.routes_collection.remove({'parent': tab['_id']}, multi=True)
 
-        self.routes_collection.update({'route_type': 'tab', 'rank': {'$gt': tab['rank']}},
-                                    {'$inc': {'rank': -1}}, multi=True)
+        if tab['nav_display']:
+            self.update_tab_ranks(tab['parent'], tab['rank'])
+
+        for route in self.routes_collection.find({'parent': tab['_id']}):
+            self.remove_tab(route['_id'])
 
     def get_tab_links(self):
-        return self.routes_collection.find({'route_type': 'tab'}).sort('rank', 1)
+        return list(self.routes_collection.find({'route_type': 'tab'}).sort('rank', 1))
 
     def get_mane_route(self):
         mm = self.routes_collection.find({'route_type': 'mane'}).sort('rank', 1).limit(1)
@@ -249,4 +251,5 @@ class FShopMongoDB():
         return self.routes_collection.find_one({'_id': ObjectId(route_id)})
 
     def get_tab_by_name(self, route_name):
-        return self.routes_collection.find_one({'route_id': route_name.lower()})
+        path = self._base_util.pathify_name(route_name, True)
+        return self.routes_collection.find_one({'path': path})
