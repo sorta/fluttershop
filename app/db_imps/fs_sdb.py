@@ -51,7 +51,7 @@ class FShopSimpleDB():
         tails = self.get_taillinks(mane.lower())
         return manes, tails
 
-    def get_mane_mane(self):
+    def get_mane_tab(self):
         manes = self._sdb.get_domain('ManeLink')
         result = manes.select("select * from `ManeLink` where priority >= '0' order by priority limit 1")
 

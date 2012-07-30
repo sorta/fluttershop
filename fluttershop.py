@@ -40,7 +40,7 @@ class FShopApp(object):
 
     #### Basic Routes ####
     def index(self):
-        mane = self._FSDBsys.route_db.get_mane_mane()
+        mane = self._FSDBsys.route_db.get_mane_tab()
         if mane:
             redirect(mane.get('path', '/Home'))
         else:
@@ -56,7 +56,7 @@ class FShopApp(object):
 
     @view('main')
     def error404(self, error):
-        mane = self._FSDBsys.route_db.get_mane_mane()
+        mane = self._FSDBsys.route_db.get_mane_tab()
         pm = self._util.get_page_model_error(mane)
         return pm
 

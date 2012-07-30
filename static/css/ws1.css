@@ -47,5 +47,26 @@ textarea.red_tb
 .navbar .nav > li > a.mane_funcs
 {
     margin: 0px auto;
+    margin-right: 2px;
     padding: 0px;
+}
+
+a.tail_funcs
+{
+    height: 14px;
+    width: 14px;
+    margin: 0px !important;
+    padding: 0px !important;
+    float: right;
+}
+
+div.tail_funcs
+{
+    max-width: 14px;
+    margin-right: 2px;
+}
+
+.no_bottom
+{
+    margin-bottom: 5px !important;
 }

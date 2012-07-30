@@ -27,10 +27,11 @@ function setDeleteTab(id, name)
     $("span#delete_tab_label").text(name);
 }
 
-function setEditTab(action, parent, rank, name, title, desc)
+function setEditTab(action, parent, name, rank, title, desc, tid)
 {
     $("input#edit_tab_action").val(action);
     $("input#edit_tab_parent").val(parent);
+    $("input#edit_tab_id").val(tid);
     $("input#edit_tab_name").val(name);
     $("input#edit_tab_rank").val(rank);
     $("input#edit_tab_title").val(title);

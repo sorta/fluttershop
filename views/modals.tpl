@@ -105,10 +105,12 @@
             <h3>Add/Edit Tab</h3>
         </div>
         <div class="modal-body">
-            <form action="/_sitefuncs_/editTab" class="form-vertical" id="editTab" method="post">
+            <form action="/_sitefuncs_/edittab" class="form-vertical" id="editTab" method="post">
                 <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                <input name="selected_tab_id" type="hidden" value="{{ selected_tab['_id'] }}" />
                 <input name="action" id="edit_tab_action" type="hidden" value="add" />
-                <input name="parent" id="edit_tab_parent" type="hidden" value="" />
+                <input name="tab_parent" id="edit_tab_parent" type="hidden" value="" />
+                <input name="tab_id" id="edit_tab_id" type="hidden" value="" />
 
                 <label>Name*</label>
                 <input name="tab_name" id="edit_tab_name" type="text" class="span5" placeholder="Name" />

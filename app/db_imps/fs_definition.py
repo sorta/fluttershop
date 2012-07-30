@@ -26,7 +26,7 @@ class IFShopDB(object):
     def get_links_for_mane(self, mane):
         return
 
-    def get_mane_mane(self):
+    def get_mane_tab(self):
         return
 
     def validate_mane(self, mane):

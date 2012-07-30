@@ -26,6 +26,7 @@ def tab_update1():
             rt['name'] = rt['tail_name']
         else:
             rt['name'] = rt['mane_name']
+            rt['parent'] = None
         coll.save(rt)
 
     coll.update({}, {'$unset': {'mane_name': 1, 'tail_name': 1, 'route_name': 1, 'route_type': 1}}, multi=True)

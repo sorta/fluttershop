@@ -30,7 +30,7 @@
         %setdefault('next_tail_rank', 0)
         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
-        %include modals.tpl selected_route=selected_route, selected_mane=get('selected_mane', '/'), manelinks=manelinks, taillinks=get('taillinks', []), logged_in=logged_in, user=get('user', {}), site_name=site_name, def_ppp=def_ppp
+        %include modals.tpl selected_route=selected_route, selected_tab=selected_tab, logged_in=logged_in, user=get('user', {}), site_name=site_name, def_ppp=def_ppp
 
         <!-- NAVBAR -->
         <div class="navbar navbar-fixed-top">
@@ -48,9 +48,9 @@
                         <ul class="nav pull-left">
 
                             <li><a class="brand" href="/">{{ site_name }}</a></li>
-                            %for link in manelinks:
+                            %for mane in tabs[0]:
                                 %class_str = ""
-                                %if defined('selected_mane') and selected_mane == link['mane_name']:
+                                %if selected_tab['_id'] == mane['_id']:
                                     %class_str += "active"
                                 %end
 
@@ -60,14 +60,14 @@
                                     <li>
                                 %end
 
-                                <a href="{{ link['route_name'] }}">{{ link['display'] }}</a></li>
+                                <a href="{{ mane['path'] }}">{{ mane['display'] }}</a></li>
                                 %if logged_in:
                                     <li>
-                                        <a data-toggle="modal" href="#delete_tab_modal" onclick="setDeleteTab('{{ link['_id'] }}', '{{ link['mane_name'] }}');" class="mane_funcs">
+                                        <a data-toggle="modal" href="#delete_tab_modal" onclick="setDeleteTab('{{ mane['_id'] }}', '{{ mane['name'] }}');" class="mane_funcs">
                                             <i class="icon-remove icon-white"></i>
                                         </a>
                                         <a data-toggle="modal" href="#edit_tab_modal"
-                                            onclick="setEditTab('edit', '', '{{ link['mane_name'] }}', '{{ link['rank'] }}', '{{ link['title'] }}', '{{ link['desc'] }}');" class="mane_funcs">
+                                            onclick="setEditTab('edit', '{{ mane.get('parent', None) }}', '{{ mane['name'] }}', '{{ mane['rank'] }}', '{{ mane['title'] }}', '{{ mane['desc'] }}', '{{ mane['_id'] }}');" class="mane_funcs">
                                                 <i class="icon-edit icon-white"></i>
                                         </a>
                                     </li>
@@ -75,7 +75,7 @@
 
                             %end
                             %if logged_in:
-                                <li><a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add');" class="badge badge-info"><i class="icon-plus"></i></a></li>
+                                <li><a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add', null, null, {{ len(tabs[0]) }});" class="badge badge-info"><i class="icon-plus"></i></a></li>
                             %end
 
                         </ul>
@@ -104,27 +104,45 @@
 
         <!-- TABS -->
         <div class="tabbable">
-            <ul class="nav nav-tabs">
-                %for link in get('taillinks', []):
-                    %if defined('selected_tail') and selected_tail == link['tail_name'].lower():
-                        <li class="active">
-                    %else:
-                        <li>
-                    %end
+            %for (counter, tab_row) in enumerate(tabs):
+                %if counter != 0 and (logged_in or len(tab_row) > 0):
+                    %example_parent = "'{0}'".format(selected_tab['_id'])
+                    <ul class="nav nav-tabs no_bottom">
+                        %for tab in tab_row:
+                            %if selected_tab['_id'] == tab['_id']:
+                                <li class="active">
+                            %else:
+                                <li>
+                            %end
+                            %if tab['parent']:
+                                %example_parent = "'{0}'".format(tab['parent'])
+                            %end
 
+                            <a href="{{ tab['path'] }}">{{ tab['display'] }}</a>
+                            </li>
+                            <li>
+                            %if logged_in:
+                                <div class="tail_funcs">
+                                    <a data-toggle="modal" href="#delete_tab_modal" onclick="setDeleteTab('{{ tab['_id'] }}', '{{ tab['name'] }}');" class="tail_funcs">
+                                        <i class="icon-remove"></i>
+                                    </a>
+                                    <a data-toggle="modal" href="#edit_tab_modal"
+                                        onclick="setEditTab('edit', '{{ tab.get('parent', None) }}', '{{ tab['name'] }}', '{{ tab['rank'] }}', '{{ tab['title'] }}', '{{ tab['desc'] }}', '{{ tab['_id'] }}');" class="tail_funcs">
+                                            <i class="icon-edit"></i>
+                                    </a>
+                                </div>
 
-                    %if logged_in:
-                        <div class="close"><a data-toggle="modal" href="#delete_tail_modal_{{ link['tail_name'].replace(" ", "_") }}">
-                            <i class="icon-remove"></i>
-                        </a></div>
-                    %end
-                    <a href="{{ link['route_name'] }}">{{ link['display'] }}</a>
-                    </li>
+                            %end
+                            </li>
+                        %end
+                        %if logged_in:
+                            <li>
+                                <a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add', {{ example_parent }}, null, {{ len(tab_row) }});" class="badge badge-info"><i class="icon-plus"></i></a>
+                            </li>
+                        %end
+                    </ul>
                 %end
-                %if logged_in:
-                    <li><a data-toggle="modal" href="#add_tail_modal" class="badge badge-info"><i class="icon-plus"></i></a></li>
-                %end
-            </ul>
+            %end
             <!-- CONTENT -->
             <div class="tab-content">
                 <div style="height: 19px"></div>
@@ -150,7 +168,7 @@
                                                 <td>
                                                     <form class="form-vertical" action="/_sitefuncs_/addpost" method="post">
                                                         <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                                                        <input name="selected_rob" type="hidden" value="{{ selected_rob }}" />
+                                                        <input name="selected_tab" type="hidden" value="{{ selected_tab }}" />
 
                                                         <div id="pe_title" class="collapse">
                                                             <label>Title</label>

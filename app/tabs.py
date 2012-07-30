@@ -36,64 +36,65 @@ class FShopTabs(object):
         self._auth.validate_session()
         form = request.forms
         selected_url = form['selected_url']
-        tab = form['tab_name']
+        tab_name = form['tab_name']
+        action = form['action']
 
         valid_req = self._base_util.validate_schema(AddEditTabSchema(), form, self._add_tab_sv)
 
-    def add_tab(self):
+        if action == 'add':
+            if self._FSDBsys.route_db.get_tab_by_name(tab_name):
+                self._base_util.flash_alert("Could not add specified tab. One with that name already exists.", "alert-error", "Error")
+                valid_req = False
 
-        if self._FSDBsys.route_db.get_tab(tab):
-            self._base_util.flash_alert("Could not add specified tab tab. One with that name already exists.", "alert-error", "Error")
-            valid_req = False
-
-        if valid_req:
-            title = form.get('tab_title', None)
-            desc = form.get('tab_desc', None)
-            priority = form["tab_rank"]
-
-            self._FSDBsys.route_db.add_new_tab(tab, priority, title, desc)
-            self._FSDBsys.rank_db.new_tail_rank(tab)
-            self._FSDBsys.rank_db.increment_tab_rank()
-
-        redirect(selected_url)
-
-    def edit_tab(self):
-        self._auth.validate_session()
-        form = request.forms
-        selected_url = form['selected_url']
-        tab = form['tab_name']
-
-        valid_req = self._base_util.validate_schema(AddtabSchema(), form, self._add_tab_sv)
-
-        if self._FSDBsys.route_db.get_tab(tab):
-            self._base_util.flash_alert("Could not edit specified tab tab. One with that name already exists.", "alert-error", "Error")
-            valid_req = False
-
-        if valid_req:
-            title = form.get('tab_title', None)
-            desc = form.get('tab_desc', None)
-            priority = form["tab_rank"]
+            if valid_req:
+                self.add_tab(form)
+        elif action == 'edit':
             tab_id = form['tab_id']
+            tbn = self._FSDBsys.route_db.get_tab_by_name(tab_name)
+            tbi = self._FSDBsys.route_db.get_tab(tab_id)
+            if tbn and tbi and (tbn['_id'] != tbi['_id']):
+                self._base_util.flash_alert("Could not edit specified tab. One with that name already exists.", "alert-error", "Error")
+                valid_req = False
 
-            self._FSDBsys.route_db.add_new_tab(tab, priority, title, desc)
-            self._FSDBsys.rank_db.increment_tab_rank()
+            if valid_req:
+                self.edit_tab(form)
 
         redirect(selected_url)
+
+    def add_tab(self, form):
+        name = form['tab_name']
+        title = form.get('tab_title', None)
+        desc = form.get('tab_desc', None)
+        rank = form["tab_rank"]
+        parent = form['tab_parent']
+        nav_display = True
+
+        self._FSDBsys.route_db.add_new_tab(name, rank, title, desc, parent, nav_display)
+
+    def edit_tab(self, form):
+        tab_id = form['tab_id']
+        name = form['tab_name']
+        title = form.get('tab_title', None)
+        desc = form.get('tab_desc', None)
+        rank = form["tab_rank"]
+        parent = form['tab_parent']
+        nav_display = True
+
+        self._FSDBsys.route_db.edit_tab(tab_id, name, rank, title, desc, parent, nav_display)
 
     def delete_tab(self):
         self._auth.validate_session()
         form = request.forms
         selected_url = form.get('selected_url', '/')
-        tab = form['tab_name']
+        tab_name = form['tab_name']
+        tab = self._FSDBsys.route_db.get_tab_by_name(tab_name)
 
-        if self._FSDBsys.route_db.get_tab(tab):
-            self._FSDBsys.route_db.remove_tab(tab)
-            self._FSDBsys.rank_db.remove_tail_rank(tab)
-            self._FSDBsys.rank_db.increment_tab_rank(-1)
+        if tab:
+            self._FSDBsys.route_db.remove_tab(tab['_id'])
 
         redirect(selected_url)
 
 
-class AddEditManeSchema(Schema):
-    mane_name = validators.String(not_empty=True)
-    mane_rank = validators.Int()
+class AddEditTabSchema(Schema):
+    tab_name = validators.String(not_empty=True)
+    tab_rank = validators.Int()

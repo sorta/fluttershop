@@ -1,6 +1,7 @@
 from datetime import datetime
 import pymongo
 from bson.objectid import ObjectId
+from bson.errors import InvalidId
 
 
 class FShopMongoDB():
@@ -182,15 +183,23 @@ class FShopMongoDB():
     # Tab
 
     def get_next_tab_rank(self, parent):
-        if parent:
-            parent = ObjectId(parent)
+        parent = self._qualify_parent(parent)
         return self.routes_collection.find({'parent': parent}).count()
 
     def update_tab_ranks(self, parent, rank):
+        parent = self._qualify_parent(parent)
         self.routes_collection.update({'parent': parent, 'rank': {'$gte': rank}},
                                     {'$inc': {'rank': 1}}, multi=True)
 
     #### ROUTING ####
+    def _qualify_parent(self, parent):
+        try:
+            val = ObjectId(parent)
+        except InvalidId:
+            val = None
+
+        return val
+
     def _build_tab_data(self, tab_name, rank, title, desc, parent, nav_display):
         rank = int(rank)
         tab_name = unicode(tab_name)
@@ -203,7 +212,7 @@ class FShopMongoDB():
             'rank': rank,
             'title': unicode(title) if title else title,
             'desc': unicode(desc) if desc else desc,
-            'parent': ObjectId(parent) if parent else parent,
+            'parent': ObjectId(parent) if parent else None,
             'nav_display': nav_display
         }
         return tab
@@ -213,18 +222,20 @@ class FShopMongoDB():
         self.routes_collection.insert(new_tab)
 
     def add_new_tab(self, tab_name, rank, title=None, desc=None, parent=None, nav_display=True):
+        parent = self._qualify_parent(parent)
         if nav_display:
             self.update_tab_ranks(parent, rank)
         self._insert_tab(tab_name, rank, title, desc, parent, nav_display)
 
     def edit_tab(self, tab_id, tab_name, rank, title=None, desc=None, parent=None, nav_display=True):
+        parent = self._qualify_parent(parent)
         if nav_display:
             self.update_tab_ranks(parent, rank)
 
         updates = self._build_tab_data(tab_name, rank, title, desc, parent, nav_display)
         self.routes_collection.update({'_id': tab_id}, {'$set': updates})
 
-        zero_route = self.routes_collection.find_one({'route_type': 'tab', 'rank': 0})
+        zero_route = self.routes_collection.find_one({'parent': ObjectId(parent), 'rank': 0})
         if not zero_route:
             self.routes_collection.update({'rank': {'$gt': 0}}, {'$inc': {'rank': -1}}, multi=True)
 
@@ -233,16 +244,29 @@ class FShopMongoDB():
         self.routes_collection.remove({'_id': tab['_id']})
 
         if tab['nav_display']:
-            self.update_tab_ranks(tab['parent'], tab['rank'])
+            self.update_tab_ranks(tab.get('parent', None), tab['rank'])
 
         for route in self.routes_collection.find({'parent': tab['_id']}):
             self.remove_tab(route['_id'])
 
-    def get_tab_links(self):
-        return list(self.routes_collection.find({'route_type': 'tab'}).sort('rank', 1))
+    def get_tabs_by_parent(self, parent_id):
+        parent_id = ObjectId(parent_id) if parent_id else parent_id
+        return list(self.routes_collection.find({'parent': parent_id}).sort('rank', 1))
 
-    def get_mane_route(self):
-        mm = self.routes_collection.find({'route_type': 'mane'}).sort('rank', 1).limit(1)
+    def get_tab_links(self, tab_id, parent_id, get_tail=True):
+        links = []
+        if parent_id:
+            parent = self.get_tab(parent_id)
+            links.extend(self.get_tab_links(parent['_id'], parent['parent'], False))
+
+        links.append(self.get_tabs_by_parent(parent_id))
+        if get_tail:
+            links.append(self.get_tabs_by_parent(tab_id))
+
+        return links
+
+    def get_mane_tab(self):
+        mm = self.routes_collection.find({'parent': None}).sort('rank', 1).limit(1)
         for mane in mm:
             return mane
         return None

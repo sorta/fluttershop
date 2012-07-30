@@ -17,33 +17,19 @@ class FShopUtil(object):
         self._base_util = b_util
 
     #### Helpers ####
-    def get_page_model(self, mane, tail=None):
-        manes, tails = self._FSDBsys.route_db.get_links_for_mane(mane['mane_name'])
+    def get_page_model(self, tab):
+        tabs = self._FSDBsys.route_db.get_tab_links(tab['_id'], tab.get('parent', None))
         site_name = self._FSDBsys.options_db.get_site_name()
 
-        if tail:
-            route = tail['route_name']
-            page_title = tail['title']
-            page_desc = tail['desc']
-            tail_name = tail['tail_name']
-        else:
-            route = mane['route_name']
-            page_title = mane['title']
-            page_desc = mane['desc']
-            tail_name = None
-
-        selected_rob = self._FSDBsys.route_db.get_route(route)
-        rows = self.listify_posts(selected_rob)
+        # rows = self.listify_posts(tab)
+        rows = []
         alerts = self.get_flash_alerts()
 
         pm = self.add_user_info({
-            'manelinks': manes,
-            'taillinks': tails,
-            'selected_mane': mane['mane_name'],
-            'selected_tail': tail_name,
-            'selected_rob': selected_rob,
-            'page_title': page_title,
-            'page_desc': page_desc,
+            'tabs': tabs,
+            'selected_tab': tab,
+            'page_title': tab.get('title', None),
+            'page_desc': tab.get('desc', None),
             'site_name': site_name["site_name"],
             'rows': rows,
             'flash_alerts': alerts
@@ -51,9 +37,7 @@ class FShopUtil(object):
 
         if pm['logged_in']:
             pm['def_ppp'] = self._FSDBsys.options_db.get_def_ppp()
-            pm['next_post_rank'] = self._FSDBsys.rank_db.get_next_post_rank(route)
-            pm['next_mane_rank'] = self._FSDBsys.rank_db.get_next_mane_rank()
-            pm['next_tail_rank'] = self._FSDBsys.rank_db.get_next_tail_rank(mane['mane_name'])
+            pm['next_post_rank'] = 0  # self._FSDBsys.rank_db.get_next_post_rank(route)
 
         return pm
 
@@ -65,8 +49,8 @@ class FShopUtil(object):
         page_title = "Page Not Found"
         page_desc = "Page Not Found"
 
-        selected_rob = self._FSDBsys.route_db.get_route(route)
-        rows = self.listify_posts(selected_rob)
+        selected_tab = self._FSDBsys.route_db.get_route(route)
+        rows = self.listify_posts(selected_tab)
         alerts = self.get_flash_alerts()
 
         pm = self.add_user_info({
