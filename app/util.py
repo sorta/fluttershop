@@ -1,7 +1,7 @@
 """
 """
 
-from bottle import request
+from bottle import request, redirect
 from datetime import datetime
 from math import ceil
 from urlparse import urlparse, parse_qs
@@ -21,8 +21,7 @@ class FShopUtil(object):
         tabs = self._FSDBsys.route_db.get_tab_links(tab['_id'], tab.get('parent', None))
         site_name = self._FSDBsys.options_db.get_site_name()
 
-        # rows = self.listify_posts(tab)
-        rows = []
+        rows = self.listify_posts(tab)
         alerts = self.get_flash_alerts()
 
         pm = self.add_user_info({
@@ -132,8 +131,8 @@ class FShopUtil(object):
 
             return new_row, h_loc, requested, alignment
 
-    def listify_posts(self, route_id):
-        posts = self._FSDBsys.content_db.get_posts_for_route(route_id, 10)
+    def listify_posts(self, tab):
+        posts = self._FSDBsys.content_db.get_posts_for_tab(tab['_id'], post_limit=10)
 
         post_list = []
         rows = []
@@ -169,10 +168,23 @@ class FShopUtil(object):
 
         return rows
 
+    def remove_tab(self, tab_id):
+        self._FSDBsys.route_db.remove_tab(tab_id)
+        self._FSDBsys.content_db.remove_posts_for_tab(tab_id)
+        for route in self._FSDBsys.route_db.get_tabs_by_parent(tab_id):
+            self.remove_tab(route['_id'])
+
     def parse_checkbox(self, data):
         if data == "on":
             return True
         return False
+
+    def tab_redirect(self, tab_id):
+        tab = self._FSDBsys.route_db.get_tab(tab_id)
+        if tab:
+            redirect(tab['path'])
+        else:
+            redirect('/')
 
 
 class FShopBaseUtil(object):

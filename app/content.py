@@ -1,4 +1,4 @@
-from bottle import request, redirect
+from bottle import request
 
 
 class FShopPost(object):
@@ -53,38 +53,40 @@ class FShopContent(object):
 
         fshop_bottle.post('/_sitefuncs_/editpost')(self.edit_post)
 
+    def get_rank_from_form(self, form, tab_id):
+
+        try:
+            post_rank = int(form["post_rank"])
+        except ValueError:
+            post_rank = self._FSDBsys.content_db.get_next_post_rank(tab_id)
+
+        return post_rank
+
     def add_post(self):
         self._auth.validate_session()
         form = request.forms
-        route = form["selected_url"]
-        rob = form["selected_tab"]
         title = form["post_title"]
         alignment = form.get("post_alignment", "left")
         width = int(form.get("post_width", 12))
         show_title = self._util.parse_checkbox(form.get("post_show_title", False))
         show_date = self._util.parse_checkbox(form.get("post_show_date", False))
         content = form.get("post_content")
-        try:
-            post_rank = int(form["post_rank"])
-        except ValueError:
-            post_rank = self._FSDBsys.rank_db.get_next_post_rank(route)
-
-        mane, tail = self._util.parse_route(route)
+        tab_id = form.get('tab_id', None)
+        rank = self.get_rank_from_form(form, tab_id)
 
         if alignment in ALIGN_SET:
             alignment = alignment.lower()
         else:
             alignment = int(alignment)
 
-        self._FSDBsys.content_db.insert_new_post(route, mane, alignment, width, title, post_rank, show_title, show_date, content, tail)
-        self._FSDBsys.rank_db.increment_post_rank(route)
+        self._FSDBsys.content_db.insert_new_post(tab_id, alignment, width, title, rank, show_title, show_date, content)
 
-        redirect(route)
+        selected_tab_id = form["selected_tab"]
+        self._util.tab_redirect(selected_tab_id)
 
     def edit_post(self):
         self._auth.validate_session()
         form = request.forms
-        route = form["selected_url"]
         title = form["post_title"]
         alignment = form.get("post_alignment", "left")
         width = int(form.get("post_width", 12))
@@ -92,18 +94,15 @@ class FShopContent(object):
         show_date = self._util.parse_checkbox(form.get("post_show_date", False))
         content = form.get("post_content")
         post_id = form['post_id']
-
-        try:
-            post_rank = int(form["post_rank"])
-        except ValueError:
-            post_rank = self._FSDBsys.rank_db.get_next_post_rank(route)
+        tab_id = form.get('tab_id', None)
+        rank = self.get_rank_from_form(form, tab_id)
 
         if alignment in ALIGN_SET:
             alignment = alignment.lower()
         else:
             alignment = int(alignment)
 
-        self._FSDBsys.content_db.update_post(post_id, route, alignment, width, title, post_rank, show_title, show_date, content)
-        self._FSDBsys.rank_db.one_up_post_rank(route, post_rank)
+        self._FSDBsys.content_db.update_post(post_id, tab_id, alignment, width, title, rank, show_title, show_date, content)
 
-        redirect(route)
+        selected_tab_id = form["selected_tab"]
+        self._util.tab_redirect(selected_tab_id)

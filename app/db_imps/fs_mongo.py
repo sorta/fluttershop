@@ -27,23 +27,18 @@ class FShopMongoDB():
 
     #### CONTENT ####
 
-    def get_posts_for_route_by_name(self, route_id, post_limit=10):
-        post_col = self.posts_collection
-        return post_col.find({'route_id': unicode(route_id).lower()}).sort('rank', -1).limit(post_limit)
+    def get_posts_for_tab(self, tab_id, post_limit=10):
+        tab_id = self._qualify_oid(tab_id)
+        return self.posts_collection.find({'parent': tab_id}).sort('rank', -1).limit(post_limit)
 
-    def get_posts_for_route(self, route_id, post_limit=10):
+    def insert_new_post(self, tab_id, alignment, width, title, rank, show_title, show_date, post_content):
         post_col = self.posts_collection
-        return post_col.find({'route_id': ObjectId(route_id)}).sort('rank', -1).limit(post_limit)
-
-    def insert_new_post(self, route, mane, alignment, width, title, rank, show_title, show_date, post_content, tail=None):
-        post_col = self.posts_collection
+        tab_id = self._qualify_oid(tab_id)
         rank = int(rank)
-        post_col.update({'route_id': route, 'rank': {'$gte': rank}}, {'$inc': {'rank': 1}}, multi=True)
 
         timestamp = datetime.now()
         new_post = {
-            "route_id": route,
-            "mane_id": mane,
+            "parent": tab_id,
             "post_content": post_content,
             "alignment": alignment,
             "width": width,
@@ -55,17 +50,14 @@ class FShopMongoDB():
             "rank": rank
         }
 
-        if tail:
-            new_post["tail_id"] = tail
+        new_id = post_col.insert(new_post)
+        self.update_post_ranks(tab_id, rank, ignore_id=new_id)
 
-        return post_col.insert(new_post)
-
-    def update_post(self, post_id, route, alignment, width, title, rank, show_title, show_date, post_content):
+    def update_post(self, post_id, tab_id, alignment, width, title, rank, show_title, show_date, post_content):
         post_col = self.posts_collection
+        tab_id = self._qualify_oid(tab_id)
+        post_id = self._qualify_oid(post_id)
         rank = int(rank)
-        post_col.update({'route_id': route, 'rank': {'$gte': rank}}, {'$inc': {'rank': 1}}, multi=True)
-
-        post_id = ObjectId(post_id)
 
         timestamp = datetime.now()
         updates = {
@@ -80,10 +72,15 @@ class FShopMongoDB():
         }
 
         post_col.update({'_id': post_id}, {'$set': updates})
+        self.update_post_ranks(tab_id, rank, ignore_id=post_id)
 
-        zero_post = post_col.find({'route_id': route, 'rank': 0})
-        if not zero_post.count():
-            post_col.update({'rank': {'$gt': 0}}, {'$inc': {'rank': -1}}, multi=True)
+        zero_post = post_col.find_one({'parent': tab_id, 'rank': 0})
+        if not zero_post:
+            self.update_post_ranks(tab_id, 1, increment=-1)
+
+    def remove_posts_for_tab(self, parent_id):
+        parent_id = self._qualify_oid(parent_id)
+        self.posts_collection.remove({'parent': parent_id})
 
     #### OPTIONS ####
     def get_user_check_password(self, username, test_password):
@@ -182,19 +179,33 @@ class FShopMongoDB():
 
     # Tab
 
-    def get_next_tab_rank(self, parent):
-        parent = self._qualify_parent(parent)
-        return self.routes_collection.find({'parent': parent}).count()
+    def get_next_tab_rank(self, parent_id):
+        parent_id = self._qualify_oid(parent_id)
+        return self.routes_collection.find({'parent': parent_id}).count()
 
-    def update_tab_ranks(self, parent, rank):
-        parent = self._qualify_parent(parent)
-        self.routes_collection.update({'parent': parent, 'rank': {'$gte': rank}},
-                                    {'$inc': {'rank': 1}}, multi=True)
+    def update_tab_ranks(self, parent_id, rank, ignore_id=None, increment=1):
+        parent_id = self._qualify_oid(parent_id)
+        self.routes_collection.update({'parent': parent_id, 'rank': {'$gte': rank}, '_id': {'$ne': ignore_id}},
+                                    {'$inc': {'rank': increment}}, multi=True)
+
+    # Post
+
+    def get_next_post_rank(self, parent_id):
+        parent_id = self._qualify_oid(parent_id)
+        return self.posts_collection.find({'parent': parent_id}).count()
+
+    def update_post_ranks(self, parent_id, rank, ignore_id=None, increment=1):
+        parent_id = self._qualify_oid(parent_id)
+        self.posts_collection.update({'parent': parent_id, 'rank': {'$gte': rank}, '_id': {'$ne': ignore_id}},
+                                    {'$inc': {'rank': increment}}, multi=True)
 
     #### ROUTING ####
-    def _qualify_parent(self, parent):
+    def _qualify_oid(self, oid):
+        if oid == None:
+            return None
+
         try:
-            val = ObjectId(parent)
+            val = ObjectId(oid)
         except InvalidId:
             val = None
 
@@ -212,45 +223,45 @@ class FShopMongoDB():
             'rank': rank,
             'title': unicode(title) if title else title,
             'desc': unicode(desc) if desc else desc,
-            'parent': ObjectId(parent) if parent else None,
+            'parent': parent,
             'nav_display': nav_display
         }
         return tab
 
     def _insert_tab(self, tab_name, rank, title, desc, parent, nav_display):
         new_tab = self._build_tab_data(tab_name, rank, title, desc, parent, nav_display)
-        self.routes_collection.insert(new_tab)
+        return self.routes_collection.insert(new_tab)
 
     def add_new_tab(self, tab_name, rank, title=None, desc=None, parent=None, nav_display=True):
-        parent = self._qualify_parent(parent)
+        parent = self._qualify_oid(parent)
+        new_id = self._insert_tab(tab_name, rank, title, desc, parent, nav_display)
         if nav_display:
-            self.update_tab_ranks(parent, rank)
-        self._insert_tab(tab_name, rank, title, desc, parent, nav_display)
+            self.update_tab_ranks(parent, rank, ignore_id=new_id)
+        return new_id
 
     def edit_tab(self, tab_id, tab_name, rank, title=None, desc=None, parent=None, nav_display=True):
-        parent = self._qualify_parent(parent)
-        if nav_display:
-            self.update_tab_ranks(parent, rank)
+        parent = self._qualify_oid(parent)
 
         updates = self._build_tab_data(tab_name, rank, title, desc, parent, nav_display)
         self.routes_collection.update({'_id': tab_id}, {'$set': updates})
 
-        zero_route = self.routes_collection.find_one({'parent': ObjectId(parent), 'rank': 0})
+        if nav_display:
+            self.update_tab_ranks(parent, rank, ignore_id=tab_id)
+
+        zero_route = self.routes_collection.find_one({'parent': parent, 'rank': 0})
         if not zero_route:
-            self.routes_collection.update({'rank': {'$gt': 0}}, {'$inc': {'rank': -1}}, multi=True)
+            self.update_tab_ranks(parent, 1, increment=-1)
 
     def remove_tab(self, tab_id):
+        tab_id = self._qualify_oid(tab_id)
         tab = self.get_tab(tab_id)
         self.routes_collection.remove({'_id': tab['_id']})
 
         if tab['nav_display']:
-            self.update_tab_ranks(tab.get('parent', None), tab['rank'])
-
-        for route in self.routes_collection.find({'parent': tab['_id']}):
-            self.remove_tab(route['_id'])
+            self.update_tab_ranks(tab.get('parent', None), tab['rank'], increment=-1)
 
     def get_tabs_by_parent(self, parent_id):
-        parent_id = ObjectId(parent_id) if parent_id else parent_id
+        parent_id = self._qualify_oid(parent_id)
         return list(self.routes_collection.find({'parent': parent_id}).sort('rank', 1))
 
     def get_tab_links(self, tab_id, parent_id, get_tail=True):
@@ -271,9 +282,14 @@ class FShopMongoDB():
             return mane
         return None
 
-    def get_tab(self, route_id):
-        return self.routes_collection.find_one({'_id': ObjectId(route_id)})
+    def get_tab(self, tab_id):
+        tab_id = self._qualify_oid(tab_id)
+        return self.routes_collection.find_one({'_id': tab_id})
 
     def get_tab_by_name(self, route_name):
         path = self._base_util.pathify_name(route_name, True)
         return self.routes_collection.find_one({'path': path})
+
+    def get_path_by_tab(self, tab_id):
+        tab_id = self._qualify_oid(tab_id)
+        return self.routes_collection.find_one({'_id': tab_id}, fields=['path'])

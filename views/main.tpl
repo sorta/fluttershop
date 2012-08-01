@@ -49,28 +49,30 @@
 
                             <li><a class="brand" href="/">{{ site_name }}</a></li>
                             %for mane in tabs[0]:
-                                %class_str = ""
-                                %if selected_tab['_id'] == mane['_id']:
-                                    %class_str += "active"
-                                %end
+                                %if mane['nav_display']:
+                                    %class_str = ""
+                                    %if selected_tab['_id'] == mane['_id']:
+                                        %class_str += "active"
+                                    %end
 
-                                %if class_str != "":
-                                    <li class="{{class_str}}">
-                                %else:
-                                    <li>
-                                %end
+                                    %if class_str != "":
+                                        <li class="{{class_str}}">
+                                    %else:
+                                        <li>
+                                    %end
 
-                                <a href="{{ mane['path'] }}">{{ mane['display'] }}</a></li>
-                                %if logged_in:
-                                    <li>
-                                        <a data-toggle="modal" href="#delete_tab_modal" onclick="setDeleteTab('{{ mane['_id'] }}', '{{ mane['name'] }}');" class="mane_funcs">
-                                            <i class="icon-remove icon-white"></i>
-                                        </a>
-                                        <a data-toggle="modal" href="#edit_tab_modal"
-                                            onclick="setEditTab('edit', '{{ mane.get('parent', None) }}', '{{ mane['name'] }}', '{{ mane['rank'] }}', '{{ mane['title'] }}', '{{ mane['desc'] }}', '{{ mane['_id'] }}');" class="mane_funcs">
-                                                <i class="icon-edit icon-white"></i>
-                                        </a>
-                                    </li>
+                                    <a href="{{ mane['path'] }}">{{ mane['display'] }}</a></li>
+                                    %if logged_in:
+                                        <li>
+                                            <a data-toggle="modal" href="#delete_tab_modal" onclick="setDeleteTab('{{ mane['_id'] }}', '{{ mane['name'] }}');" class="mane_funcs">
+                                                <i class="icon-remove icon-white"></i>
+                                            </a>
+                                            <a data-toggle="modal" href="#edit_tab_modal"
+                                                onclick="setEditTab('edit', '{{ mane.get('parent', None) }}', '{{ mane['name'] }}', '{{ mane['rank'] }}', '{{ mane['title'] }}', '{{ mane['desc'] }}', '{{ mane['_id'] }}');" class="mane_funcs">
+                                                    <i class="icon-edit icon-white"></i>
+                                            </a>
+                                        </li>
+                                    %end
                                 %end
 
                             %end

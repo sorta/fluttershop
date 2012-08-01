@@ -33,7 +33,7 @@ class FShopApp(object):
         self._util = FShopUtil(self._base_util, self._config, self._FSDBsys, fshop_bottle)
         self._auth = FShopAuth(self._base_util, self._config, self._FSDBsys, fshop_bottle)
         self._content = FShopContent(self._base_util, self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
-        self._content = FShopSiteOptions(self._base_util, self._FSDBsys, self._auth, self._crypto, fshop_bottle)
+        self._site_options = FShopSiteOptions(self._base_util, self._util, self._FSDBsys, self._auth, self._crypto, fshop_bottle)
 
         # For routing reasons, tabs should be the last module to load
         self._tabs = FShopTabs(self._base_util, self._config, self._FSDBsys, fshop_bottle, self._auth, self._util)
@@ -72,10 +72,15 @@ class FShopApp(object):
         if not self._FSDBsys.options_db.at_least_one_user():
             self._FSDBsys.options_db._add_user("admin", "123456", "example@email.com")
 
-        # page_404 = self._FSDBsys.content_db.get_posts_for_route_by_name("/404")
-        # if not page_404.count():
-        #     self._FSDBsys.content_db.insert_new_post("/404", "404", "left", 12, "Page Not Found", 0, True, False, "You've tried to access a non-existant page.")
-        #     self._FSDBsys.rank_db.increment_post_rank("/404")
+        error_tab = self._FSDBsys.route_db.get_tab_by_name('404')
+        if not error_tab:
+            error_tab = self._FSDBsys.route_db.add_new_tab('404', 0, title='Page Not Found', desc='The page you are looking for does not exist.', parent=None, nav_display=False)
+        else:
+            error_tab = error_tab['_id']
+
+        error_posts = self._FSDBsys.content_db.get_posts_for_tab(error_tab, post_limit=10)
+        if not error_posts.count():
+            self._FSDBsys.content_db.insert_new_post(error_tab, "left", 12, "Page Not Found", 0, True, False, "You've tried to access a non-existant page.")
 
     def start(self):
         self.init_db_if_necessary()
