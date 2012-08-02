@@ -1,5 +1,5 @@
 import os
-from bottle import run, Bottle, redirect, static_file, view, debug
+from bottle import run, Bottle, redirect, static_file, view, debug, response
 
 from beaker.middleware import SessionMiddleware
 
@@ -42,7 +42,7 @@ class FShopApp(object):
     def index(self):
         mane = self._FSDBsys.route_db.get_mane_tab()
         if mane:
-            redirect(mane.get('path', '/Home'))
+            redirect(mane.get('path', '/home'))
         else:
             rank = self._FSDBsys.route_db.get_next_tab_rank(None)
             self._FSDBsys.route_db.add_new_tab("Home", rank, "Site Home", "FlutterShop default home", parent=None, nav_display=True)
@@ -56,8 +56,8 @@ class FShopApp(object):
 
     @view('main')
     def error404(self, error):
-        mane = self._FSDBsys.route_db.get_mane_tab()
-        pm = self._util.get_page_model_error(mane)
+        tab = self._FSDBsys.route_db.get_tab_by_name('/404')
+        pm = self._util.get_page_model(tab)
         return pm
 
     def init_db_if_necessary(self):

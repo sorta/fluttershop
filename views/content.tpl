@@ -49,7 +49,7 @@
                     <div>
                         <h3>Edit Post</h3>
                         <form class="form-vertical" action="/_sitefuncs_/editpost" method="post">
-                            <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                            <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
                             <input name="post_id" type="hidden" value="{{ post['post_id'] }}" />
 
                             <label>Title</label>

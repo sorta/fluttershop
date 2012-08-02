@@ -81,8 +81,8 @@ class FShopContent(object):
 
         self._FSDBsys.content_db.insert_new_post(tab_id, alignment, width, title, rank, show_title, show_date, content)
 
-        selected_tab_id = form["selected_tab"]
-        self._util.tab_redirect(selected_tab_id)
+        selected_tab = form["selected_tab"]
+        self._util.tab_redirect(selected_tab)
 
     def edit_post(self):
         self._auth.validate_session()
@@ -104,5 +104,5 @@ class FShopContent(object):
 
         self._FSDBsys.content_db.update_post(post_id, tab_id, alignment, width, title, rank, show_title, show_date, content)
 
-        selected_tab_id = form["selected_tab"]
-        self._util.tab_redirect(selected_tab_id)
+        selected_tab = form["selected_tab"]
+        self._util.tab_redirect(selected_tab)

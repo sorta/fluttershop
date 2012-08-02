@@ -36,38 +36,7 @@ class FShopUtil(object):
 
         if pm['logged_in']:
             pm['def_ppp'] = self._FSDBsys.options_db.get_def_ppp()
-            pm['next_post_rank'] = 0  # self._FSDBsys.rank_db.get_next_post_rank(route)
-
-        return pm
-
-    def get_page_model_error(self, mane, tail=None):
-        manes, tails = self._FSDBsys.route_db.get_links_for_mane(mane['mane_name'])
-        site_name = self._FSDBsys.options_db.get_site_name()
-
-        route = "/404"
-        page_title = "Page Not Found"
-        page_desc = "Page Not Found"
-
-        selected_tab = self._FSDBsys.route_db.get_route(route)
-        rows = self.listify_posts(selected_tab)
-        alerts = self.get_flash_alerts()
-
-        pm = self.add_user_info({
-            'manelinks': manes,
-            'taillinks': tails,
-            'selected_mane': "",
-            'page_title': page_title,
-            'page_desc': page_desc,
-            'site_name': site_name["site_name"],
-            'rows': rows,
-            'flash_alerts': alerts
-        })
-
-        if pm['logged_in']:
-            pm['def_ppp'] = self._FSDBsys.options_db.get_def_ppp()
-            pm['next_post_rank'] = self._FSDBsys.rank_db.get_next_post_rank(route)
-            pm['next_mane_rank'] = self._FSDBsys.rank_db.get_next_mane_rank()
-            pm['next_tail_rank'] = self._FSDBsys.rank_db.get_next_tail_rank(mane['mane_name'])
+            pm['next_post_rank'] = self._FSDBsys.content_db.get_next_post_rank(tab['_id'])
 
         return pm
 
@@ -83,23 +52,6 @@ class FShopUtil(object):
         if pm['logged_in']:
             pm['user'] = session.get('user', None)
         return pm
-
-    def parse_route(self, route):
-        if route == "/":
-            return None, None
-
-        mane = None
-        tail = None
-        sprout = route.split('/')
-        sprout_len = len(sprout)
-
-        if sprout_len > 1:
-            mane = sprout[1].lower()
-
-            if sprout_len > 2:
-                tail = sprout[2].lower()
-
-        return mane, tail
 
     def get_width_str(self, h_loc, requested, alignment, new_row=False):
         if h_loc + requested > 12:
@@ -235,9 +187,14 @@ class FShopBaseUtil(object):
         return unicode(name.lower().replace(" ", "_"))
 
     def pathify_name(self, name, is_clean=False):
+
         if not is_clean:
             name = self.clean_name(name)
-        return u'/{0}'.format(name)
+
+        if name.startswith('/'):
+            return name
+        else:
+            return u'/{0}'.format(name)
 
     def run_validator(self, validator, value):
         try:

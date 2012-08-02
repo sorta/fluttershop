@@ -7,7 +7,7 @@
     </div>
     <div class="modal-body">
         <form action="/_sitefuncs_/login" class="form-vertical" id="loginForm" method="post">
-            <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+            <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
             <label>User</label>
             <input id="login_username" name="login_username" type="text" class="span3 offset2" placeholder="Username" />
             <label>Password</label>
@@ -32,7 +32,7 @@
 
             <form action="/_sitefuncs_/logout" method="post" id="logoutForm">
                 <label>Are you sure you want to log out?</label>
-                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+            <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
         </div>
         <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
@@ -49,7 +49,7 @@
         </div>
         <div class="modal-body">
             <form action="/_sitefuncs_/options" class="form-vertical" id="siteOptionsForm" method="post">
-                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
                 <input name="current_username" type="hidden" value="{{ user.get('username', 'User') }}" />
                 <input name="current_email" type="hidden" value="{{ user.get('email', 'user@sortasoftware.com') }}" />
 
@@ -81,7 +81,7 @@
         <div class="modal-body">
             <form action="/_sitefuncs_/changepassword" class="form-vertical" id="passChangeForm" method="post">
 
-                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
                 <input name="current_username" type="hidden" value="{{ user.get('username', 'User') }}" />
 
                 <label>New Password</label>
@@ -106,8 +106,7 @@
         </div>
         <div class="modal-body">
             <form action="/_sitefuncs_/edittab" class="form-vertical" id="editTab" method="post">
-                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                <input name="selected_tab_id" type="hidden" value="{{ selected_tab['_id'] }}" />
+                <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
                 <input name="action" id="edit_tab_action" type="hidden" value="add" />
                 <input name="tab_parent" id="edit_tab_parent" type="hidden" value="" />
                 <input name="tab_id" id="edit_tab_id" type="hidden" value="" />
@@ -137,7 +136,7 @@
         <div class="modal-body">
             <form action="/_sitefuncs_/deletetab" class="form-vertical" method="post">
                 <label>Are you sure you want to delete this Tab (<span id="delete_tab_label"></span>)?</label>
-                <input name="selected_url" type="hidden" value="{{ selected_route }}" />
+                <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
                 <input name="tab_id" id="delete_tab_id" type="hidden" value="" />
                 <input name="tab_name" id="delete_tab_name" type="hidden" value="" />
         </div>

@@ -5,32 +5,24 @@
         <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css" type="text/css" />
         <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.css" type="text/css" />
         <link rel="stylesheet" href="/static/css/ws1.css" type="text/css" />
-        <link rel="stylesheet" href="/static/js/redactor/css/redactor.css" />
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
-        <script src="/static/js/redactor/redactor.js"></script>
         <script language="javascript" src="/static/bootstrap/js/bootstrap.js"></script>
-        <script language="javascript" src="/static/js/ws1.js"></script>
+
+        %if logged_in:
+            <link rel="stylesheet" href="/static/js/redactor/css/redactor.css" />
+
+            <script src="/static/js/redactor/redactor.js"></script>
+            <script language="javascript" src="/static/js/fshopa.js"></script>
+        %end
         <title>{{ page_title }}</title>
         <meta name="description" content="{{ page_desc }}" />
     </head>
     <body style="padding-top: 40px;">
 
-        %if get('selected_mane', None):
-            %if get('selected_tail', None):
-                %selected_route = "/{0}/{1}".format(selected_mane, selected_tail)
-            %else:
-                %selected_route = "/{0}".format(selected_mane)
-            %end
-        %else:
-            %selected_route = "/"
-        %end
         %setdefault('def_ppp', 10)
-        %setdefault('next_mane_rank', 0)
-        %setdefault('next_tail_rank', 0)
-        <input name="selected_url" type="hidden" value="{{ selected_route }}" />
 
-        %include modals.tpl selected_route=selected_route, selected_tab=selected_tab, logged_in=logged_in, user=get('user', {}), site_name=site_name, def_ppp=def_ppp
+        %include modals.tpl selected_tab=selected_tab, logged_in=logged_in, user=get('user', {}), site_name=site_name, def_ppp=def_ppp
 
         <!-- NAVBAR -->
         <div class="navbar navbar-fixed-top">
@@ -169,19 +161,21 @@
                                             <tr>
                                                 <td>
                                                     <form class="form-vertical" action="/_sitefuncs_/addpost" method="post">
-                                                        <input name="selected_url" type="hidden" value="{{ selected_route }}" />
-                                                        <input name="selected_tab" type="hidden" value="{{ selected_tab }}" />
+                                                        <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
 
                                                         <div id="pe_title" class="collapse">
                                                             <label>Title</label>
                                                         </div>
-                                                        <input name="post_title" type="text" class="span12" placeholder="Post something..." data-toggle="collapse" data-target="#pe0"></input>
+
+                                                        <input name="post_title" id="post_title" type="text" class="span12" placeholder="Post something..." data-toggle="collapse" data-target="#pe0"></input>
+
                                                         <div id="pe0" class="collapse"></div>
 
                                                         <div id="pe_details" class="collapse">
                                                             <label>Post Content*</label>
                                                             <textarea name="post_content" id="post_tb" class="span12"></textarea>
                                                         </div>
+
                                                         <div id="pe_post_buttons" class="collapse">
                                                             <div class="row-fluid">
                                                                 <div class="span2">
@@ -234,7 +228,7 @@
                             </div>
                         %end
 
-                        %include content.tpl rows=get('rows', []), logged_in=logged_in, selected_route=selected_route
+                        %include content.tpl rows=get('rows', []), logged_in=logged_in, selected_tab=selected_tab
                     </div>
                 </div>
             </div>

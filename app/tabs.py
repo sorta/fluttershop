@@ -1,7 +1,7 @@
 """
 """
 
-from bottle import view, abort, request, redirect
+from bottle import view, request, redirect
 from formencode import validators, Schema
 
 
@@ -27,7 +27,7 @@ class FShopTabs(object):
 
         tab = self._FSDBsys.route_db.get_tab_by_name(tab_name)
         if not tab:
-            abort(404)
+            redirect('/404')
         pm = self._util.get_page_model(tab)
         return pm
 
@@ -35,7 +35,7 @@ class FShopTabs(object):
     def add_or_edit_tab(self):
         self._auth.validate_session()
         form = request.forms
-        selected_url = form['selected_url']
+        selected_tab = form['selected_tab']
         tab_name = form['tab_name']
         action = form['action']
 
@@ -59,7 +59,7 @@ class FShopTabs(object):
             if valid_req:
                 self.edit_tab(form)
 
-        redirect(selected_url)
+        self._util.tab_redirect(selected_tab)
 
     def add_tab(self, form):
         name = form['tab_name']
@@ -85,14 +85,14 @@ class FShopTabs(object):
     def delete_tab(self):
         self._auth.validate_session()
         form = request.forms
-        selected_url = form.get('selected_url', '/')
-        tab_name = form['tab_name']
-        tab = self._FSDBsys.route_db.get_tab_by_name(tab_name)
+        selected_tab = form.get('selected_tab')
+        tab_id = form['tab_id']
+        tab = self._FSDBsys.route_db.get_tab(tab_id)
 
         if tab:
-            self._FSDBsys.route_db.remove_tab(tab['_id'])
+            self._util.remove_tab(tab['_id'])
 
-        redirect(selected_url)
+        self._util.tab_redirect(selected_tab)
 
 
 class AddEditTabSchema(Schema):
