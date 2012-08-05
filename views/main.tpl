@@ -160,20 +160,23 @@
                                         <tbody>
                                             <tr>
                                                 <td>
-                                                    <form class="form-vertical" action="/_sitefuncs_/addpost" method="post">
-                                                        <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
+                                                    <form id="edit_post_form" class="form-vertical" action="/_sitefuncs_/addpost" method="post">
+                                                        <input name="selected_tab" type="text" value="{{ selected_tab['_id'] }}" />
+                                                        <input name="post_action" id="edit_post_action" type="text" value="" />
+                                                        <input name="post_id" id="edit_post_id" type="text" value="" />
 
                                                         <div id="pe_title" class="collapse">
                                                             <label>Title</label>
                                                         </div>
 
-                                                        <input name="post_title" id="post_title" type="text" class="span12" placeholder="Post something..." data-toggle="collapse" data-target="#pe0"></input>
+                                                        <input name="post_title" id="edit_post_title" type="text" class="span12" placeholder="Post something..." data-toggle="collapse" data-target="#pe0"></input>
 
                                                         <div id="pe0" class="collapse"></div>
+                                                        <div id="pe1" class="collapse"></div>
 
                                                         <div id="pe_details" class="collapse">
                                                             <label>Post Content*</label>
-                                                            <textarea name="post_content" id="post_tb" class="span12"></textarea>
+                                                            <textarea name="post_content" id="edit_post_content" class="span12"></textarea>
                                                         </div>
 
                                                         <div id="pe_post_buttons" class="collapse">
@@ -181,21 +184,21 @@
                                                                 <div class="span2">
                                                                     <label>Show</label>
                                                                     <div class="btn-group" data-toggle="buttons-checkbox">
-                                                                        <button type="button" id="pst_button" class="btn hidden_flipper active">Title</button>
-                                                                        <button type="button" id="psd_button" class="btn hidden_flipper active">Date</button>
+                                                                        <button type="button" id="edit_post_showtitle" class="btn hidden_flipper active">Title</button>
+                                                                        <button type="button" id="edit_post_showdate" class="btn hidden_flipper active">Date</button>
                                                                     </div>
-                                                                    <input type="checkbox" id="pst_button_c" class="hide" name="post_show_title" checked="true"/>
-                                                                    <input type="checkbox" id="psd_button_c" class="hide" name="post_show_date" checked="true"/>
+                                                                    <input type="checkbox" id="edit_post_showtitle_c" class="" name="post_showtitle" checked="true"/>
+                                                                    <input type="checkbox" id="edit_post_showdate_c" class="" name="post_showdate" checked="true"/>
                                                                 </div>
 
                                                                 <div class="span3">
                                                                     <label>Rank</label>
-                                                                    <input name="post_rank" type="text" class="span12" value="{{ next_post_rank }}" ></input>
+                                                                    <input name="post_rank" id="edit_post_rank" type="text" class="span12" value="{{ next_post_rank }}" ></input>
                                                                 </div>
 
                                                                 <div class="span3">
                                                                     <label>Alignment</label>
-                                                                    <select class="span10" name="post_alignment">
+                                                                    <select class="span10" name="post_alignment" id="edit_post_alignment">
                                                                         <option>Left</option>
                                                                         <option>Right</option>
                                                                         <option>Center</option>
@@ -207,7 +210,7 @@
 
                                                                 <div class="span3">
                                                                     <label>Width</label>
-                                                                    <select class="span10" name="post_width">
+                                                                    <select class="span10" name="post_width" id="edit_post_width">
                                                                         %for num in range(12, 0, -1):
                                                                             <option>{{ num }}</option>
                                                                         %end
@@ -216,7 +219,8 @@
                                                             </div>
 
                                                             <div>
-                                                                <button style="display: inline;" type="submit" class="btn btn-primary pull-right"><i class="icon-plus"></i>Post</Button>
+                                                                <button style="display: inline;" type="submit" class="btn btn-primary pull-right"><i class="icon-plus"></i>Save</Button>
+                                                                <button style="display: inline; margin-right: 10px;" type="button" onclick="setEditPost('add', '', '', '', true, true, '{{ next_post_rank }}', 'left', 12);" class="btn pull-right">Cancel</Button>
                                                             </div>
                                                         </div>
                                                     </form>

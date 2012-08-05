@@ -100,20 +100,9 @@ class FShopUtil(object):
                 rows.append(post_list)
                 post_list = []
 
-            post_list.append({
-                    'post_type': post.get('post_type', u'txt'),
-                    'post_id': post['_id'],
-                    'title': post.get('title', u""),
-                    'alignment': post['alignment'],
-                    'timestamp': post.get('timestamp', datetime.now()),
-                    'date_created': post.get('date_created', datetime.now()),
-                    'show_title': post['show_title'],
-                    'show_date': post['show_date'],
-                    'width': width,
-                    'offset': offset,
-                    'post_content': post['post_content'],
-                    'rank': post['rank']
-                })
+            post['offset'] = offset
+
+            post_list.append(post)
 
         if len(post_list) > 0:
             rows.append(post_list)

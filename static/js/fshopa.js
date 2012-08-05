@@ -20,6 +20,17 @@ function flip_cb()
     pst_cb.attr('checked', !pst_cb.attr('checked'));
 }
 
+function setButtonAndCb(base_id, value)
+{
+    base_id = "#" + base_id;
+    var cb_id = base_id + "_c";
+
+    $(base_id).val(value);
+    $(base_id).removeClass("active");
+    if (value) { $(base_id).addClass("active"); }
+    $(cb_id).attr('checked', value);
+}
+
 function setDeleteTab(id, name)
 {
     $("input#delete_tab_id").val(id);
@@ -36,6 +47,21 @@ function setEditTab(action, parent, name, rank, title, desc, tid)
     $("input#edit_tab_rank").val(rank);
     $("input#edit_tab_title").val(title);
     $("textarea#edit_tab_desc").val(desc);
+}
+
+function setEditPost(action, pid, title, content, showtitle, showdate, rank, alignment, width)
+{
+    $("#edit_post_action").val(action);
+    $("#edit_post_id").val(pid);
+    $("#edit_post_title").val(title);
+    $("#edit_post_content").val(content);
+
+    setButtonAndCb("edit_post_showtitle", showtitle);
+    setButtonAndCb("edit_post_showdate", showdate);
+
+    $("#edit_post_rank").val(rank);
+    $("#edit_post_alignment").val(alignment);
+    $("#edit_post_width").val(width);
 }
 
 $(document).ready(function()
