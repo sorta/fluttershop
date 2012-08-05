@@ -185,6 +185,8 @@ class FShopMongoDB():
 
     def update_tab_ranks(self, parent_id, rank, ignore_id=None, increment=1):
         parent_id = self._qualify_oid(parent_id)
+        ignore_id = self._qualify_oid(ignore_id)
+        rank = int(rank)
         self.routes_collection.update({'parent': parent_id, 'rank': {'$gte': rank}, '_id': {'$ne': ignore_id}},
                                     {'$inc': {'rank': increment}}, multi=True)
 
@@ -196,6 +198,8 @@ class FShopMongoDB():
 
     def update_post_ranks(self, parent_id, rank, ignore_id=None, increment=1):
         parent_id = self._qualify_oid(parent_id)
+        ignore_id = self._qualify_oid(ignore_id)
+        rank = int(rank)
         self.posts_collection.update({'parent': parent_id, 'rank': {'$gte': rank}, '_id': {'$ne': ignore_id}},
                                     {'$inc': {'rank': increment}}, multi=True)
 
@@ -211,11 +215,25 @@ class FShopMongoDB():
 
         return val
 
-    def _build_tab_data(self, tab_name, rank, title, desc, parent, nav_display):
+    def _qualify_parent(self, parent_id):
+        parent = self.get_tab(parent_id)
+
+        if not parent:
+            parent = {
+                'path': '',
+                '_id': None
+            }
+
+        return parent
+
+    def _build_tab_data(self, tab_name, rank, title, desc, parent_id, nav_display):
         rank = int(rank)
-        tab_name = unicode(tab_name)
+
+        tab_name = tab_name
         clean_name = self._base_util.clean_name(tab_name)
-        path = self._base_util.pathify_name(clean_name, True)
+
+        parent = self._qualify_parent(parent_id)
+        path = u"{0}/{1}".format(parent.get('path', ''), clean_name)
         tab = {
             'name': clean_name,
             'display': tab_name,
@@ -223,34 +241,38 @@ class FShopMongoDB():
             'rank': rank,
             'title': unicode(title) if title else title,
             'desc': unicode(desc) if desc else desc,
-            'parent': parent,
+            'parent': parent.get('_id', None),
             'nav_display': nav_display
         }
         return tab
 
-    def _insert_tab(self, tab_name, rank, title, desc, parent, nav_display):
-        new_tab = self._build_tab_data(tab_name, rank, title, desc, parent, nav_display)
+    def _insert_tab(self, tab_name, rank, title, desc, parent_id, nav_display):
+        new_tab = self._build_tab_data(tab_name, rank, title, desc, parent_id, nav_display)
         return self.routes_collection.insert(new_tab)
 
-    def add_new_tab(self, tab_name, rank, title=None, desc=None, parent=None, nav_display=True):
-        parent = self._qualify_oid(parent)
-        new_id = self._insert_tab(tab_name, rank, title, desc, parent, nav_display)
+    def add_new_tab(self, tab_name, rank, title=None, desc=None, parent_id=None, nav_display=True):
+        parent_id = self._qualify_oid(parent_id)
+        rank = int(rank)
+
+        new_id = self._insert_tab(tab_name, rank, title, desc, parent_id, nav_display)
         if nav_display:
-            self.update_tab_ranks(parent, rank, ignore_id=new_id)
+            self.update_tab_ranks(parent_id, rank, ignore_id=new_id)
         return new_id
 
-    def edit_tab(self, tab_id, tab_name, rank, title=None, desc=None, parent=None, nav_display=True):
-        parent = self._qualify_oid(parent)
+    def edit_tab(self, tab_id, tab_name, rank, title=None, desc=None, parent_id=None, nav_display=True):
+        parent_id = self._qualify_oid(parent_id)
+        tab_id = self._qualify_oid(tab_id)
+        rank = int(rank)
 
-        updates = self._build_tab_data(tab_name, rank, title, desc, parent, nav_display)
+        updates = self._build_tab_data(tab_name, rank, title, desc, parent_id, nav_display)
         self.routes_collection.update({'_id': tab_id}, {'$set': updates})
 
         if nav_display:
-            self.update_tab_ranks(parent, rank, ignore_id=tab_id)
+            self.update_tab_ranks(parent_id, rank, ignore_id=tab_id)
 
-        zero_route = self.routes_collection.find_one({'parent': parent, 'rank': 0})
+        zero_route = self.routes_collection.find_one({'parent': parent_id, 'rank': 0})
         if not zero_route:
-            self.update_tab_ranks(parent, 1, increment=-1)
+            self.update_tab_ranks(parent_id, 1, increment=-1)
 
     def remove_tab(self, tab_id):
         tab_id = self._qualify_oid(tab_id)

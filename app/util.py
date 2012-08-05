@@ -2,11 +2,11 @@
 """
 
 from bottle import request, redirect
-from datetime import datetime
 from math import ceil
 from urlparse import urlparse, parse_qs
 from formencode import Invalid
 from string import capwords
+import slugify
 
 
 class FShopUtil(object):
@@ -173,7 +173,10 @@ class FShopBaseUtil(object):
         session['flash_alerts'] = alerts
 
     def clean_name(self, name):
-        return unicode(name.lower().replace(" ", "_"))
+
+        name = slugify.slugify(unicode(name.lower().replace(" ", "_")))
+
+        return name
 
     def pathify_name(self, name, is_clean=False):
 
@@ -207,3 +210,6 @@ class FShopBaseUtil(object):
     def populate_val_dict(self, form, vals):
         for val in vals:
             yield val, form[val]
+
+    def console_debug(self, category, item):
+        print "\n{0}: {1}\n".format(category.upper(), item)

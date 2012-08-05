@@ -22,6 +22,8 @@
 
         %setdefault('def_ppp', 10)
 
+        %from json import dumps
+
         %include modals.tpl selected_tab=selected_tab, logged_in=logged_in, user=get('user', {}), site_name=site_name, def_ppp=def_ppp
 
         <!-- NAVBAR -->
@@ -40,8 +42,10 @@
                         <ul class="nav pull-left">
 
                             <li><a class="brand" href="/">{{ site_name }}</a></li>
+                            %mane_count = 0
                             %for mane in tabs[0]:
                                 %if mane['nav_display']:
+                                    %mane_count += 1
                                     %class_str = ""
                                     %if selected_tab['_id'] == mane['_id']:
                                         %class_str += "active"
@@ -56,11 +60,11 @@
                                     <a href="{{ mane['path'] }}">{{ mane['display'] }}</a></li>
                                     %if logged_in:
                                         <li>
-                                            <a data-toggle="modal" href="#delete_tab_modal" onclick="setDeleteTab('{{ mane['_id'] }}', '{{ mane['name'] }}');" class="mane_funcs">
+                                            <a data-toggle="modal" href="#delete_tab_modal" onclick='setDeleteTab("{{ mane["_id"] }}", {{ dumps(mane["display"]) }});' class="mane_funcs">
                                                 <i class="icon-remove icon-white"></i>
                                             </a>
                                             <a data-toggle="modal" href="#edit_tab_modal"
-                                                onclick="setEditTab('edit', '{{ mane.get('parent', None) }}', '{{ mane['name'] }}', '{{ mane['rank'] }}', '{{ mane['title'] }}', '{{ mane['desc'] }}', '{{ mane['_id'] }}');" class="mane_funcs">
+                                                onclick='setEditTab("edit", "{{ mane.get("parent", None) }}", {{ dumps(mane["display"]) }}, {{ mane["rank"] }}, {{ dumps(mane["title"]) }}, {{ dumps(mane["desc"]) }}, "{{ mane["_id"] }}");' class="mane_funcs">
                                                     <i class="icon-edit icon-white"></i>
                                             </a>
                                         </li>
@@ -69,7 +73,7 @@
 
                             %end
                             %if logged_in:
-                                <li><a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add', null, null, {{ len(tabs[0]) }});" class="badge badge-info"><i class="icon-plus"></i></a></li>
+                                <li><a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add', null, null, {{ mane_count }});" class="badge badge-info"><i class="icon-plus"></i></a></li>
                             %end
 
                         </ul>
@@ -117,11 +121,11 @@
                             <li>
                             %if logged_in:
                                 <div class="tail_funcs">
-                                    <a data-toggle="modal" href="#delete_tab_modal" onclick="setDeleteTab('{{ tab['_id'] }}', '{{ tab['name'] }}');" class="tail_funcs">
+                                    <a data-toggle="modal" href="#delete_tab_modal" onclick='setDeleteTab("{{ tab["_id"] }}", {{ dumps(tab["display"]) }});' class="tail_funcs">
                                         <i class="icon-remove"></i>
                                     </a>
                                     <a data-toggle="modal" href="#edit_tab_modal"
-                                        onclick="setEditTab('edit', '{{ tab.get('parent', None) }}', '{{ tab['name'] }}', '{{ tab['rank'] }}', '{{ tab['title'] }}', '{{ tab['desc'] }}', '{{ tab['_id'] }}');" class="tail_funcs">
+                                        onclick='setEditTab("edit", "{{ tab.get("parent", None) }}", {{ dumps(tab["display"]) }}, "{{ tab["rank"] }}", {{ dumps(tab["title"]) }}, {{ dumps(tab["desc"]) }}, "{{ tab["_id"] }}");' class="tail_funcs">
                                             <i class="icon-edit"></i>
                                     </a>
                                 </div>
@@ -162,7 +166,7 @@
                                                 <td>
                                                     <form id="edit_post_form" class="form-vertical" action="/_sitefuncs_/addpost" method="post">
                                                         <input name="selected_tab" type="text" value="{{ selected_tab['_id'] }}" />
-                                                        <input name="post_action" id="edit_post_action" type="text" value="" />
+                                                        <input name="post_action" id="edit_post_action" type="text" value="add" />
                                                         <input name="post_id" id="edit_post_id" type="text" value="" />
 
                                                         <div id="pe_title" class="collapse">
@@ -232,7 +236,7 @@
                             </div>
                         %end
 
-                        %include content.tpl rows=get('rows', []), logged_in=logged_in, selected_tab=selected_tab
+                        %include content.tpl rows=get('rows', []), logged_in=logged_in, selected_tab=selected_tab, dumps=dumps
                     </div>
                 </div>
             </div>

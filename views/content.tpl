@@ -20,23 +20,7 @@
                             %end
 
                             %if logged_in:
-                                <form>
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                    <input name="post_action" type="hidden" value="" />
-                                </form>
-                                <a class="pull-right" href="#edit_post_form" onclick="setEditPost('edit', '{{ post['_id'] }}', '{{ post['title'] }}', '{{ post['post_content'] }}', {{ post['show_title'] }}, {{ post['show_date'] }}, {{ post['rank'] }}, '{{ post['alignment'] }}', {{ post['width'] }});"><i class="icon-edit"></i></a>
+                                <a class="pull-right" href="#edit_post_form" onclick='setEditPost("edit", "{{ post["_id"] }}", {{ dumps(post["title"]) }}, {{ dumps(post["post_content"]) }}, {{ dumps(post["show_title"]) }}, {{ dumps(post["show_date"]) }}, {{ post["rank"] }}, "{{ post["alignment"] }}", {{ post["width"] }});'><i class="icon-edit"></i></a>
                             %end
                         </th>
                     </tr>

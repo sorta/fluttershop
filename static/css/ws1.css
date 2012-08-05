@@ -22,26 +22,21 @@ li.first-tab {
     float: right;
 }
 
-textarea#post_tb
+#edit_post_content
 {
-    height: 200px;
+    height: 250px;
 }
 
 div.fakeTable
 {
     border: solid #AAAAAA 1px;
-    margin: 20px 0px;
+    margin: 20px 0;
     border-radius: 5px;
 }
 
 div.fakeTable div
 {
     margin: 10px;
-}
-
-textarea.red_tb
-{
-    min-height: 300px;
 }
 
 .navbar .nav > li > a.mane_funcs

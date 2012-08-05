@@ -51,10 +51,12 @@ function setEditTab(action, parent, name, rank, title, desc, tid)
 
 function setEditPost(action, pid, title, content, showtitle, showdate, rank, alignment, width)
 {
+    expandInput();
     $("#edit_post_action").val(action);
     $("#edit_post_id").val(pid);
     $("#edit_post_title").val(title);
-    $("#edit_post_content").val(content);
+    $("#edit_post_content").setCode(content);
+    $("#edit_post_content").setFocus();
 
     setButtonAndCb("edit_post_showtitle", showtitle);
     setButtonAndCb("edit_post_showdate", showdate);
@@ -64,10 +66,23 @@ function setEditPost(action, pid, title, content, showtitle, showdate, rank, ali
     $("#edit_post_width").val(width);
 }
 
+function sendresults(thingy)
+{
+    var xuxa = "#" + thingy.id;
+    var formA = $(xuxa).parent();
+
+    for (var inp in formA.children())
+    {
+        if (inp.attr("name") == "post_content")
+        {
+            $("#edit_post_content").val(inp.val());
+        }
+    }
+}
+
 $(document).ready(function()
 {
     $("#pe0").on('show', expandInput);
-    $('#post_tb').redactor();
-    $('.red_tb').redactor();
+    $('#edit_post_content').redactor();
     $(".hidden_flipper").click(flip_cb);
 });
