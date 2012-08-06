@@ -41,6 +41,7 @@ function setDeleteTab(id, name)
 function setEditTab(action, parent, name, rank, title, desc, tid)
 {
     $("input#edit_tab_action").val(action);
+    $("span#tab_action").text(action);
     $("input#edit_tab_parent").val(parent);
     $("input#edit_tab_id").val(tid);
     $("input#edit_tab_name").val(name);
@@ -52,7 +53,9 @@ function setEditTab(action, parent, name, rank, title, desc, tid)
 function setEditPost(action, pid, title, content, showtitle, showdate, rank, alignment, width)
 {
     expandInput();
+    var actionLabel = action + " post";
     $("#edit_post_action").val(action);
+    $("span#post_action").text(actionLabel);
     $("#edit_post_id").val(pid);
     $("#edit_post_title").val(title);
     $("#edit_post_content").setCode(content);

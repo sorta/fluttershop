@@ -164,12 +164,13 @@
                                         <tbody>
                                             <tr>
                                                 <td>
-                                                    <form id="edit_post_form" class="form-vertical" action="/_sitefuncs_/addpost" method="post">
-                                                        <input name="selected_tab" type="text" value="{{ selected_tab['_id'] }}" />
-                                                        <input name="post_action" id="edit_post_action" type="text" value="add" />
-                                                        <input name="post_id" id="edit_post_id" type="text" value="" />
+                                                    <form id="edit_post_form" class="form-vertical" action="/_sitefuncs_/editpost" method="post">
+                                                        <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
+                                                        <input name="post_action" id="edit_post_action" type="hidden" value="add" />
+                                                        <input name="post_id" id="edit_post_id" type="hidden" value="" />
 
                                                         <div id="pe_title" class="collapse">
+                                                            <h2><span id="post_action" class="action_span">add post</span></h2>
                                                             <label>Title</label>
                                                         </div>
 
@@ -191,8 +192,8 @@
                                                                         <button type="button" id="edit_post_showtitle" class="btn hidden_flipper active">Title</button>
                                                                         <button type="button" id="edit_post_showdate" class="btn hidden_flipper active">Date</button>
                                                                     </div>
-                                                                    <input type="checkbox" id="edit_post_showtitle_c" class="" name="post_showtitle" checked="true"/>
-                                                                    <input type="checkbox" id="edit_post_showdate_c" class="" name="post_showdate" checked="true"/>
+                                                                    <input type="checkbox" id="edit_post_showtitle_c" class="hide" name="post_showtitle" checked="true"/>
+                                                                    <input type="checkbox" id="edit_post_showdate_c" class="hide" name="post_showdate" checked="true"/>
                                                                 </div>
 
                                                                 <div class="span3">

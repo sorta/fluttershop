@@ -102,7 +102,7 @@
     <div class="modal hide fade" id="edit_tab_modal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
-            <h3>Add/Edit Tab</h3>
+            <h3><span id="tab_action" class="action_span">add</span> Tab</h3>
         </div>
         <div class="modal-body">
             <form action="/_sitefuncs_/edittab" class="form-vertical" id="editTab" method="post">

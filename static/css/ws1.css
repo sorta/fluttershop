@@ -65,3 +65,9 @@ div.tail_funcs
 {
     margin-bottom: 5px !important;
 }
+
+span.action_span
+{
+    text-transform: capitalize;
+    display: inline;
+}

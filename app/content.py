@@ -49,9 +49,7 @@ class FShopContent(object):
         self._util = util
         self._base_util = b_util
 
-        fshop_bottle.post('/_sitefuncs_/addpost')(self.add_post)
-
-        fshop_bottle.post('/_sitefuncs_/editpost')(self.edit_post)
+        fshop_bottle.post('/_sitefuncs_/editpost')(self.add_or_edit_post)
 
     def get_rank_from_form(self, form, tab_id):
 
@@ -65,7 +63,7 @@ class FShopContent(object):
     def add_or_edit_post(self):
         self._auth.validate_session()
         form = request.forms
-        action = form['action']
+        action = form['post_action']
         title = form["post_title"]
         alignment = form.get("post_alignment", "left")
         width = int(form.get("post_width", 12))
@@ -89,43 +87,4 @@ class FShopContent(object):
             rank = self.get_rank_from_form(form, tab_id)
             self._FSDBsys.content_db.update_post(post_id, tab_id, alignment, width, title, rank, show_title, show_date, content)
 
-        self._util.tab_redirect(selected_tab)
-
-
-    def add_post(self):
-        self._auth.validate_session()
-        form = request.forms
-        title = form["post_title"]
-        alignment = form.get("post_alignment", "left")
-        width = int(form.get("post_width", 12))
-        show_title = self._util.parse_checkbox(form.get("post_showtitle", False))
-        show_date = self._util.parse_checkbox(form.get("post_showdate", False))
-        content = form.get("post_content")
-        selected_tab = form["selected_tab"]
-        rank = self.get_rank_from_form(form, selected_tab)
-
-        self._FSDBsys.content_db.insert_new_post(selected_tab, alignment, width, title, rank, show_title, show_date, content)
-        self._util.tab_redirect(selected_tab)
-
-    def edit_post(self):
-        self._auth.validate_session()
-        form = request.forms
-        title = form["post_title"]
-        alignment = form.get("post_alignment", "left")
-        width = int(form.get("post_width", 12))
-        show_title = self._util.parse_checkbox(form.get("post_show_title", False))
-        show_date = self._util.parse_checkbox(form.get("post_show_date", False))
-        content = form.get("post_content")
-        post_id = form['post_id']
-        tab_id = form.get('tab_id', None)
-        rank = self.get_rank_from_form(form, tab_id)
-
-        if alignment in ALIGN_SET:
-            alignment = alignment.lower()
-        else:
-            alignment = int(alignment)
-
-        self._FSDBsys.content_db.update_post(post_id, tab_id, alignment, width, title, rank, show_title, show_date, content)
-
-        selected_tab = form["selected_tab"]
         self._util.tab_redirect(selected_tab)
