@@ -12,11 +12,11 @@
                     <tr>
                         <th>
                             %if post['show_title']:
-                                <h2 style="display:inline;">{{ post['title'] }}</h2>
+                                <h2 class="inl">{{ post['title'] }}</h2>
                             %end
 
                             %if post['show_date']:
-                                <em class="pull-right" style="font-weight: normal;">Posted: {{ post['date_created'].strftime('%B %d, %Y %H:%M %Z %x %X') }}</em>
+                                <em class="pull-right fawn">Posted: {{ post['date_created'].strftime('%B %d, %Y %H:%M %Z %x %X') }}</em>
                             %end
 
                             %if logged_in:

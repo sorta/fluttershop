@@ -71,3 +71,28 @@ span.action_span
     text-transform: capitalize;
     display: inline;
 }
+
+div.navbar_scooter
+{
+    height: 40px;
+}
+
+div.tab_content_divider
+{
+    height: 19px;
+}
+
+.inl
+{
+    display: inline;
+}
+
+.fawn
+{
+    font-weight: normal;
+}
+
+.scoot_left
+{
+    margin-right: 10px;
+}

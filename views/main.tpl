@@ -18,7 +18,7 @@
         <title>{{ page_title }}</title>
         <meta name="description" content="{{ page_desc }}" />
     </head>
-    <body style="padding-top: 40px;">
+    <body>
 
         %setdefault('def_ppp', 10)
 
@@ -101,6 +101,7 @@
         </div>
 
         <!-- TABS -->
+        <div class="navbar_scooter"></div>
         <div class="tabbable">
             %for (counter, tab_row) in enumerate(tabs):
                 %if counter != 0 and (logged_in or len(tab_row) > 0):
@@ -143,7 +144,7 @@
             %end
             <!-- CONTENT -->
             <div class="tab-content">
-                <div style="height: 19px"></div>
+                <div class="tab_content_divider"></div>
                 <div class="tab-pane active" id="ActiveTab">
                     <div class="container">
 
@@ -224,8 +225,8 @@
                                                             </div>
 
                                                             <div>
-                                                                <button style="display: inline;" type="submit" class="btn btn-primary pull-right"><i class="icon-plus"></i>Save</Button>
-                                                                <button style="display: inline; margin-right: 10px;" type="button" onclick="setEditPost('add', '', '', '', true, true, '{{ next_post_rank }}', 'left', 12);" class="btn pull-right">Cancel</Button>
+                                                                <button class="inl" type="submit" class="btn btn-primary pull-right"><i class="icon-plus"></i>Save</Button>
+                                                                <button class="inl scoot_left" type="button" onclick="setEditPost('add', '', '', '', true, true, '{{ next_post_rank }}', 'left', 12);" class="btn pull-right">Cancel</Button>
                                                             </div>
                                                         </div>
                                                     </form>
