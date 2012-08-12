@@ -19,7 +19,7 @@ class FShopTabs(object):
         fshop_bottle.post('/_sitefuncs_/edittab')(self.add_or_edit_tab)
         fshop_bottle.post('/_sitefuncs_/deletetab')(self.delete_tab)
 
-        self._add_tab_sv = ["tab_name", "tab_rank"]
+        self._add_tab_sv = ["tab_name", "tab_rank", "tab_ppp"]
 
     #### View Routes ####
     @view('main')
@@ -67,9 +67,10 @@ class FShopTabs(object):
         desc = form.get('tab_desc', None)
         rank = form["tab_rank"]
         parent = form['tab_parent']
+        ppp = int(form['tab_ppp'])
         nav_display = True
 
-        self._FSDBsys.route_db.add_new_tab(name, rank, title, desc, parent, nav_display)
+        self._FSDBsys.route_db.add_new_tab(name, rank, title, desc, parent, nav_display, ppp)
 
     def edit_tab(self, form):
         tab_id = form['tab_id']
@@ -78,9 +79,10 @@ class FShopTabs(object):
         desc = form.get('tab_desc', None)
         rank = form["tab_rank"]
         parent = form['tab_parent']
+        ppp = int(form['tab_ppp'])
         nav_display = True
 
-        self._FSDBsys.route_db.edit_tab(tab_id, name, rank, title, desc, parent, nav_display)
+        self._FSDBsys.route_db.edit_tab(tab_id, name, rank, title, desc, parent, nav_display, ppp)
 
     def delete_tab(self):
         self._auth.validate_session()
@@ -98,3 +100,4 @@ class FShopTabs(object):
 class AddEditTabSchema(Schema):
     tab_name = validators.String(not_empty=True)
     tab_rank = validators.Int()
+    tab_ppp = validators.Int()

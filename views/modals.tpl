@@ -119,6 +119,8 @@
                 <input name="tab_title" id="edit_tab_title" type="text" class="span5" placeholder="Quick basic description" />
                 <label>Description</label>
                 <textarea name="tab_desc" id="edit_tab_desc" class="span5" placeholder="Detailed description"></textarea>
+                <label>Posts Per Page</label>
+                <input name="tab_ppp" id="edit_tab_ppp" type="text" class="span5" value="" />
         </div>
         <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
@@ -143,6 +145,25 @@
         <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
                 <input class="btn btn-danger" type="submit" value="DESTROY!" />
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Post -->
+    <div class="modal hide fade" id="delete_post_modal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">×</button>
+            <h3>Delete Post</h3>
+        </div>
+        <div class="modal-body">
+            <form action="/_sitefuncs_/deletepost" class="form-vertical" method="post">
+                <label>Are you sure you want to delete this Post (<span id="delete_post_label"></span>)?</label>
+                <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
+                <input name="post_id" id="delete_post_id" type="hidden" value="" />
+        </div>
+        <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <input class="btn btn-danger" type="submit" value="HULK SMASH!" />
             </form>
         </div>
     </div>

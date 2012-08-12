@@ -27,6 +27,10 @@ class FShopMongoDB():
 
     #### CONTENT ####
 
+    def get_post(self, post_id):
+        post_id = self._qualify_oid(post_id)
+        return self.posts_collection.find_one({'_id': post_id})
+
     def get_posts_for_tab(self, tab_id, post_limit=10):
         tab_id = self._qualify_oid(tab_id)
         return self.posts_collection.find({'parent': tab_id}).sort('rank', -1).limit(post_limit)
@@ -77,6 +81,13 @@ class FShopMongoDB():
         zero_post = post_col.find_one({'parent': tab_id, 'rank': 0})
         if not zero_post:
             self.update_post_ranks(tab_id, 1, increment=-1)
+
+    def remove_post(self, post_id):
+        post_id = self._qualify_oid(post_id)
+        post = self.get_post(post_id)
+        if post:
+            self.posts_collection.remove({'_id': post['_id']})
+            self.update_post_ranks(post.get('parent', None), post['rank'], increment=-1)
 
     def remove_posts_for_tab(self, parent_id):
         parent_id = self._qualify_oid(parent_id)
@@ -161,6 +172,13 @@ class FShopMongoDB():
     def get_def_ppp(self):
         return self.options_collection.find_one({"option_type": "def_ppp"})
 
+    def get_def_ppp_num(self):
+        def_ppp = self.get_def_ppp()
+        if not def_ppp:
+            return 12
+        else:
+            return def_ppp['def_ppp']
+
     def _add_def_ppp(self, def_ppp):
         timestamp = datetime.now()
         new_item = {
@@ -226,7 +244,7 @@ class FShopMongoDB():
 
         return parent
 
-    def _build_tab_data(self, tab_name, rank, title, desc, parent_id, nav_display):
+    def _build_tab_data(self, tab_name, rank, title, desc, parent_id, nav_display, ppp):
         rank = int(rank)
 
         tab_name = tab_name
@@ -242,29 +260,32 @@ class FShopMongoDB():
             'title': unicode(title) if title else title,
             'desc': unicode(desc) if desc else desc,
             'parent': parent.get('_id', None),
-            'nav_display': nav_display
+            'nav_display': nav_display,
+            'ppp': ppp
         }
         return tab
 
-    def _insert_tab(self, tab_name, rank, title, desc, parent_id, nav_display):
-        new_tab = self._build_tab_data(tab_name, rank, title, desc, parent_id, nav_display)
+    def _insert_tab(self, tab_name, rank, title, desc, parent_id, nav_display, ppp):
+        new_tab = self._build_tab_data(tab_name, rank, title, desc, parent_id, nav_display, ppp)
         return self.routes_collection.insert(new_tab)
 
-    def add_new_tab(self, tab_name, rank, title=None, desc=None, parent_id=None, nav_display=True):
+    def add_new_tab(self, tab_name, rank, title=None, desc=None, parent_id=None, nav_display=True, ppp=12):
         parent_id = self._qualify_oid(parent_id)
         rank = int(rank)
+        ppp = int(ppp)
 
-        new_id = self._insert_tab(tab_name, rank, title, desc, parent_id, nav_display)
+        new_id = self._insert_tab(tab_name, rank, title, desc, parent_id, nav_display, ppp)
         if nav_display:
             self.update_tab_ranks(parent_id, rank, ignore_id=new_id)
         return new_id
 
-    def edit_tab(self, tab_id, tab_name, rank, title=None, desc=None, parent_id=None, nav_display=True):
+    def edit_tab(self, tab_id, tab_name, rank, title=None, desc=None, parent_id=None, nav_display=True, ppp=12):
         parent_id = self._qualify_oid(parent_id)
         tab_id = self._qualify_oid(tab_id)
         rank = int(rank)
+        ppp = int(ppp)
 
-        updates = self._build_tab_data(tab_name, rank, title, desc, parent_id, nav_display)
+        updates = self._build_tab_data(tab_name, rank, title, desc, parent_id, nav_display, ppp)
         self.routes_collection.update({'_id': tab_id}, {'$set': updates})
 
         if nav_display:

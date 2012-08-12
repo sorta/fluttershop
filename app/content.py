@@ -50,6 +50,7 @@ class FShopContent(object):
         self._base_util = b_util
 
         fshop_bottle.post('/_sitefuncs_/editpost')(self.add_or_edit_post)
+        fshop_bottle.post('/_sitefuncs_/deletepost')(self.delete_post)
 
     def get_rank_from_form(self, form, tab_id):
 
@@ -86,5 +87,17 @@ class FShopContent(object):
             tab_id = form.get('tab_id', None)
             rank = self.get_rank_from_form(form, tab_id)
             self._FSDBsys.content_db.update_post(post_id, tab_id, alignment, width, title, rank, show_title, show_date, content)
+
+        self._util.tab_redirect(selected_tab)
+
+    def delete_post(self):
+        self._auth.validate_session()
+        form = request.forms
+        selected_tab = form.get('selected_tab')
+        post_id = form['post_id']
+        post = self._FSDBsys.content_db.get_post(post_id)
+
+        if post:
+            self._FSDBsys.content_db.remove_post(post['_id'])
 
         self._util.tab_redirect(selected_tab)

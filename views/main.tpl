@@ -64,7 +64,7 @@
                                                 <i class="icon-remove icon-white"></i>
                                             </a>
                                             <a data-toggle="modal" href="#edit_tab_modal"
-                                                onclick='setEditTab("edit", "{{ mane.get("parent", None) }}", {{ dumps(mane["display"]) }}, {{ mane["rank"] }}, {{ dumps(mane["title"]) }}, {{ dumps(mane["desc"]) }}, "{{ mane["_id"] }}");' class="mane_funcs">
+                                                onclick='setEditTab("edit", "{{ mane.get("parent", None) }}", {{ dumps(mane["display"]) }}, {{ mane["rank"] }}, {{ dumps(mane["title"]) }}, {{ dumps(mane["desc"]) }}, "{{ mane["_id"] }}", {{ mane.get("ppp", def_ppp) }});' class="mane_funcs">
                                                     <i class="icon-edit icon-white"></i>
                                             </a>
                                         </li>
@@ -73,7 +73,7 @@
 
                             %end
                             %if logged_in:
-                                <li><a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add', null, null, {{ mane_count }});" class="badge badge-info"><i class="icon-plus"></i></a></li>
+                                <li><a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add', null, null, {{ mane_count }}, null, null, null, {{ def_ppp['def_ppp'] }});" class="badge badge-info"><i class="icon-plus"></i></a></li>
                             %end
 
                         </ul>
@@ -126,7 +126,7 @@
                                         <i class="icon-remove"></i>
                                     </a>
                                     <a data-toggle="modal" href="#edit_tab_modal"
-                                        onclick='setEditTab("edit", "{{ tab.get("parent", None) }}", {{ dumps(tab["display"]) }}, "{{ tab["rank"] }}", {{ dumps(tab["title"]) }}, {{ dumps(tab["desc"]) }}, "{{ tab["_id"] }}");' class="tail_funcs">
+                                        onclick='setEditTab("edit", "{{ tab.get("parent", None) }}", {{ dumps(tab["display"]) }}, "{{ tab["rank"] }}", {{ dumps(tab["title"]) }}, {{ dumps(tab["desc"]) }}, "{{ tab["_id"] }}", {{ mane.get("ppp", def_ppp) }});' class="tail_funcs">
                                             <i class="icon-edit"></i>
                                     </a>
                                 </div>
@@ -136,7 +136,7 @@
                         %end
                         %if logged_in:
                             <li>
-                                <a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add', {{ example_parent }}, null, {{ len(tab_row) }});" class="badge badge-info"><i class="icon-plus"></i></a>
+                                <a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add', {{ example_parent }}, null, {{ len(tab_row) }}, null, null, null, {{ def_ppp['def_ppp'] }});" class="badge badge-info"><i class="icon-plus"></i></a>
                             </li>
                         %end
                     </ul>
@@ -225,8 +225,8 @@
                                                             </div>
 
                                                             <div>
-                                                                <button class="inl" type="submit" class="btn btn-primary pull-right"><i class="icon-plus"></i>Save</Button>
-                                                                <button class="inl scoot_left" type="button" onclick="setEditPost('add', '', '', '', true, true, '{{ next_post_rank }}', 'left', 12);" class="btn pull-right">Cancel</Button>
+                                                                <button class="inl btn btn-primary pull-right" type="submit"><i class="icon-plus"></i>Save</Button>
+                                                                <button class="inl scoot_left btn pull-right" type="button" onclick="setEditPost('add', '', '', '', true, true, '{{ next_post_rank }}', 'left', 12);">Cancel</Button>
                                                             </div>
                                                         </div>
                                                     </form>

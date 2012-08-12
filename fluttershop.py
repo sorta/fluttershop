@@ -45,7 +45,8 @@ class FShopApp(object):
             redirect(mane.get('path', '/home'))
         else:
             rank = self._FSDBsys.route_db.get_next_tab_rank(None)
-            self._FSDBsys.route_db.add_new_tab("Home", rank, "Site Home", "FlutterShop default home", parent=None, nav_display=True)
+            def_ppp = self._FSDBsys.options_db.get_def_ppp_num()
+            self._FSDBsys.route_db.add_new_tab("Home", rank, "Site Home", "FlutterShop default home", parent_id=None, nav_display=True, ppp=def_ppp)
             redirect("/home")
 
     def send_static(self, filepath):
@@ -74,13 +75,14 @@ class FShopApp(object):
 
         error_tab = self._FSDBsys.route_db.get_tab_by_name('404')
         if not error_tab:
-            error_tab = self._FSDBsys.route_db.add_new_tab('404', 0, title='Page Not Found', desc='The page you are looking for does not exist.', parent=None, nav_display=False)
+            def_ppp = self._FSDBsys.options_db.get_def_ppp_num()
+            error_tab = self._FSDBsys.route_db.add_new_tab('404', 0, title='Page Not Found', desc='The page you are looking for does not exist.', parent_id=None, nav_display=False, ppp=def_ppp)
         else:
             error_tab = error_tab['_id']
 
         error_posts = self._FSDBsys.content_db.get_posts_for_tab(error_tab, post_limit=10)
         if not error_posts.count():
-            self._FSDBsys.content_db.insert_new_post(error_tab, "left", 12, "Page Not Found", 0, True, False, "You've tried to access a non-existant page.")
+            self._FSDBsys.content_db.insert_new_post(error_tab, "left", 12, "Page Not Found", 0, True, False, "<p>You've tried to access a non-existant page.</p>")
 
     def start(self):
         self.init_db_if_necessary()

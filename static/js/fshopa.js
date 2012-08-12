@@ -38,7 +38,7 @@ function setDeleteTab(id, name)
     $("span#delete_tab_label").text(name);
 }
 
-function setEditTab(action, parent, name, rank, title, desc, tid)
+function setEditTab(action, parent, name, rank, title, desc, tid, ppp)
 {
     $("input#edit_tab_action").val(action);
     $("span#tab_action").text(action);
@@ -48,6 +48,7 @@ function setEditTab(action, parent, name, rank, title, desc, tid)
     $("input#edit_tab_rank").val(rank);
     $("input#edit_tab_title").val(title);
     $("textarea#edit_tab_desc").val(desc);
+    $("input#edit_tab_ppp").val(ppp);
 }
 
 function setEditPost(action, pid, title, content, showtitle, showdate, rank, alignment, width)
@@ -69,18 +70,10 @@ function setEditPost(action, pid, title, content, showtitle, showdate, rank, ali
     $("#edit_post_width").val(width);
 }
 
-function sendresults(thingy)
+function setDeletePost(post_id, title)
 {
-    var xuxa = "#" + thingy.id;
-    var formA = $(xuxa).parent();
-
-    for (var inp in formA.children())
-    {
-        if (inp.attr("name") == "post_content")
-        {
-            $("#edit_post_content").val(inp.val());
-        }
-    }
+    $("input#delete_post_id").val(post_id);
+    $("span#delete_post_label").text(title);
 }
 
 $(document).ready(function()

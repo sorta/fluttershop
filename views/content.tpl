@@ -15,12 +15,16 @@
                                 <h2 class="inl">{{ post['title'] }}</h2>
                             %end
 
-                            %if post['show_date']:
-                                <em class="pull-right fawn">Posted: {{ post['date_created'].strftime('%B %d, %Y %H:%M %Z %x %X') }}</em>
+                            %if logged_in:
+                                <a data-toggle="modal" href="#delete_post_modal" onclick='setDeletePost("{{ post["_id"] }}", {{ dumps(post["title"]) }});' class="pull-right scoot_right">
+                                    <i class="icon-remove"></i>
+                                </a>
+
+                                <a class="pull-right scoot_right" href="#edit_post_form" onclick='setEditPost("edit", "{{ post["_id"] }}", {{ dumps(post["title"]) }}, {{ dumps(post["post_content"]) }}, {{ dumps(post["show_title"]) }}, {{ dumps(post["show_date"]) }}, {{ post["rank"] }}, "{{ post["alignment"] }}", {{ post["width"] }});'><i class="icon-edit"></i></a>
                             %end
 
-                            %if logged_in:
-                                <a class="pull-right" href="#edit_post_form" onclick='setEditPost("edit", "{{ post["_id"] }}", {{ dumps(post["title"]) }}, {{ dumps(post["post_content"]) }}, {{ dumps(post["show_title"]) }}, {{ dumps(post["show_date"]) }}, {{ post["rank"] }}, "{{ post["alignment"] }}", {{ post["width"] }});'><i class="icon-edit"></i></a>
+                            %if post['show_date']:
+                                <em class="pull-right fawn">Posted: {{ post['date_created'].strftime('%B %d, %Y %H:%M %Z %x %X') }}</em>
                             %end
                         </th>
                     </tr>
