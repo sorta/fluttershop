@@ -1,41 +1,5 @@
 from bottle import request
-
-
-class FShopPost(object):
-    def __init__(self, ptype, urlfield="post_url", atfield="post_alt_text", capfield="post_caption"):
-        self._post_type = ptype
-        self._body_field = "post_text"
-        self._url_field = urlfield
-        self._alt_text_field = atfield
-        self._caption_field = capfield
-
-    @property
-    def post_type(self):
-        return self._post_type
-
-    @property
-    def body_field(self):
-        return self._body_field
-
-    @property
-    def url_field(self):
-        return self._url_field
-
-    @property
-    def alt_text_field(self):
-        return self._alt_text_field
-
-    @property
-    def caption_field(self):
-        return self._caption_field
-
-
-POST_TYPE_MAP = {
-    'txt': FShopPost('txt'),
-    'pic': FShopPost('pic', 'post_pic_url', 'post_pic_alt', 'post_pic_cap'),
-    'lnk': FShopPost('lnk', 'post_link_url', 'post_link_alt', 'post_link_cap'),
-    'vid': FShopPost('vid', 'post_vid_url', capfield='post_vid_cap')
-}
+from formencode import validators, Schema
 
 ALIGN_SET = set(['Left', 'Right', 'Center'])
 
@@ -48,6 +12,7 @@ class FShopContent(object):
         self._auth = auth
         self._util = util
         self._base_util = b_util
+        self._edit_post_sv = ['post_content', 'post_rank']
 
         fshop_bottle.post('/_sitefuncs_/editpost')(self.add_or_edit_post)
         fshop_bottle.post('/_sitefuncs_/deletepost')(self.delete_post)
@@ -78,15 +43,18 @@ class FShopContent(object):
         else:
             alignment = int(alignment)
 
-        if action == 'add':
-            rank = self.get_rank_from_form(form, selected_tab)
-            self._FSDBsys.content_db.insert_new_post(selected_tab, alignment, width, title, rank, show_title, show_date, content)
+        valid_req = self._base_util.validate_schema(PostSchema(), form, self._edit_post_sv)
 
-        elif action == 'edit':
-            post_id = form['post_id']
-            tab_id = form.get('tab_id', None)
-            rank = self.get_rank_from_form(form, tab_id)
-            self._FSDBsys.content_db.update_post(post_id, tab_id, alignment, width, title, rank, show_title, show_date, content)
+        if valid_req:
+            if action == 'add':
+                rank = self.get_rank_from_form(form, selected_tab)
+                self._FSDBsys.content_db.insert_new_post(selected_tab, alignment, width, title, rank, show_title, show_date, content)
+
+            elif action == 'edit':
+                post_id = form['post_id']
+                tab_id = form.get('tab_id', None)
+                rank = self.get_rank_from_form(form, tab_id)
+                self._FSDBsys.content_db.update_post(post_id, tab_id, alignment, width, title, rank, show_title, show_date, content)
 
         self._util.tab_redirect(selected_tab)
 
@@ -101,3 +69,8 @@ class FShopContent(object):
             self._FSDBsys.content_db.remove_post(post['_id'])
 
         self._util.tab_redirect(selected_tab)
+
+
+class PostSchema(Schema):
+    post_content = validators.String(not_empty=True)
+    post_rank = validators.Int()

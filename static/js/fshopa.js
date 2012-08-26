@@ -2,15 +2,27 @@
 
 function collapseInput()
 {
-    $("#pe_radio_buttons").collapse("hide");
-    $("#pe_post_buttons").collapse("hide");
+    if (localStorage['post_shown'] == "true")
+    {
+        $("#pe0").collapse("hide");
+        $("#pe_title").collapse("hide");
+        $("#pe_details").collapse("hide");
+        $("#pe_post_buttons").collapse("hide");
+    }
+
+    localStorage['post_shown'] = "false";
 }
 
 function expandInput()
 {
-    $("#pe_title").collapse("show");
-    $("#pe_details").collapse("show");
-    $("#pe_post_buttons").collapse("show");
+    if (localStorage['post_shown'] == "false")
+    {
+        $("#pe_title").collapse("show");
+        $("#pe_details").collapse("show");
+        $("#pe_post_buttons").collapse("show");
+    }
+
+    localStorage['post_shown'] = "true";
 }
 
 function flip_cb()
@@ -51,9 +63,12 @@ function setEditTab(action, parent, name, rank, title, desc, tid, ppp)
     $("input#edit_tab_ppp").val(ppp);
 }
 
-function setEditPost(action, pid, title, content, showtitle, showdate, rank, alignment, width)
+function setEditPost(action, pid, title, content, showtitle, showdate, rank, alignment, width, collapse)
 {
-    expandInput();
+    if (collapse === true)
+        collapseInput();
+    else
+        expandInput();
     var actionLabel = action + " post";
     $("#edit_post_action").val(action);
     $("span#post_action").text(actionLabel);
@@ -78,7 +93,8 @@ function setDeletePost(post_id, title)
 
 $(document).ready(function()
 {
-    $("#pe0").on('show', expandInput);
+    $("#edit_post_title").on('focus', expandInput);
+    localStorage['post_shown'] = "false";
     $('#edit_post_content').redactor();
     $(".hidden_flipper").click(flip_cb);
 });

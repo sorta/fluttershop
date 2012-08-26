@@ -100,4 +100,4 @@ class FShopTabs(object):
 class AddEditTabSchema(Schema):
     tab_name = validators.String(not_empty=True)
     tab_rank = validators.Int()
-    tab_ppp = validators.Int()
+    tab_ppp = validators.Int(min=1)

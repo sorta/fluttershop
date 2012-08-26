@@ -4,9 +4,10 @@
     <head>
         <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css" type="text/css" />
         <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.css" type="text/css" />
-        <link rel="stylesheet" href="/static/css/ws1.css" type="text/css" />
+        <link rel="stylesheet" href="/static/css/fshop.css" type="text/css" />
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
         <script language="javascript" src="/static/bootstrap/js/bootstrap.js"></script>
 
         %if logged_in:
@@ -60,11 +61,11 @@
                                     <a href="{{ mane['path'] }}">{{ mane['display'] }}</a></li>
                                     %if logged_in:
                                         <li>
-                                            <a data-toggle="modal" href="#delete_tab_modal" onclick='setDeleteTab("{{ mane["_id"] }}", {{ dumps(mane["display"]) }});' class="mane_funcs">
+                                            <a data-toggle="modal" href="#delete_tab_modal" onclick='setDeleteTab("{{ mane["_id"] }}", {{! dumps(mane["display"]) }});' class="mane_funcs">
                                                 <i class="icon-remove icon-white"></i>
                                             </a>
                                             <a data-toggle="modal" href="#edit_tab_modal"
-                                                onclick='setEditTab("edit", "{{ mane.get("parent", None) }}", {{ dumps(mane["display"]) }}, {{ mane["rank"] }}, {{ dumps(mane["title"]) }}, {{ dumps(mane["desc"]) }}, "{{ mane["_id"] }}", {{ mane.get("ppp", def_ppp) }});' class="mane_funcs">
+                                                onclick='setEditTab("edit", "{{ mane.get("parent", None) }}", {{! dumps(mane["display"]) }}, {{ mane["rank"] }}, {{! dumps(mane["title"]) }}, {{! dumps(mane["desc"]) }}, "{{ mane["_id"] }}", {{ mane.get("ppp", def_ppp["def_ppp"]) }});' class="mane_funcs">
                                                     <i class="icon-edit icon-white"></i>
                                             </a>
                                         </li>
@@ -122,11 +123,11 @@
                             <li>
                             %if logged_in:
                                 <div class="tail_funcs">
-                                    <a data-toggle="modal" href="#delete_tab_modal" onclick='setDeleteTab("{{ tab["_id"] }}", {{ dumps(tab["display"]) }});' class="tail_funcs">
+                                    <a data-toggle="modal" href="#delete_tab_modal" onclick='setDeleteTab("{{ tab["_id"] }}", {{! dumps(tab["display"]) }});' class="tail_funcs">
                                         <i class="icon-remove"></i>
                                     </a>
                                     <a data-toggle="modal" href="#edit_tab_modal"
-                                        onclick='setEditTab("edit", "{{ tab.get("parent", None) }}", {{ dumps(tab["display"]) }}, "{{ tab["rank"] }}", {{ dumps(tab["title"]) }}, {{ dumps(tab["desc"]) }}, "{{ tab["_id"] }}", {{ mane.get("ppp", def_ppp) }});' class="tail_funcs">
+                                        onclick='setEditTab("edit", "{{ tab.get("parent", None) }}", {{! dumps(tab["display"]) }}, "{{ tab["rank"] }}", {{! dumps(tab["title"]) }}, {{! dumps(tab["desc"]) }}, "{{ tab["_id"] }}", {{ tab.get("ppp", def_ppp["def_ppp"]) }});' class="tail_funcs">
                                             <i class="icon-edit"></i>
                                     </a>
                                 </div>
@@ -175,10 +176,9 @@
                                                             <label>Title</label>
                                                         </div>
 
-                                                        <input name="post_title" id="edit_post_title" type="text" class="span12" placeholder="Post something..." data-toggle="collapse" data-target="#pe0"></input>
+                                                        <input name="post_title" id="edit_post_title" type="text" class="span12" placeholder="Post something..."></input>
 
                                                         <div id="pe0" class="collapse"></div>
-                                                        <div id="pe1" class="collapse"></div>
 
                                                         <div id="pe_details" class="collapse">
                                                             <label>Post Content*</label>
@@ -226,7 +226,7 @@
 
                                                             <div>
                                                                 <button class="inl btn btn-primary pull-right" type="submit"><i class="icon-plus"></i>Save</Button>
-                                                                <button class="inl scoot_left btn pull-right" type="button" onclick="setEditPost('add', '', '', '', true, true, '{{ next_post_rank }}', 'left', 12);">Cancel</Button>
+                                                                <button class="inl scoot_left btn pull-right" type="button" onclick="setEditPost('add', '', '', '', true, true, '{{ next_post_rank }}', 'left', {{ selected_tab['ppp'] }}, true);">Cancel</Button>
                                                             </div>
                                                         </div>
                                                     </form>

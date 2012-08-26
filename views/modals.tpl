@@ -119,7 +119,7 @@
                 <input name="tab_title" id="edit_tab_title" type="text" class="span5" placeholder="Quick basic description" />
                 <label>Description</label>
                 <textarea name="tab_desc" id="edit_tab_desc" class="span5" placeholder="Detailed description"></textarea>
-                <label>Posts Per Page</label>
+                <label>Posts Per Page*</label>
                 <input name="tab_ppp" id="edit_tab_ppp" type="text" class="span5" value="" />
         </div>
         <div class="modal-footer">
