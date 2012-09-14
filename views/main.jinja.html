@@ -10,23 +10,19 @@
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
         <script language="javascript" src="/static/bootstrap/js/bootstrap.js"></script>
 
-        %if logged_in:
+        {% if logged_in %}
             <link rel="stylesheet" href="/static/js/redactor/css/redactor.css" />
 
             <script src="/static/js/redactor/redactor.js"></script>
             <script language="javascript" src="/static/js/fshopa.js"></script>
-        %end
+        {% endif %}
         <title>{{ page_title }}</title>
         <meta name="description" content="{{ page_desc }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
 
-        %setdefault('def_ppp', 10)
-
-        %from json import dumps
-
-        %include modals.tpl selected_tab=selected_tab, logged_in=logged_in, user=get('user', {}), site_name=site_name, def_ppp=def_ppp
+        <!-- Include Modals here? -->
 
         <!-- NAVBAR -->
         <div class="navbar navbar-inverse navbar-fixed-top">
@@ -44,45 +40,45 @@
                         <ul class="nav pull-left">
 
                             <li><a class="brand" href="/">{{ site_name }}</a></li>
-                            %mane_count = 0
-                            %for mane in tabs[0]:
-                                %if mane['nav_display']:
-                                    %mane_count += 1
-                                    %class_str = ""
-                                    %if selected_tab['_id'] == mane['_id']:
-                                        %class_str += "active"
-                                    %end
+                            {% set mane_count = 0 %}
+                            {% for mane in tabs[0] %}
+                                {% if mane['nav_display'] %}
+                                    {% set mane_count = mane_count + 1 %}
+                                    {% set class_str = "" %}
+                                    {% if selected_tab['_id'] == mane['_id'] %}
+                                        {% set class_str = class_str + "active" %}
+                                    {% endif %}
 
-                                    %if class_str != "":
+                                    {% if class_str != "" %}
                                         <li class="{{class_str}}">
-                                    %else:
+                                    {% else %}
                                         <li>
-                                    %end
+                                    {% endif %}
 
                                     <a href="{{ mane['path'] }}">{{ mane['display'] }}</a></li>
-                                    %if logged_in:
+                                    {% if logged_in %}
                                         <li>
-                                            <a data-toggle="modal" href="#delete_tab_modal" onclick='setDeleteTab("{{ mane["_id"] }}", {{! dumps(mane["display"]) }});' class="mane_funcs">
+                                            <a data-toggle="modal" href="#delete_tab_modal" onclick='setDeleteTab("{{ mane["_id"] }}", {{ dumps(mane["display"]) }});' class="mane_funcs">
                                                 <i class="icon-remove icon-white"></i>
                                             </a>
                                             <a data-toggle="modal" href="#edit_tab_modal"
-                                                onclick='setEditTab("edit", "{{ mane.get("parent", None) }}", {{! dumps(mane["display"]) }}, {{ mane["rank"] }}, {{! dumps(mane["title"]) }}, {{! dumps(mane["desc"]) }}, "{{ mane["_id"] }}", {{ mane.get("ppp", def_ppp["def_ppp"]) }});' class="mane_funcs">
+                                                onclick='setEditTab("edit", "{{ mane.get("parent", None) }}", {{ dumps(mane["display"]) }}, {{ mane["rank"] }}, {{ dumps(mane["title"]) }}, {{ dumps(mane["desc"]) }}, "{{ mane["_id"] }}", {{ mane.get("ppp", def_ppp["def_ppp"]) }});' class="mane_funcs">
                                                     <i class="icon-edit icon-white"></i>
                                             </a>
                                         </li>
-                                    %end
-                                %end
+                                    {% endif %}
+                                {% endif %}
 
-                            %end
-                            %if logged_in:
+                            {% endfor %}
+                            {% if logged_in %}
                                 <li><a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add', null, null, {{ mane_count }}, null, null, null, {{ def_ppp['def_ppp'] }});" class="badge badge-info"><i class="icon-plus"></i></a></li>
-                            %end
+                            {% endif %}
 
                         </ul>
                         <!-- Right -->
                         <ul class="nav pull-right">
                             <li class="divider-vertical"></li>
-                            %if logged_in:
+                            {% if logged_in %}
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown">{{ user.get("username", "User") }}<b class="caret"></b></a>
                                     <ul class="dropdown-menu">
@@ -92,9 +88,9 @@
                                         <li><a data-toggle="modal" href="#logout_modal">Log Out</a></li>
                                     </ul>
                                 </li>
-                            %else:
+                            {% else %}
                                 <li><a data-toggle="modal" href="#login_modal" ><span class="label label-info"><i class="icon-user"></i></span></a></li>
-                            %end
+                            {% endif %}
                         </ul>
 
                     </div>
@@ -105,62 +101,62 @@
         <!-- TABS -->
         <div class="navbar_scooter"></div>
         <div class="tabbable">
-            %for (counter, tab_row) in enumerate(tabs):
-                %if counter != 0 and (logged_in or len(tab_row) > 0):
-                    %example_parent = "'{0}'".format(selected_tab['_id'])
+            {% for tab_row in tabs %}
+                {% if not loop.first and (logged_in or tab_row|length > 0) %}
+                    {% set example_parent = "{0}".format(selected_tab['_id']) %}
                     <ul class="nav nav-tabs no_bottom">
-                        %for tab in tab_row:
-                            %if selected_tab['_id'] == tab['_id']:
+                        {% for tab in tab_row %}
+                            {% if selected_tab['_id'] == tab['_id'] %}
                                 <li class="active">
-                            %else:
+                            {% else %}
                                 <li>
-                            %end
-                            %if tab['parent']:
-                                %example_parent = "'{0}'".format(tab['parent'])
-                            %end
+                            {% endif %}
+                            {% if tab['parent'] %}
+                                {% set example_parent = "'{0}'".format(tab['parent']) %}
+                            {% endif %}
 
                             <a href="{{ tab['path'] }}">{{ tab['display'] }}</a>
                             </li>
                             <li>
-                            %if logged_in:
+                            {% if logged_in %}
                                 <div class="tail_funcs">
-                                    <a data-toggle="modal" href="#delete_tab_modal" onclick='setDeleteTab("{{ tab["_id"] }}", {{! dumps(tab["display"]) }});' class="tail_funcs">
+                                    <a data-toggle="modal" href="#delete_tab_modal" onclick='setDeleteTab("{{ tab["_id"] }}", {{ dumps(tab["display"]) }});' class="tail_funcs">
                                         <i class="icon-remove"></i>
                                     </a>
                                     <a data-toggle="modal" href="#edit_tab_modal"
-                                        onclick='setEditTab("edit", "{{ tab.get("parent", None) }}", {{! dumps(tab["display"]) }}, "{{ tab["rank"] }}", {{! dumps(tab["title"]) }}, {{! dumps(tab["desc"]) }}, "{{ tab["_id"] }}", {{ tab.get("ppp", def_ppp["def_ppp"]) }});' class="tail_funcs">
+                                        onclick='setEditTab("edit", "{{ tab.get("parent", None) }}", {{ dumps(tab["display"]) }}, "{{ tab["rank"] }}", {{ dumps(tab["title"]) }}, {{ dumps(tab["desc"]) }}, "{{ tab["_id"] }}", {{ tab.get("ppp", def_ppp["def_ppp"]) }});' class="tail_funcs">
                                             <i class="icon-edit"></i>
                                     </a>
                                 </div>
 
-                            %end
+                            {% endif %}
                             </li>
-                        %end
-                        %if logged_in:
+                        {% endfor %}
+                        {% if logged_in %}
                             <li>
                                 <a data-toggle="modal" href="#edit_tab_modal" onclick="setEditTab('add', {{ example_parent }}, null, {{ len(tab_row) }}, null, null, null, {{ def_ppp['def_ppp'] }});" class="badge badge-info"><i class="icon-plus"></i></a>
                             </li>
-                        %end
+                        {% endif %}
                     </ul>
-                %end
-            %end
+                {% endif %}
+            {% endfor %}
             <!-- CONTENT -->
             <div class="tab-content">
                 <div class="tab_content_divider"></div>
                 <div class="tab-pane active" id="ActiveTab">
                     <div class="container">
 
-                        %for msg in flash_alerts:
+                        {% for msg in flash_alerts %}
                             <div class="alert alert-block fade in {{ msg['msg_classes'] }}">
                                 <button type="button" class="close" data-dismiss="alert">×</button>
-                                %if msg['title']:
+                                {% if msg['title'] %}
                                     <h4 class="alert-heading">{{ msg['title'] }}</h4>
-                                %end
+                                {% endif %}
                                 {{ msg['message'] }}
                             </div>
-                        %end
+                        {% endfor %}
 
-                        %if logged_in:
+                        {% if logged_in %}
                             <div class="row-fluid">
                                 <div class="span12">
                                     <table class="table table-bordered">
@@ -209,18 +205,18 @@
                                                                         <option>Left</option>
                                                                         <option>Right</option>
                                                                         <option>Center</option>
-                                                                        %for num in range(1, 12):
+                                                                        {% for num in range(1, 12) %}
                                                                             <option>{{ num }}</option>
-                                                                        %end
+                                                                        {% endfor %}
                                                                     </select>
                                                                 </div>
 
                                                                 <div class="span3">
                                                                     <label>Width</label>
                                                                     <select class="span10" name="post_width" id="edit_post_width">
-                                                                        %for num in range(12, 0, -1):
+                                                                        {% for num in range(12, 0, -1) %}
                                                                             <option>{{ num }}</option>
-                                                                        %end
+                                                                        {% endfor %}
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -237,9 +233,8 @@
                                     </table>
                                 </div>
                             </div>
-                        %end
+                        {% endif %}
 
-                        %include content.tpl rows=get('rows', []), logged_in=logged_in, selected_tab=selected_tab, dumps=dumps
                     </div>
                 </div>
             </div>

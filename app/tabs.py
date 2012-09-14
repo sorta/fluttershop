@@ -1,7 +1,7 @@
 """
 """
 
-from bottle import view, request, redirect
+from bottle import request, redirect, jinja2_view as view
 from formencode import validators, Schema
 
 
@@ -22,7 +22,7 @@ class FShopTabs(object):
         self._add_tab_sv = ["tab_name", "tab_rank", "tab_ppp"]
 
     #### View Routes ####
-    @view('main')
+    @view('main.jinja')
     def tab(self, tab_name):
 
         tab = self._FSDBsys.route_db.get_tab_by_name(tab_name)
