@@ -1,0 +1,72 @@
+<table class="table table-bordered">
+    <tbody>
+        <tr>
+            <td>
+                <form id="edit_post_form" class="form-vertical" action="/_sitefuncs_/editpost" method="post">
+                    <input name="selected_tab" type="hidden" value="{{ selected_tab['_id'] }}" />
+                    <input name="post_action" id="edit_post_action" type="hidden" value="add" />
+                    <input name="post_id" id="edit_post_id" type="hidden" value="" />
+
+                    <div id="pe_title" class="collapse">
+                        <h2><span id="post_action" class="action_span">add post</span></h2>
+                        <label>Title</label>
+                    </div>
+
+                    <input name="post_title" id="edit_post_title" type="text" class="span12" placeholder="Post something..."></input>
+
+                    <div id="pe0" class="collapse"></div>
+
+                    <div id="pe_details" class="collapse">
+                        <label>Post Content*</label>
+                        <textarea name="post_content" id="edit_post_content" class="span12"></textarea>
+                    </div>
+
+                    <div id="pe_post_buttons" class="collapse">
+                        <div class="row-fluid">
+                            <div class="span2">
+                                <label>Show</label>
+                                <div class="btn-group" data-toggle="buttons-checkbox">
+                                    <button type="button" id="edit_post_showtitle" class="btn hidden_flipper active">Title</button>
+                                    <button type="button" id="edit_post_showdate" class="btn hidden_flipper active">Date</button>
+                                </div>
+                                <input type="checkbox" id="edit_post_showtitle_c" class="hide" name="post_showtitle" checked="true"/>
+                                <input type="checkbox" id="edit_post_showdate_c" class="hide" name="post_showdate" checked="true"/>
+                            </div>
+
+                            <div class="span3">
+                                <label>Rank</label>
+                                <input name="post_rank" id="edit_post_rank" type="text" class="span12" value="{{ next_post_rank }}" ></input>
+                            </div>
+
+                            <div class="span3">
+                                <label>Alignment</label>
+                                <select class="span10" name="post_alignment" id="edit_post_alignment">
+                                    <option>Left</option>
+                                    <option>Right</option>
+                                    <option>Center</option>
+                                    {% for num in range(1, 12) %}
+                                        <option>{{ num }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="span3">
+                                <label>Width</label>
+                                <select class="span10" name="post_width" id="edit_post_width">
+                                    {% for num in range(12, 0, -1) %}
+                                        <option>{{ num }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button class="inl btn btn-primary pull-right" type="submit"><i class="icon-plus"></i>Save</Button>
+                            <button class="inl scoot_left btn pull-right" type="button" onclick="setEditPost('add', '', '', '', true, true, '{{ next_post_rank }}', 'left', {{ selected_tab['ppp'] }}, true);">Cancel</Button>
+                        </div>
+                    </div>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>

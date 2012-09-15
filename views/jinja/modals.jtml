@@ -20,7 +20,7 @@
     </div>
 </div>
 
-%if logged_in:
+{% if logged_in %}
 
     <!-- Logout -->
     <div class="modal hide fade" id="logout_modal">
@@ -167,4 +167,4 @@
             </form>
         </div>
     </div>
-%end
+{% endif %}
