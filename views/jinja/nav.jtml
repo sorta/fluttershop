@@ -64,7 +64,7 @@
                                 </ul>
                             </li>
                         {% else %}
-                            <li><a data-toggle="modal" href="#login_modal" ><span class="label label-info"><i class="icon-user"></i></span></a></li>
+                            <li><a data-toggle="modal" href="#login_modal" ><span class="label label-warning"><i class="icon-user"></i></span></a></li>
                         {% endif %}
                     </ul>
 
