@@ -1,0 +1,11 @@
+
+
+
+// Colors
+// Only give background-color difference to links (and to simplify, we don't qualifty with `a` but [href] attribute)
+.label,
+.badge {
+  // Fshop (yellow)
+  &-fshop         { background-color: lighten(@flutterDarkPink, 10%) }
+  &-fshop[href]   { background-color: @flutterDarkPink }
+}

@@ -3,40 +3,35 @@
 {% block spire %}
     {{ super() }}
     <!-- CONTENT -->
-    <div class="tab-content">
-        <div class="tab_content_divider"></div>
-        <div class="tab-pane active" id="ActiveTab">
-            <div class="container">
+    <div class="container">
 
-                {% block messages %}
+        {% block messages %}
 
-                    {% for msg in flash_alerts %}
-                        <div class="alert alert-block fade in {{ msg['msg_classes'] }}">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            {% if msg['title'] %}
-                                <h4 class="alert-heading">{{ msg['title'] }}</h4>
-                            {% endif %}
-                            {{ msg['message'] }}
-                        </div>
-                    {% endfor %}
+            {% for msg in flash_alerts %}
+                <div class="alert alert-block fade in {{ msg['msg_classes'] }}">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    {% if msg['title'] %}
+                        <h4 class="alert-heading">{{ msg['title'] }}</h4>
+                    {% endif %}
+                    {{ msg['message'] }}
+                </div>
+            {% endfor %}
 
-                {% endblock %}
+        {% endblock %}
 
-                {% if logged_in %}
-                    <div class="row-fluid">
-                        <div class="span12">
+        {% if logged_in %}
+            <div class="row-fluid">
+                <div class="span12">
 
-                            {% block edit_post %}
+                    {% block edit_post %}
 
-                                {% include 'jinja/post_editor.jtml' %}
+                        {% include 'jinja/post_editor.jtml' %}
 
-                            {% endblock %}
-                        </div>
-                    </div>
-                {% endif %}
-
-                {% include 'jinja/content.jtml' %}
+                    {% endblock %}
+                </div>
             </div>
-        </div>
+        {% endif %}
+
+        {% include 'jinja/content.jtml' %}
     </div>
 {% endblock %}

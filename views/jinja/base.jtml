@@ -12,6 +12,7 @@
 
             <!-- bootstrap -->
             <link rel="stylesheet/less" href="/static/bootstrap/source/less/bootstrap.less">
+            <link rel="stylesheet/less" href="/static/bootstrap/source/less/responsive.less">
             <!--
             <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css" type="text/css" />
             <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.css" type="text/css" />
@@ -29,6 +30,7 @@
 
             <!-- FlutterShop -->
             <link rel="stylesheet" href="/static/css/fshop.css" type="text/css" />
+            <link rel="stylesheet/less" href="/static/css/fshopLESS.less">
             {% if logged_in %}
                 <script language="javascript" src="/static/js/fshopa.js"></script>
             {% endif %}
