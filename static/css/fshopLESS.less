@@ -1,6 +1,63 @@
 
+
+@flutterYellow: #fefaa3;
+@flutterDarkYellow: #f5dd61;
+
+@flutterPink: darken(#ffb9db, 10%);
+@flutterDarkPink: darken(#fe8dc5, 10%);
+
+.all_corners(@color: @flutterPink, @size: 10px)
+{
+    background: @color; /* fallback */
+
+    background: -moz-linear-gradient(45deg,  transparent @size, @color @size),
+                -moz-linear-gradient(135deg, transparent @size, @color @size),
+                -moz-linear-gradient(225deg, transparent @size, @color @size),
+                -moz-linear-gradient(315deg, transparent @size, @color @size);
+
+    background: -o-linear-gradient(45deg,  transparent @size, @color @size),
+                -o-linear-gradient(135deg, transparent @size, @color @size),
+                -o-linear-gradient(225deg, transparent @size, @color @size),
+                -o-linear-gradient(315deg, transparent @size, @color @size);
+
+    background: -webkit-linear-gradient(45deg,  transparent @size, @color @size),
+                -webkit-linear-gradient(135deg, transparent @size, @color @size),
+                -webkit-linear-gradient(225deg, transparent @size, @color @size),
+                -webkit-linear-gradient(315deg, transparent @size, @color @size);
+
+    background-position: bottom left, bottom right, top right, top left;
+    -moz-background-size: 50% 50%;
+    -webkit-background-size: 50% 50%;
+    background-size: 50% 50%;
+
+    background-repeat: no-repeat;
+}
+
+.rounded(@radius) {
+  border-radius: @radius;
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+}
+
+.starship-top(@color: @flutterPink, @size: 20px)
+{
+    height: 0;
+    background-color: transparent;
+    border-bottom: @size solid @color;
+    border-right: @size solid transparent;
+}
+
+.starship-bottom(@color: @flutterPink, @size: 20px)
+{
+    height: 0;
+    background-color: transparent;
+    border-top: @size solid @color;
+    border-left: @size solid transparent;
+}
+
 html, body {
     height: 100%;
+    background-color: lighten(@flutterYellow, 5%);
 }
 
 li.first-tab {
@@ -72,4 +129,40 @@ span.action_span
 .scoot_right
 {
     margin-left: 10px;
+}
+
+body
+{
+}
+
+
+.container
+{
+    height: 100%;
+    padding-top: 20px;
+}
+
+.flutter_post
+{
+    width: 100%;
+    // .all_corners(@flutterPink, 10px);
+    background-color: @flutterPink;
+    .rounded(10px);
+
+    div
+    {
+        overflow: auto;
+        padding: 10px;
+
+        &.starship_top
+        {
+            background-color: transparent;
+            .starship-top(@flutterPink, 30px);
+        }
+
+        &.starship_bottom
+        {
+            .starship-bottom(@flutterPink, 30px);
+        }
+    }
 }

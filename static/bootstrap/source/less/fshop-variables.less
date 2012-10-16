@@ -10,8 +10,8 @@
 @flutterYellow: #fefaa3;
 @flutterDarkYellow: #f5dd61;
 
-@flutterPink: #ffb9db;
-@flutterDarkPink: #fe8dc5;
+@flutterPink: darken(#ffb9db, 10%);
+@flutterDarkPink: darken(#fe8dc5, 10%);
 
 // Navbar
 // -------------------------
@@ -32,13 +32,13 @@
 @navbarBrandColor:                @navbarLinkColor;
 
 // Inverted navbar
-@navbarInverseBackground:                @flutterDarkYellow;
-@navbarInverseBackgroundHighlight:       @flutterYellow;
-@navbarInverseBorder:                    @flutterYellow;
+@navbarInverseBackground:                fadeOut(@flutterDarkPink, 10%);
+@navbarInverseBackgroundHighlight:       @flutterPink;
+@navbarInverseBorder:                    @flutterPink;
 
-@navbarInverseText:                      @flutterDarkPink;
-@navbarInverseLinkColor:                 @flutterDarkPink;
-@navbarInverseLinkColorActive:           darken(@flutterDarkPink, 20%);
+@navbarInverseText:                      @flutterDarkYellow;
+@navbarInverseLinkColor:                 @flutterDarkYellow;
+@navbarInverseLinkColorActive:           @flutterYellow;
 @navbarInverseLinkColorHover:            darken(@navbarLinkColorActive, 20%);
 @navbarInverseLinkBackgroundHover:       transparent;
 @navbarInverseLinkBackgroundActive:      @navbarInverseBackground;

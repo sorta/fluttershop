@@ -3,42 +3,39 @@
     <div class="row">
     {% for post in row %}
         {% if post['offset'] > 0 %}
-            <div class="span{{ post['offset'] }}"><br /></div>
+            <div class="span{{ post['width'] }} offset{{ post['offset'] }}"><br /></div>
+        {% else %}
+            <div class="span{{ post['width'] }}">
         {% endif %}
-        <div class="span{{ post['width'] }}">
-            <table class="table table-bordered">
-                {% if post['show_title'] or post['show_date'] or logged_in %}
-                <thead>
-                    <tr>
-                        <th>
+                <div class="flutter_post">
+                    <!-- <div class="starship_top"></div> -->
+                    <div class="fp_header">
+                        <!-- header -->
+                        {% if post['show_title'] or post['show_date'] or logged_in %}
                             {% if post['show_title'] %}
                                 <h2 class="inl">{{ post['title'] }}</h2>
                             {% endif %}
 
                             {% if logged_in %}
-                                <a data-toggle="modal" href="#delete_post_modal" onclick='setDeletePost("{{ post["_id"] }}", {{ dumps(post["title"]) }});' class="pull-right scoot_right">
+                                <a data-toggle="modal" href="#delete_post_modal" onclick='setDeletePost("{{ post["_id"] }}", {{ post["title"] }});' class="pull-right scoot_right">
                                     <i class="icon-remove"></i>
                                 </a>
 
-                                <a class="pull-right scoot_right" href="#edit_post_form" onclick='setEditPost("edit", "{{ post["_id"] }}", {{ dumps(post["title"]) }}, {{ dumps(post["post_content"]) }}, {{ dumps(post["show_title"]) }}, {{ dumps(post["show_date"]) }}, {{ post["rank"] }}, "{{ post["alignment"] }}", {{ post["width"] }});'><i class="icon-edit"></i></a>
+                                <a class="pull-right scoot_right" href="#edit_post_form" onclick='setEditPost("edit", "{{ post["_id"] }}", {{ post["title"] }}, {{ post["post_content"] }}, {{ post["show_title"] }}, {{ post["show_date"] }}, {{ post["rank"] }}, "{{ post["alignment"] }}", {{ post["width"] }});'><i class="icon-edit"></i></a>
                             {% endif %}
 
                             {% if post['show_date'] %}
                                 <em class="pull-right fawn">Posted: {{ post['date_created'].strftime('%B %d, %Y %H:%M %Z %x %X') }}</em>
                             {% endif %}
-                        </th>
-                    </tr>
-                </thead>
-                {% endif %}
-                <tbody>
-                    <tr>
-                        <td>
-                            {{ post['post_content'] }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                        {% endif %}
+                    </div>
+                    <div class="fp_content">
+                        <!-- Content -->
+                        {{ post['post_content'] }}
+                    </div>
+                    <!-- <div class="starship_bottom"></div> -->
+                </div>
+            </div>
     {% endfor %}
     </div>
 {% endfor %}
