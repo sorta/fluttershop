@@ -1,103 +1,79 @@
-
-html, body {
-    height: 100%;
+html,
+body {
+  height: 100%;
+  background-color: #fefbbc;
 }
-
-div.stretchedMargin {
-    display: block;
-    position: absolute;
-    height: auto;
-    bottom:0;
-    top:0;
-    left:0;
-    right:0;
-    margin-top: 40px;
-}
-
 li.first-tab {
-    margin-top: 19px;
+  margin-top: 19px;
 }
-
 .fright {
-    float: right;
+  float: right;
 }
-
-#edit_post_content
-{
-    height: 250px;
+#edit_post_content {
+  height: 250px;
 }
-
-div.fakeTable
-{
-    border: solid #AAAAAA 1px;
-    margin: 20px 0;
-    border-radius: 5px;
+.navbar .nav > li > a.mane_funcs {
+  margin: 0px auto;
+  margin-right: 2px;
+  padding: 0px;
 }
-
-div.fakeTable div
-{
-    margin: 10px;
+a.tail_funcs {
+  height: 14px;
+  width: 14px;
+  margin: 0px !important;
+  padding: 0px !important;
+  float: right;
 }
-
-.navbar .nav > li > a.mane_funcs
-{
-    margin: 0px auto;
-    margin-right: 2px;
-    padding: 0px;
+div.tail_funcs {
+  max-width: 14px;
+  margin-right: 2px;
 }
-
-a.tail_funcs
-{
-    height: 14px;
-    width: 14px;
-    margin: 0px !important;
-    padding: 0px !important;
-    float: right;
+.no_bottom {
+  margin-bottom: 5px !important;
 }
-
-div.tail_funcs
-{
-    max-width: 14px;
-    margin-right: 2px;
+span.action_span {
+  text-transform: capitalize;
+  display: inline;
 }
-
-.no_bottom
-{
-    margin-bottom: 5px !important;
+.navbar_scooter {
+  height: 40px;
 }
-
-span.action_span
-{
-    text-transform: capitalize;
-    display: inline;
+.inl {
+  display: inline;
 }
-
-div.navbar_scooter
-{
-    height: 40px;
+.fawn {
+  font-weight: normal;
 }
-
-div.tab_content_divider
-{
-    height: 19px;
+.scoot_left {
+  margin-right: 10px;
 }
-
-.inl
-{
-    display: inline;
+.scoot_right {
+  margin-left: 10px;
 }
-
-.fawn
-{
-    font-weight: normal;
+.container {
+  height: 100%;
+  padding-top: 20px;
 }
-
-.scoot_left
-{
-    margin-right: 10px;
+.flutter_post {
+  width: 100%;
+  background-color: #ff86c1;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
 }
-
-.scoot_right
-{
-    margin-left: 10px;
+.flutter_post div {
+  overflow: auto;
+  padding: 10px;
+}
+.flutter_post div.starship_top {
+  height: 0;
+  background-color: transparent;
+  border-bottom: 30px solid #ff86c1;
+  border-right: 30px solid transparent;
+}
+.flutter_post div.starship_bottom {
+  height: 0;
+  background-color: transparent;
+  border-top: 30px solid #ff86c1;
+  border-left: 30px solid transparent;
 }
