@@ -1,0 +1,103 @@
+
+html, body {
+    height: 100%;
+}
+
+div.stretchedMargin {
+    display: block;
+    position: absolute;
+    height: auto;
+    bottom:0;
+    top:0;
+    left:0;
+    right:0;
+    margin-top: 40px;
+}
+
+li.first-tab {
+    margin-top: 19px;
+}
+
+.fright {
+    float: right;
+}
+
+#edit_post_content
+{
+    height: 250px;
+}
+
+div.fakeTable
+{
+    border: solid #AAAAAA 1px;
+    margin: 20px 0;
+    border-radius: 5px;
+}
+
+div.fakeTable div
+{
+    margin: 10px;
+}
+
+.navbar .nav > li > a.mane_funcs
+{
+    margin: 0px auto;
+    margin-right: 2px;
+    padding: 0px;
+}
+
+a.tail_funcs
+{
+    height: 14px;
+    width: 14px;
+    margin: 0px !important;
+    padding: 0px !important;
+    float: right;
+}
+
+div.tail_funcs
+{
+    max-width: 14px;
+    margin-right: 2px;
+}
+
+.no_bottom
+{
+    margin-bottom: 5px !important;
+}
+
+span.action_span
+{
+    text-transform: capitalize;
+    display: inline;
+}
+
+div.navbar_scooter
+{
+    height: 40px;
+}
+
+div.tab_content_divider
+{
+    height: 19px;
+}
+
+.inl
+{
+    display: inline;
+}
+
+.fawn
+{
+    font-weight: normal;
+}
+
+.scoot_left
+{
+    margin-right: 10px;
+}
+
+.scoot_right
+{
+    margin-left: 10px;
+}
