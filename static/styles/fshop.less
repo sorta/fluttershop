@@ -2,15 +2,19 @@
 /* VARS *******************************************************************/
 
 @flutterYellow: #fefaa3;
-@flutterDarkYellow: #f5dd61;
+@flutterPink: #ff86c1;
 
-@flutterPink: darken(#ffb9db, 10%);
-@flutterDarkPink: darken(#fe8dc5, 10%);
+
+@theme-color-1: @flutterYellow;
+@theme-color-1-dark: darken(@theme-color-1, 10%);
+
+@theme-color-2: @flutterPink;
+@theme-color-2-dark: darken(@theme-color-2, 10%);
 
 
 /* MIXINS *******************************************************************/
 
-.all_corners(@color: @flutterPink, @size: 10px)
+.all_corners(@color: @theme-color-2, @size: 10px)
 {
     background: @color; /* fallback */
 
@@ -44,7 +48,14 @@
   -ms-border-radius: @radius;
 }
 
-.starship-top(@color: @flutterPink, @size: 20px)
+.rounded-top(@radius) {
+  border-radius: @radius @radius 0 0;
+  -moz-border-radius: @radius @radius 0 0;
+  -webkit-border-radius: @radius @radius 0 0;
+  -ms-border-radius: @radius @radius 0 0;
+}
+
+.starship-top(@color: @theme-color-2, @size: 20px)
 {
     height: 0;
     background-color: transparent;
@@ -52,7 +63,7 @@
     border-right: @size solid transparent;
 }
 
-.starship-bottom(@color: @flutterPink, @size: 20px)
+.starship-bottom(@color: @theme-color-2, @size: 20px)
 {
     height: 0;
     background-color: transparent;
@@ -64,7 +75,7 @@
 
 html, body {
     height: 100%;
-    background-color: lighten(@flutterYellow, 5%);
+    background-color: lighten(@theme-color-1, 5%);
 }
 
 body
@@ -153,8 +164,8 @@ span.action_span
 .flutter_post
 {
     width: 100%;
-    // .all_corners(@flutterPink, 10px);
-    background-color: @flutterPink;
+    // .all_corners(@theme-color-2, 10px);
+    background-color: @theme-color-2;
     .rounded(10px);
 
     div
@@ -162,15 +173,21 @@ span.action_span
         overflow: auto;
         padding: 10px;
 
+        &.fp_header
+        {
+            background-color: lighten(@theme-color-2, 10%);
+            .rounded-top(10px);
+        }
+
         &.starship_top
         {
             background-color: transparent;
-            .starship-top(@flutterPink, 30px);
+            .starship-top(@theme-color-2, 30px);
         }
 
         &.starship_bottom
         {
-            .starship-bottom(@flutterPink, 30px);
+            .starship-bottom(@theme-color-2, 30px);
         }
     }
 }
