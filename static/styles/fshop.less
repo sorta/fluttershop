@@ -1,10 +1,14 @@
 
+/* VARS *******************************************************************/
 
 @flutterYellow: #fefaa3;
 @flutterDarkYellow: #f5dd61;
 
 @flutterPink: darken(#ffb9db, 10%);
 @flutterDarkPink: darken(#fe8dc5, 10%);
+
+
+/* MIXINS *******************************************************************/
 
 .all_corners(@color: @flutterPink, @size: 10px)
 {
@@ -37,6 +41,7 @@
   border-radius: @radius;
   -moz-border-radius: @radius;
   -webkit-border-radius: @radius;
+  -ms-border-radius: @radius;
 }
 
 .starship-top(@color: @flutterPink, @size: 20px)
@@ -55,60 +60,28 @@
     border-left: @size solid transparent;
 }
 
+/* BASE STYLES *******************************************************************/
+
 html, body {
     height: 100%;
     background-color: lighten(@flutterYellow, 5%);
 }
 
-li.first-tab {
-    margin-top: 19px;
+body
+{
 }
 
-.fright {
+
+.container
+{
+    height: 100%;
+    padding-top: 20px;
+}
+
+/* UTILITY CLASSES *******************************************************************/
+
+.fl_r {
     float: right;
-}
-
-#edit_post_content
-{
-    height: 250px;
-}
-
-.navbar .nav > li > a.mane_funcs
-{
-    margin: 0px auto;
-    margin-right: 2px;
-    padding: 0px;
-}
-
-a.tail_funcs
-{
-    height: 14px;
-    width: 14px;
-    margin: 0px !important;
-    padding: 0px !important;
-    float: right;
-}
-
-div.tail_funcs
-{
-    max-width: 14px;
-    margin-right: 2px;
-}
-
-.no_bottom
-{
-    margin-bottom: 5px !important;
-}
-
-span.action_span
-{
-    text-transform: capitalize;
-    display: inline;
-}
-
-.navbar_scooter
-{
-    height: 40px;
 }
 
 .inl
@@ -131,16 +104,51 @@ span.action_span
     margin-left: 10px;
 }
 
-body
+.no_bottom
 {
+    margin-bottom: 5px !important;
 }
 
+/* NAVIGATION *******************************************************************/
 
-.container
+.navbar .nav > li > a.mane_funcs
 {
-    height: 100%;
-    padding-top: 20px;
+    margin: 0px auto;
+    margin-right: 2px;
+    padding: 0px;
 }
+
+li.first-tab {
+    margin-top: 19px;
+}
+
+a.tail_funcs
+{
+    height: 14px;
+    width: 14px;
+    margin: 0px !important;
+    padding: 0px !important;
+    float: right;
+}
+
+div.tail_funcs
+{
+    max-width: 14px;
+    margin-right: 2px;
+}
+
+span.action_span
+{
+    text-transform: capitalize;
+    display: inline;
+}
+
+.navbar_scooter
+{
+    height: 40px;
+}
+
+/* POSTS *******************************************************************/
 
 .flutter_post
 {
